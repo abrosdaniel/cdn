@@ -16,18 +16,18 @@ if (!window.AbrosCopyright) {
     document.head.insertAdjacentHTML(
       "beforeend",
       `
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-                .color-transition {
-                  transition: background-color 1s, color 2s;
-                }
-            </style>
-          `
+              <style>
+                  @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+                  .color-transition {
+                    transition: background-color 1s, color 2s;
+                  }
+              </style>
+            `
     );
 
     const container = document.createElement("div");
     container.style.cssText =
-      "width:100vw;height:auto;margin:0;padding:10px;display:flex;justify-content:center;align-items:center;background-color:#040404;font-family:'Montserrat Alternates',sans-serif;background-image:radial-gradient(circle at 10px 10px,#fff 0.7px,transparent 1px);background-size:10px 10px;";
+      "width:100vw;height:auto;margin:0;padding:2px;display:flex;justify-content:center;align-items:center;background-color:#040404;font-family:'Montserrat Alternates',sans-serif;background-image:radial-gradient(circle at 10px 10px,#fff 0.7px,transparent 1px);background-size:10px 10px;border-top: 1px solid white;";
 
     const link = document.createElement("a");
     link.href = "https://abros.dev";
@@ -44,8 +44,18 @@ if (!window.AbrosCopyright) {
     const description = document.createElement("p");
     description.style.cssText =
       "padding:0;margin:0;font-size:x-small;text-align:center;";
-    description.textContent =
-      "Сайт или материалы на сайте разработаны разработчиком Daniel Abros";
+
+    const translations = {
+      en: "The site or materials on the site are developed by developer Daniel Abros",
+      ru: "Сайт или материалы на сайте разработаны разработчиком Daniel Abros",
+      es: "El sitio o los materiales en el sitio están desarrollados por el desarrollador Daniel Abros",
+      fr: "Le site ou les matériaux sur le site sont développés par le développeur Daniel Abros",
+      de: "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt",
+      pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniela Abrosa",
+    };
+
+    const userLang = navigator.language || navigator.userLanguage;
+    description.textContent = translations[userLang] || translations["en"];
 
     link.appendChild(title);
     link.appendChild(description);
