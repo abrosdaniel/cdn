@@ -27,8 +27,8 @@ if (!window.AbrosCopyright) {
       `
           <div style="display: flex; flex-direction: column; align-items: center; width:100vw; height: auto; padding: 10px; margin: 0; background-color: #040404; color: white; font-family: 'Montserrat Alternates', sans-serif;">
               <a href="https://abros.dev" target="_blank">
-                  <img src="https://cdn.abros.dev/main/icons/icon512.webp" style="width: 60px;" alt="Logo">
-                  <p style="text-align: center;">© Daniel Abros, 2023 - 2024</p>
+                <p>ABROS</p>
+                <p>Сайт или материалы на сайте разработанны разработчиком Daniel Abros</p>
               </a>
           </div>
         `
