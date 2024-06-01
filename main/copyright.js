@@ -25,13 +25,13 @@ if (!window.AbrosCopyright) {
     document.body.insertAdjacentHTML(
       "beforeend",
       `
-          <div style="display: flex; flex-direction: column; align-items: center; width:100vw; height: auto; padding: 10px; margin: 0; background-color: #040404; color: white; font-family: 'Montserrat Alternates', sans-serif;">
-              <a href="https://abros.dev" target="_blank">
-                <p>ABROS</p>
-                <p>Сайт или материалы на сайте разработанны разработчиком Daniel Abros</p>
-              </a>
-          </div>
-        `
+      <div style=": ;nter;width:100vw;heigh;x;height: auto;margin: 0;padding: 0;display: flex;justify-content: center;background-color: #040404;font-family: 'Montserrat Alternates', sans-serif;background-image: radial-gradient(circle at 10px 10px, #fff 0.7px, transparent 1px);background-size: 10px 10px;">
+        <a href="https://abros.dev" target="_blank" rel="noopener" style="display: flex;flex-wrap: wrap;justify-content: center;width: 550px;text-decoration: none;color: white;">
+            <p style="transition: background-color 1s, color 2s;padding: 0;margin: 0;font-size: x-large;">ABROS</p>
+            <p style="padding: 0;margin: 0;font-size: small;text-align: center;">Сайт или материалы на сайте разработанны разработчиком Daniel Abros</p>
+        </a>
+      </div>
+      `
     );
 
     window.AbrosCopyright = true;
