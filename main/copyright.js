@@ -34,16 +34,16 @@ if (!window.AbrosCopyright) {
     link.target = "_blank";
     link.rel = "noopener";
     link.style.cssText =
-      "display:flex;flex-wrap:wrap;justify-content:center;width:550px;text-decoration:none;color:white;";
+      "display:flex;flex-wrap:wrap;justify-content:center;width:450px;text-decoration:none;color:white;";
 
     const title = document.createElement("p");
     title.style.cssText =
-      "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:x-large;";
+      "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:medium;";
     title.textContent = "ABROS";
 
     const description = document.createElement("p");
     description.style.cssText =
-      "padding:0;margin:0;font-size:small;text-align:center;";
+      "padding:0;margin:0;font-size:x-small;text-align:center;";
     description.textContent =
       "Сайт или материалы на сайте разработаны разработчиком Daniel Abros";
 
