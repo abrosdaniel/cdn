@@ -10,7 +10,7 @@
  */
 
 if (!window.AbrosCopyright) {
-  (function () {
+  document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
     document.head.insertAdjacentHTML(
@@ -35,5 +35,5 @@ if (!window.AbrosCopyright) {
     );
 
     window.AbrosCopyright = true;
-  })();
+  });
 }
