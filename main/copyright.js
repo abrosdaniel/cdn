@@ -27,7 +27,7 @@ if (!window.AbrosCopyright) {
 
     const container = document.createElement("div");
     container.style.cssText =
-      "width:100vw;height:auto;margin:0;padding:0;display:flex;justify-content:center;align-items:center;background-color:#040404;font-family:'Montserrat Alternates',sans-serif;background-image:radial-gradient(circle at 10px 10px,#fff 0.7px,transparent 1px);background-size:10px 10px;";
+      "width:100vw;height:auto;margin:0;padding:10px;display:flex;justify-content:center;align-items:center;background-color:#040404;font-family:'Montserrat Alternates',sans-serif;background-image:radial-gradient(circle at 10px 10px,#fff 0.7px,transparent 1px);background-size:10px 10px;";
 
     const link = document.createElement("a");
     link.href = "https://abros.dev";
@@ -37,7 +37,8 @@ if (!window.AbrosCopyright) {
       "display:flex;flex-wrap:wrap;justify-content:center;width:550px;text-decoration:none;color:white;";
 
     const title = document.createElement("p");
-    title.style.cssText = "padding:0;margin:0;font-size:x-large;";
+    title.style.cssText =
+      "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:x-large;";
     title.textContent = "ABROS";
 
     const description = document.createElement("p");
