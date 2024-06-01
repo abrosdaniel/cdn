@@ -27,9 +27,9 @@ if (!window.AbrosCopyright) {
       `
           <div style="display: flex; flex-direction: column; align-items: center; width:100vw; height: auto; padding: 10px; margin: 0; background-color: #040404; color: white; font-family: 'Montserrat Alternates', sans-serif;">
               <a href="https://abros.dev" target="_blank">
-                  <img src="https://cdn.abros.dev" style="width: 60px;" alt="Logo">
+                  <img src="https://cdn.abros.dev/main/icons/icon512.webp" style="width: 60px;" alt="Logo">
+                  <p style="text-align: center;">© Daniel Abros, 2023 - 2024</p>
               </a>
-              <p style="text-align: center;">D3US System - модификация упрощающая жизнь!<br>Модификация совершенно бесплатна и средства на разработку идут от рекламы, поэтому...</p>
           </div>
         `
     );
