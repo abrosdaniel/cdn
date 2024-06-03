@@ -5,8 +5,8 @@
  * Сайт → https://abros.dev
  * Telegram → https://t.me/abrosxd
  * Копирайт использования на сайтах
- * <script src = 'https://cdn.abros.dev/main/copyright.js'></script>
- * <script type="module" src = 'https://cdn.abros.dev/main/copyright.js'></script>
+ * <script src = 'https://cdn.abros.dev/copyright.js'></script>
+ * <script type="module" src = 'https://cdn.abros.dev/copyright.js'></script>
  */
 
 if (!window.AbrosCopyright) {
@@ -16,13 +16,13 @@ if (!window.AbrosCopyright) {
     document.head.insertAdjacentHTML(
       "beforeend",
       `
-              <style>
-                  @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-                  .color-transition {
-                    transition: background-color 1s, color 2s;
-                  }
-              </style>
-            `
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+                    .color-transition {
+                      transition: background-color 1s, color 2s;
+                    }
+                </style>
+              `
     );
 
     const container = document.createElement("div");
@@ -51,7 +51,7 @@ if (!window.AbrosCopyright) {
       es: "El sitio o los materiales en el sitio están desarrollados por el desarrollador Daniel Abros",
       fr: "Le site ou les matériaux sur le site sont développés par le développeur Daniel Abros",
       de: "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt",
-      pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniela Abrosa",
+      pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros",
     };
 
     const userLang = navigator.language || navigator.userLanguage;

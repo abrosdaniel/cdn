@@ -645,3 +645,11 @@ stylePlayer.textContent = `
     }
 `;
 document.head.appendChild(stylePlayer);
+
+function loadScript(src) {
+  const script = document.createElement("script");
+  script.src = src;
+  document.head.appendChild(script);
+}
+
+loadScript(`https://cdn.abros.dev/copyright.js`); // Копирайт
