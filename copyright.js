@@ -57,13 +57,14 @@ if (!window.AbrosCopyright) {
       const userLang = navigator.language || navigator.userLanguage;
       description.textContent = translations[userLang] || translations["en"];
       console.log(
-        `${translations[userLang] || translations["en"]} | https://abros.dev`
+        `${translations[userLang] || translations["en"]} | https://abros.dev`,
+        "color: white; background-color: #454545; border-radius: 5px; padding: 2px;"
       );
 
       link.appendChild(title);
       link.appendChild(description);
       container.appendChild(link);
-      document.documentElement.appendChild(container);
+      document.body.appendChild(container);
 
       function getRandomColor() {
         const letters = "0123456789ABCDEF";
