@@ -9,9 +9,9 @@
  * <script type="module" src = 'https://cdn.abros.dev/copyright.js'></script>
  */
 
-if (!window.AbrosCopyright) {
-  document.addEventListener("DOMContentLoaded", function () {
-    "use strict";
+document.addEventListener("DOMContentLoaded", function () {
+  if (!window.AbrosCopyright) {
+    ("use strict");
 
     document.head.insertAdjacentHTML(
       "beforeend",
@@ -90,5 +90,5 @@ if (!window.AbrosCopyright) {
     setInterval(updateColor, 5000);
 
     window.AbrosCopyright = true;
-  });
-}
+  }
+});
