@@ -63,7 +63,7 @@ if (!window.AbrosCopyright) {
       link.appendChild(title);
       link.appendChild(description);
       container.appendChild(link);
-      document.body.appendChild(container);
+      document.documentElement.appendChild(container);
 
       function getRandomColor() {
         const letters = "0123456789ABCDEF";
