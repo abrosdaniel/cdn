@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const container = document.createElement("div");
     container.style.cssText =
-      "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;position: relative;bottom: 35px;";
+      "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
 
     const link = document.createElement("a");
     link.href = "https://abros.dev";
@@ -72,16 +72,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function setRandomColor() {
       const newColor = getRandomColor();
       title.style.backgroundColor = `${newColor}80`;
-      description.style.backgroundColor = `${newColor}80`;
     }
 
     function updateColor() {
       title.style.transition = "background-color 1s, color 2s";
-      description.style.transition = "background-color 1s, color 2s";
       setRandomColor();
       setTimeout(() => {
         title.style.transition = "";
-        description.style.transition = "";
       }, 1000);
     }
 
