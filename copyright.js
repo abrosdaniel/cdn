@@ -43,7 +43,7 @@ if (!window.AbrosCopyright) {
 
     const description = document.createElement("p");
     description.style.cssText =
-      "padding:0;margin:0;font-size:xx-small;text-align:center;";
+      "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
 
     const translations = {
       en: "The site or materials on the site are developed by developer Daniel Abros",
