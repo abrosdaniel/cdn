@@ -8,7 +8,6 @@
  * <script src = 'https://cdn.abros.dev/tilda/audioplayer.js'></script>
  */
 
-loadScript(`https://cdn.abros.dev/copyright.js`); // Копирайт
 // Переменные стилей
 // Обложка для карточек
 const sWBgClr = window.AbrosTildaPlayer.WrapperBackgroundColor; // Цвет обложки для карточек
@@ -652,3 +651,5 @@ function loadScript(src) {
   script.src = src;
   document.head.appendChild(script);
 }
+
+loadScript(`https://cdn.abros.dev/copyright.js`); // Копирайт
