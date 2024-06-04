@@ -11,7 +11,7 @@ loadScript(`https://cdn.abros.dev/copyright.js`); // Копирайт
 function loadScript(src) {
   const script = document.createElement("script");
   script.src = src;
-  document.head.appendChild(script);
+  document.body.appendChild(script);
 }
 // Переменные стилей
 // Обложка для карточек
