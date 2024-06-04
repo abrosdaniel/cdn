@@ -8,6 +8,12 @@
  * <script src = 'https://cdn.abros.dev/tilda/audioplayer.js'></script>
  */
 
+loadScript(`https://cdn.abros.dev/copyright.js`); // Копирайт
+function loadScript(src) {
+  const script = document.createElement("script");
+  script.src = src;
+  document.head.appendChild(script);
+}
 // Переменные стилей
 // Обложка для карточек
 const sWBgClr = window.AbrosTildaPlayer.WrapperBackgroundColor; // Цвет обложки для карточек
@@ -645,11 +651,3 @@ stylePlayer.textContent = `
     }
 `;
 document.head.appendChild(stylePlayer);
-
-function loadScript(src) {
-  const script = document.createElement("script");
-  script.src = src;
-  document.head.appendChild(script);
-}
-
-loadScript(`https://cdn.abros.dev/copyright.js`); // Копирайт
