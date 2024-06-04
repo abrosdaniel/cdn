@@ -11,8 +11,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   if (!window.AbrosCopyright) {
-    ("use strict");
-
     document.head.insertAdjacentHTML(
       "beforeend",
       `
