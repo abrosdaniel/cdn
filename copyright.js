@@ -10,7 +10,7 @@
  */
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
-  document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(() => {
     document.head.insertAdjacentHTML(
       "beforeend",
       `
@@ -86,5 +86,5 @@ if (!window.AbrosCopyright) {
     }
 
     setInterval(updateColor, 5000);
-  });
+  }, 10000);
 }
