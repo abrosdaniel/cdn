@@ -11,16 +11,18 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   if (!window.AbrosCopyright) {
+    console.log("Инициализация скрипта AbrosCopyright");
+
     document.head.insertAdjacentHTML(
       "beforeend",
       `
-                <style>
-                    @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-                    .color-transition {
-                      transition: background-color 1s, color 2s;
-                    }
-                </style>
-              `
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+          .color-transition {
+            transition: background-color 1s, color 2s;
+          }
+        </style>
+      `
     );
 
     const container = document.createElement("div");
@@ -60,6 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
     container.appendChild(link);
     document.body.appendChild(container);
 
+    console.log("Элементы добавлены в DOM");
+
     function getRandomColor() {
       const letters = "0123456789ABCDEF";
       let color = "#";
@@ -72,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function setRandomColor() {
       const newColor = getRandomColor();
       title.style.backgroundColor = `${newColor}80`;
+      console.log(`Установлен новый цвет: ${newColor}`);
     }
 
     function updateColor() {
