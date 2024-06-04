@@ -71,17 +71,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setRandomColor() {
       const newColor = getRandomColor();
-      title.style.backgroundColor = `${newColor}80`;
-      description.style.backgroundColor = `${newColor}80`;
+      container.style.backgroundColor = `${newColor}80`;
     }
 
     function updateColor() {
-      title.style.transition = "background-color 1s, color 2s";
-      description.style.transition = "background-color 1s, color 2s";
+      container.style.transition = "background-color 1s, color 2s";
       setRandomColor();
       setTimeout(() => {
-        title.style.transition = "";
-        description.style.transition = "";
+        container.style.transition = "";
       }, 1000);
     }
 
