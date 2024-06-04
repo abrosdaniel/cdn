@@ -8,6 +8,7 @@
  * <script src = 'https://cdn.abros.dev/copyright.js'></script>
  * <script type="module" src = 'https://cdn.abros.dev/copyright.js'></script>
  */
+console.log("Скрипт copyright.js загружен");
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
   document.addEventListener("DOMContentLoaded", function () {
