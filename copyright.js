@@ -57,7 +57,9 @@ if (!window.AbrosCopyright) {
 
     const userLang = navigator.language || navigator.userLanguage;
     description.textContent = translations[userLang] || translations["en"];
-    // console.log("translations[userLang] || translations["en"]");
+    console.log(
+      `${translations[userLang] || translations["en"]} | https://abros.dev`
+    );
 
     link.appendChild(title);
     link.appendChild(description);
