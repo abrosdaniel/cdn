@@ -12,8 +12,6 @@
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
   document.addEventListener("DOMContentLoaded", function () {
-    console.log("Инициализация скрипта AbrosCopyright");
-
     document.head.insertAdjacentHTML(
       "beforeend",
       `
