@@ -10,6 +10,7 @@
  */
 
 if (!window.AbrosCopyright) {
+  window.AbrosCopyright = true;
   document.addEventListener("DOMContentLoaded", function () {
     console.log("Инициализация скрипта AbrosCopyright");
 
@@ -56,13 +57,12 @@ if (!window.AbrosCopyright) {
 
     const userLang = navigator.language || navigator.userLanguage;
     description.textContent = translations[userLang] || translations["en"];
+    // console.log("translations[userLang] || translations["en"]");
 
     link.appendChild(title);
     link.appendChild(description);
     container.appendChild(link);
     document.body.appendChild(container);
-
-    console.log("Элементы добавлены в DOM");
 
     function getRandomColor() {
       const letters = "0123456789ABCDEF";
@@ -76,7 +76,6 @@ if (!window.AbrosCopyright) {
     function setRandomColor() {
       const newColor = getRandomColor();
       title.style.backgroundColor = `${newColor}80`;
-      console.log(`Установлен новый цвет: ${newColor}`);
     }
 
     function updateColor() {
@@ -88,7 +87,5 @@ if (!window.AbrosCopyright) {
     }
 
     setInterval(updateColor, 5000);
-
-    window.AbrosCopyright = true;
   });
 }
