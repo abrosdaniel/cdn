@@ -9,8 +9,8 @@
  * <script type="module" src = 'https://cdn.abros.dev/copyright.js'></script>
  */
 
-document.addEventListener("DOMContentLoaded", function () {
-  if (!window.AbrosCopyright) {
+if (!window.AbrosCopyright) {
+  document.addEventListener("DOMContentLoaded", function () {
     console.log("Инициализация скрипта AbrosCopyright");
 
     document.head.insertAdjacentHTML(
@@ -90,5 +90,5 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(updateColor, 5000);
 
     window.AbrosCopyright = true;
-  }
-});
+  });
+}
