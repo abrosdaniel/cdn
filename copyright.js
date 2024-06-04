@@ -27,23 +27,23 @@ if (!window.AbrosCopyright) {
 
     const container = document.createElement("div");
     container.style.cssText =
-      "width:100vw;height:auto;margin:0;padding:2px;display:flex;justify-content:center;align-items:center;background-color:#040404;font-family:'Montserrat Alternates',sans-serif;background-image:radial-gradient(circle at 10px 10px,#fff 0.7px,transparent 1px);background-size:10px 10px;border-top: 1px solid white;";
+      "width:100vw;height:auto;margin:0;padding:2px;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;";
 
     const link = document.createElement("a");
     link.href = "https://abros.dev";
     link.target = "_blank";
     link.rel = "noopener";
     link.style.cssText =
-      "display:flex;flex-wrap:wrap;justify-content:center;width:450px;text-decoration:none;color:white;";
+      "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
 
     const title = document.createElement("p");
     title.style.cssText =
-      "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:medium;";
+      "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;";
     title.textContent = "ABROS";
 
     const description = document.createElement("p");
     description.style.cssText =
-      "padding:0;margin:0;font-size:x-small;text-align:center;";
+      "padding:0;margin:0;font-size:xx-small;text-align:center;";
 
     const translations = {
       en: "The site or materials on the site are developed by developer Daniel Abros",
@@ -74,13 +74,16 @@ if (!window.AbrosCopyright) {
     function setRandomColor() {
       const newColor = getRandomColor();
       title.style.backgroundColor = `${newColor}80`;
+      description.style.backgroundColor = `${newColor}80`;
     }
 
     function updateColor() {
       title.style.transition = "background-color 1s, color 2s";
+      description.style.transition = "background-color 1s, color 2s";
       setRandomColor();
       setTimeout(() => {
         title.style.transition = "";
+        description.style.transition = "";
       }, 1000);
     }
 
