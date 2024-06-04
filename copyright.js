@@ -56,7 +56,7 @@ if (!window.AbrosCopyright) {
     description.textContent = translations[userLang] || translations["en"];
     console.log(
       `%c${translations[userLang] || translations["en"]} | https://abros.dev`,
-      "color: white; background-color: #626262; border-radius: 5px; padding: 2px 4px; font-family: 'Montserrat Alternates', sans-serif;"
+      "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
     );
 
     link.appendChild(title);
