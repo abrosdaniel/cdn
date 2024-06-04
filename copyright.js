@@ -12,6 +12,7 @@ console.log("Скрипт copyright.js загружен");
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
   document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOMContentLoaded сработал");
     document.head.insertAdjacentHTML(
       "beforeend",
       `
