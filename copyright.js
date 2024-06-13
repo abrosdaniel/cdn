@@ -109,7 +109,7 @@ if (!window.AbrosCopyright) {
       container.appendChild(link);
 
       setTimeout(function () {
-        document.body.appendChild(container);
+        document.body.insertAdjacentHTML("beforeend", container);
       }, params.time * 1000);
     }
   }
