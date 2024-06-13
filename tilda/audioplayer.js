@@ -14,12 +14,9 @@ loadScript("https://cdn.abros.dev/copyright.js", {
 function loadScript(src, dataAttrs = {}) {
   const script = document.createElement("script");
   script.src = src;
-
-  // Установка атрибутов data-*
   for (const [key, value] of Object.entries(dataAttrs)) {
     script.setAttribute(`data-${key}`, value);
   }
-
   document.head.appendChild(script);
 }
 // Переменные стилей
