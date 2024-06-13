@@ -24,7 +24,8 @@ if (!window.AbrosCopyright) {
     var script = document.querySelector(
       'script[src="https://cdn.abros.dev/copyright.js"]'
     );
-    var banner = script.getAttribute("data-banner") === "true";
+    var bannerAttr = script.getAttribute("data-banner");
+    var banner = bannerAttr === null ? true : bannerAttr === "true";
     var timeAttr = script.getAttribute("data-time");
     var time =
       timeAttr === null || parseInt(timeAttr, 10) === 0
