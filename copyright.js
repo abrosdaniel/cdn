@@ -5,8 +5,8 @@
  * Сайт → https://abros.dev
  * Telegram → https://t.me/abrosxd
  * Копирайт использования на сайтах
- * <script src = 'https://cdn.abros.dev/copyright.js'></script>
- * <script type="module" src = 'https://cdn.abros.dev/copyright.js'></script>
+ * <script src="https://cdn.abros.dev/copyright.js" data-banner="true" data-time="1"></script>
+ * <script type="module" src ="https://cdn.abros.dev/copyright.js" data-banner="true" data-time="1"></script>
  */
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
@@ -29,7 +29,7 @@ if (!window.AbrosCopyright) {
     var timeAttr = script.getAttribute("data-time");
     var time =
       timeAttr === null || parseInt(timeAttr, 10) === 0
-        ? 5
+        ? 10
         : parseInt(timeAttr, 10);
     initCopyright({
       banner: banner,
