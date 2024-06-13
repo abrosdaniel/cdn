@@ -25,10 +25,15 @@ if (!window.AbrosCopyright) {
       'script[src="https://cdn.abros.dev/copyright.js"]'
     );
     var bannerAttr = script.getAttribute("data-banner");
-    var banner = bannerAttr === null ? true : bannerAttr === "true";
+    var banner =
+      bannerAttr === null || (bannerAttr !== "true" && bannerAttr !== "false")
+        ? true
+        : bannerAttr === "true";
     var timeAttr = script.getAttribute("data-time");
     var time =
-      timeAttr === null || parseInt(timeAttr, 10) === 0
+      timeAttr === null ||
+      parseInt(timeAttr, 10) === 0 ||
+      parseInt(timeAttr, 10) > 150
         ? 10
         : parseInt(timeAttr, 10);
     initCopyright({
@@ -109,7 +114,7 @@ if (!window.AbrosCopyright) {
       container.appendChild(link);
 
       setTimeout(function () {
-        document.body.insertAdjacentHTML("beforeend", container);
+        document.body.appendChild(container);
       }, params.time * 1000);
     }
   }
