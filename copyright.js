@@ -12,12 +12,12 @@ if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
 
   const translations = {
-    en: "The site or materials on the site are developed by developer Daniel Abros",
-    ru: "Сайт или материалы на сайте разработаны разработчиком Daniel Abros",
-    es: "El sitio o los materiales en el sitio están desarrollados por el desarrollador Daniel Abros",
-    fr: "Le site ou les matériaux sur le site sont développés par le développeur Daniel Abros",
-    de: "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt",
-    pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros",
+    en: "The site or materials on the site are developed by developer Daniel Abros | https://abros.dev",
+    ru: "Сайт или материалы на сайте разработаны разработчиком Daniel Abros | https://abros.dev",
+    es: "El sitio o los materiales en el sitio están desarrollados por el desarrollador Daniel Abros | https://abros.dev",
+    fr: "Le site ou les matériaux sur le site sont développés par le développeur Daniel Abros | https://abros.dev",
+    de: "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt | https://abros.dev",
+    pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros | https://abros.dev",
   };
 
   document.addEventListener("DOMContentLoaded", function () {
