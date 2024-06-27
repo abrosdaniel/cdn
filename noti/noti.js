@@ -107,7 +107,7 @@ styleNoti.textContent = `
     transform: translateX(0.15rem)
   }
   .abrosnoti .notidesc {
-    color: #99999d;
+    color: #c1c1c1;
     padding: 0 0.5rem 0.85rem 0.5rem;
     transition: transform 300ms ease;
     z-index: 5;
