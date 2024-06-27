@@ -124,7 +124,7 @@ if (!window.AbrosCopyright) {
       const text = translations[userLang] || translations["en"];
 
       setTimeout(function () {
-        abrosnoti.create("abros", "ABROS", `${text}`, 5, true, () =>
+        abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () =>
           window.open("https://abros.dev", "_blank")
         );
       }, params.time * 1000);
