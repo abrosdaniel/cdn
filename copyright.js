@@ -116,6 +116,16 @@ if (!window.AbrosCopyright) {
       setTimeout(function () {
         document.body.appendChild(container);
       }, params.time * 1000);
+    } else {
+      const script = document.createElement("script");
+      script.src = `https://cdn.abros.dev/noti/noti.js`;
+      document.head.appendChild(script);
+
+      const text = translations[userLang] || translations["en"];
+
+      setTimeout(function () {
+        abrosnoti.create("abros", "ABROS", `${text}`, 3);
+      }, params.time * 1000);
     }
   }
 }
