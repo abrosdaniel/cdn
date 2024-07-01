@@ -100,12 +100,12 @@ if (!window.AbrosCopyright) {
 
       const title = document.createElement("p");
       title.style.cssText =
-        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;";
+        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;font-family:'Montserrat Alternates',sans-serif;";
       title.textContent = "ABROS";
 
       const description = document.createElement("p");
       description.style.cssText =
-        "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
+        "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;font-family:'Montserrat Alternates',sans-serif;";
 
       description.textContent = translations[userLang] || translations["en"];
 
