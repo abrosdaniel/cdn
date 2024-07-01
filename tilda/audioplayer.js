@@ -8,7 +8,7 @@
  * <script src = 'https://cdn.abros.dev/tilda/audioplayer.js'></script>
  */
 loadScript("https://cdn.abros.dev/copyright.js", {
-  banner: "true",
+  type: "banner",
   time: "100",
 }); // Копирайт
 function loadScript(src, dataAttrs = {}) {

@@ -5,8 +5,8 @@
  * Сайт → https://abros.dev
  * Telegram → https://t.me/abrosxd
  * Копирайт использования на сайтах
- * <script src="https://cdn.abros.dev/copyright.js" data-banner="true" data-time="1"></script>
- * <script type="module" src ="https://cdn.abros.dev/copyright.js" data-banner="true" data-time="1"></script>
+ * <script src="https://cdn.abros.dev/copyright.js" data-type="banner" data-time="1"></script>
+ * <script type="module" src ="https://cdn.abros.dev/copyright.js" data-type="banner" data-time="1"></script>
  */
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
@@ -24,11 +24,11 @@ if (!window.AbrosCopyright) {
     var script = document.querySelector(
       'script[src="https://cdn.abros.dev/copyright.js"]'
     );
-    var bannerAttr = script.getAttribute("data-banner");
-    var banner =
-      bannerAttr === null || (bannerAttr !== "true" && bannerAttr !== "false")
-        ? true
-        : bannerAttr === "true";
+    var typeAttr = script.getAttribute("data-type");
+    var type =
+      typeAttr === null || (typeAttr !== "banner" && typeAttr !== "push")
+        ? "banner"
+        : typeAttr === "banner";
     var timeAttr = script.getAttribute("data-time");
     var time =
       timeAttr === null ||
@@ -37,19 +37,19 @@ if (!window.AbrosCopyright) {
         ? 10
         : parseInt(timeAttr, 10);
     initCopyright({
-      banner: banner,
+      type: type,
       time: time,
     });
   });
 
   const userLang = navigator.language || navigator.userLanguage;
   console.log(
-    `%c${translations[userLang] || translations["en"]} | https://abros.dev`,
+    `%c${translations[userLang] || translations["en"]}`,
     "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
   );
 
   function initCopyright(params) {
-    if (params.banner) {
+    if (params.type === "banner") {
       document.head.insertAdjacentHTML(
         "beforeend",
         `
@@ -116,7 +116,7 @@ if (!window.AbrosCopyright) {
       setTimeout(function () {
         document.body.appendChild(container);
       }, params.time * 1000);
-    } else {
+    } else if (params.type === "push") {
       const script = document.createElement("script");
       script.src = `https://cdn.abros.dev/noti/noti.js`;
       document.head.appendChild(script);
@@ -128,6 +128,8 @@ if (!window.AbrosCopyright) {
           window.open("https://abros.dev", "_blank")
         );
       }, params.time * 1000);
+    } else {
+      return null;
     }
   }
 }

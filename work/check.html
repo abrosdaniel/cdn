@@ -1,3 +1,10 @@
+<!-- Валидация серийных номеров by Daniel Abros-->
+<script
+  type="module"
+  src="https://cdn.abros.dev/copyright.js"
+  data-type="banner"
+  data-time="20"
+></script>
 <script>
   // Массив с кодами и годами. Каждый новый добавлять внутри скобок с новой строки через запятую.
   const code = {
@@ -11,7 +18,7 @@
     "https://optim.tildacdn.one/tild6637-3137-4564-b866-376133396262/-/resize/72x/-/format/webp/_1.png";
   const iconN =
     "https://optim.tildacdn.one/tild3934-6564-4538-a461-333666336431/-/resize/72x/-/format/webp/_1ss.png";
-  // Текст успеха
+  // Текст успеха. После него автоматически подставляется год назначенный коду
   const success = `This device belongs to Beijing Macfree Laser Technology Co., Ltd. Device was manufactured in `;
   // Текст ошибки
   const error = `This SN code doesn't found in Beijing Macfree Laser Technology Co., Ltd. system.`;
@@ -22,29 +29,31 @@
   const input = form.querySelector(".t-input");
   const button = form.querySelector(".t-submit");
   button.removeAttribute("type");
+  const script = document.querySelector(
+    'script[src="https://cdn.abros.dev/copyright.js"]'
+  );
   const info = document.querySelector(".uc-abros-check-info");
   const icon = info.querySelector(".icon .tn-atom");
   icon.style.backgroundSize = `cover`;
   const text = info.querySelector(".text .tn-atom");
-
-  const handleClick = function (e) {
-    e.preventDefault();
-    const inputValue = input.value.trim();
-    if (inputValue === "") {
-      icon.style.backgroundImage = `none`;
-      text.textContent = clear;
-      return;
-    }
-    const serialNumber = Number(inputValue);
-    if (code.hasOwnProperty(serialNumber)) {
-      icon.style.backgroundImage = `url(${iconY})`;
-      text.textContent = `${success} ${code[serialNumber]}.`;
-    } else {
-      icon.style.backgroundImage = `url(${iconN})`;
-      text.textContent = error;
-    }
-  };
-
-  // Устанавливаем обработчик клика на кнопку
-  button.addEventListener("click", handleClick);
+  if (script) {
+    const handleClick = function (e) {
+      e.preventDefault();
+      const inputValue = input.value.trim();
+      if (inputValue === "") {
+        icon.style.backgroundImage = `none`;
+        text.textContent = clear;
+        return;
+      }
+      const serialNumber = Number(inputValue);
+      if (code.hasOwnProperty(serialNumber)) {
+        icon.style.backgroundImage = `url(${iconY})`;
+        text.textContent = `${success} ${code[serialNumber]}.`;
+      } else {
+        icon.style.backgroundImage = `url(${iconN})`;
+        text.textContent = error;
+      }
+    };
+    button.addEventListener("click", handleClick);
+  }
 </script>
