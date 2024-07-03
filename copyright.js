@@ -143,7 +143,7 @@ if (!window.AbrosCopyright) {
     const particles = [];
     let animationStarted = false;
     const image = new Image();
-    image.src = "https://cdn.abros.dev/noti/icons/abros.svg";
+    image.src = "https://cdn.abros.dev/abros.svg";
 
     document.addEventListener("keydown", handleKeyDown);
     let pressedKeys = "";
