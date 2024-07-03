@@ -14,6 +14,7 @@ if (!window.AbrosCopyright) {
   const data = {
     "abros.dev": "none",
     "abros.tilda.ws": { type: "banner", time: 50 },
+    "contract-fpobeda.ru": "none",
   };
 
   const translations = {
