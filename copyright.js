@@ -13,7 +13,7 @@ if (!window.AbrosCopyright) {
 
   const data = {
     "abros.tilda.ws": "none",
-    "onetwosign.ru": { type: "banner", time: 1 },
+    "onetwosign.ru": { type: "banner", time: 50 },
   };
 
   const translations = {
