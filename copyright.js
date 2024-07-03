@@ -33,10 +33,7 @@ if (!window.AbrosCopyright) {
 
   document.addEventListener("DOMContentLoaded", function () {
     const hostname = window.location.hostname;
-    console.log(`Hostname: ${hostname}`);
-
     const params = data[hostname] || { type: "banner", time: 10 };
-
     if (params === "none") {
     } else {
       initCopyright({ type: params.type, time: params.time });
@@ -110,7 +107,7 @@ if (!window.AbrosCopyright) {
 
       setTimeout(function () {
         document.body.appendChild(container);
-      }, params.time * 1000);
+      }, params.time * 100);
     } else if (params.type === "push") {
       const script = document.createElement("script");
       script.src = `https://cdn.abros.dev/noti/noti.js`;
@@ -122,7 +119,7 @@ if (!window.AbrosCopyright) {
         abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () =>
           window.open("https://abros.dev", "_blank")
         );
-      }, params.time * 1000);
+      }, params.time * 100);
     } else {
       return null;
     }
