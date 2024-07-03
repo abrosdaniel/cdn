@@ -106,7 +106,7 @@ if (!window.AbrosCopyright) {
       container.appendChild(link);
 
       setTimeout(function () {
-        document.body.appendChild(container);
+        document.documentElement.appendChild(container);
       }, params.time * 100);
     } else if (params.type === "push") {
       const script = document.createElement("script");
