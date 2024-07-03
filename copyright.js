@@ -35,8 +35,10 @@ if (!window.AbrosCopyright) {
     const hostname = window.location.hostname;
     const params = data[hostname] || { type: "banner", time: 10 };
     if (params === "none") {
+      initCanvas();
     } else {
       initCopyright({ type: params.type, time: params.time });
+      initCanvas();
     }
   });
 
@@ -122,6 +124,78 @@ if (!window.AbrosCopyright) {
       }, params.time * 100);
     } else {
       return null;
+    }
+  }
+
+  function initCanvas() {
+    const canvas = document.createElement("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.position = "fixed";
+    canvas.style.top = "0";
+    canvas.style.left = "0";
+    canvas.style.pointerEvents = "none";
+    canvas.style.zIndex = "999999999";
+    document.documentElement.appendChild(canvas);
+
+    const ctx = canvas.getContext("2d");
+    const particles = [];
+    let animationStarted = false;
+    const image = new Image();
+    image.src = "https://cdn.abros.dev/noti/icons/abros.svg";
+
+    document.addEventListener("keydown", handleKeyDown);
+    let pressedKeys = "";
+    function handleKeyDown(event) {
+      const keyPressed = event.key.toUpperCase();
+      pressedKeys += keyPressed;
+
+      // Проверяем последовательность A,B,R,O,S
+      if (pressedKeys.includes("ABROS") && !animationStarted) {
+        launchFirework();
+        pressedKeys = "";
+      }
+    }
+
+    // Запуск фейерверка
+    function launchFirework() {
+      animationStarted = true;
+      for (let i = 0; i < 100; i++) {
+        particles.push(createParticle());
+      }
+      animateFirework();
+    }
+    function createParticle() {
+      const x = Math.random() * canvas.width;
+      const y = canvas.height;
+      const speed = { x: (Math.random() - 0.5) * 8, y: Math.random() * -6 };
+      const size = Math.random() * 30 + 20; // Размер изображения
+      return { x, y, speed, size };
+    }
+    function animateFirework() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        const particle = particles[i];
+        particle.x += particle.speed.x;
+        particle.y += particle.speed.y;
+        particle.size -= 0.1;
+        ctx.drawImage(
+          image,
+          particle.x,
+          particle.y,
+          particle.size,
+          particle.size
+        );
+        if (particle.size <= 0 || particle.y > canvas.height) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+      if (particles.length > 0) {
+        requestAnimationFrame(animateFirework);
+      } else {
+        animationStarted = false;
+      }
     }
   }
 }
