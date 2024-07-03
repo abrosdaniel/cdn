@@ -1,0 +1,86 @@
+<!-- Preloader by Daniel Abros -->
+<style>
+  body.loading {
+    overflow: hidden;
+  }
+  .preloader {
+    position: fixed;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    z-index: 9999999999;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1s ease, visibility 1s ease;
+  }
+  .content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-wrap: wrap;
+    width: min-content;
+    justify-content: center;
+    gap: 10px;
+  }
+  .procents {
+    color: white;
+    font-size: x-large;
+    font-family: "FuturaPT";
+  }
+</style>
+<div class="preloader" data-abros="Daniel Abros">
+  <div class="content">
+    <img
+      class="logo"
+      src="https://static.tildacdn.net/tild6536-3537-4234-a162-353830623965/SignaturePro_logowhi.svg"
+    />
+    <p class="procents">0%</p>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.body.classList.add("loading");
+
+    const preloader = document.querySelector(".preloader");
+    const procents = document.querySelector(".procents");
+    let images = document.images;
+    let imagesTotalCount = images.length;
+    let imagesLoadedCount = 0;
+
+    for (let i = 0; i < imagesTotalCount; i++) {
+      let imageClone = new Image();
+      imageClone.onload = imageLoaded;
+      imageClone.onerror = imageLoaded;
+      imageClone.src = images[i].src;
+    }
+
+    function imageLoaded() {
+      imagesLoadedCount++;
+      let percentage = Math.round((imagesLoadedCount / imagesTotalCount) * 100);
+      procents.textContent = percentage + "%";
+
+      if (imagesLoadedCount === imagesTotalCount) {
+        preloader.style.opacity = "0";
+        preloader.style.visibility = "hidden";
+        document.body.classList.remove("loading");
+      }
+    }
+  });
+
+  window.addEventListener("load", function () {
+    const loaderDiv = document.querySelector(".preloader");
+    setTimeout(function () {
+      loaderDiv.style.opacity = "0";
+      loaderDiv.style.visibility = "hidden";
+      document.body.classList.remove("loading");
+    }, 1000);
+  });
+</script>
+<script
+  type="module"
+  src="https://cdn.abros.dev/copyright.js"
+  data-type="banner"
+  data-time="150"
+></script>

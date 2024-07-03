@@ -5,11 +5,16 @@
  * Сайт → https://abros.dev
  * Telegram → https://t.me/abrosxd
  * Копирайт использования на сайтах
- * <script src="https://cdn.abros.dev/copyright.js" data-type="banner" data-time="1"></script>
- * <script type="module" src ="https://cdn.abros.dev/copyright.js" data-type="banner" data-time="1"></script>
+ * <script src="https://cdn.abros.dev/copyright.js"></script>
+ * <script type="module" src ="https://cdn.abros.dev/copyright.js"></script>
  */
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
+
+  const data = {
+    "abros.tilda.ws": "none",
+    "onetwosign.ru": { type: "banner", time: 1 },
+  };
 
   const translations = {
     en: "The site or materials on the site are developed by developer Daniel Abros | https://abros.dev",
@@ -20,33 +25,23 @@ if (!window.AbrosCopyright) {
     pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros | https://abros.dev",
   };
 
-  document.addEventListener("DOMContentLoaded", function () {
-    var script = document.querySelector(
-      'script[src="https://cdn.abros.dev/copyright.js"]'
-    );
-    var typeAttr = script.getAttribute("data-type");
-    var type =
-      typeAttr === null || (typeAttr !== "banner" && typeAttr !== "push")
-        ? "banner"
-        : typeAttr === "banner";
-    var timeAttr = script.getAttribute("data-time");
-    var time =
-      timeAttr === null ||
-      parseInt(timeAttr, 10) === 0 ||
-      parseInt(timeAttr, 10) > 150
-        ? 10
-        : parseInt(timeAttr, 10);
-    initCopyright({
-      type: type,
-      time: time,
-    });
-  });
-
   const userLang = navigator.language || navigator.userLanguage;
   console.log(
     `%c${translations[userLang] || translations["en"]}`,
     "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
   );
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const hostname = window.location.hostname;
+    console.log(`Hostname: ${hostname}`);
+
+    const params = data[hostname] || { type: "banner", time: 10 };
+
+    if (params === "none") {
+    } else {
+      initCopyright({ type: params.type, time: params.time });
+    }
+  });
 
   function initCopyright(params) {
     if (params.type === "banner") {
