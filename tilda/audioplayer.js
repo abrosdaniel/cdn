@@ -7,16 +7,10 @@
  * Мод позволяющий создать из каталога плеер
  * <script src = 'https://cdn.abros.dev/tilda/audioplayer.js'></script>
  */
-loadScript("https://cdn.abros.dev/copyright.js", {
-  type: "banner",
-  time: "100",
-}); // Копирайт
-function loadScript(src, dataAttrs = {}) {
+loadScript("https://cdn.abros.dev/copyright.js"); // Копирайт
+function loadScript(src) {
   const script = document.createElement("script");
   script.src = src;
-  for (const [key, value] of Object.entries(dataAttrs)) {
-    script.setAttribute(`data-${key}`, value);
-  }
   document.head.appendChild(script);
 }
 // Переменные стилей
