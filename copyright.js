@@ -12,8 +12,8 @@ if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
 
   const data = {
-    "abros.tilda.ws": "none",
-    "onetwosign.ru": { type: "banner", time: 50 },
+    "abros.dev": "none",
+    "abros.tilda.ws": { type: "banner", time: 50 },
   };
 
   const translations = {
