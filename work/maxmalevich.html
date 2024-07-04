@@ -1,0 +1,62 @@
+<!-- Диагональный слайдер by Daniel Abros -->
+<style>
+  .uc-abros-slider .tn-group {
+    transition: transform 1s ease;
+  }
+  .uc-abros-slider .tn-group.hidden {
+    display: none;
+  }
+  .uc-abros-slider .progress-bar {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 200px;
+    height: 10px;
+    background: #ccc;
+  }
+  .uc-abros-slider .progress-bar-inner {
+    width: 0;
+    height: 100%;
+    background: #000;
+    transition: width 1s ease;
+  }
+</style>
+<script>
+  const slider = document.querySelector(".uc-abros-slider");
+  const cards = slider.querySelectorAll(".tn-group");
+  const prevBtn = slider.querySelector(".prev .tn-atom");
+  const nextBtn = slider.querySelector(".next .tn-atom");
+  const progressBar = slider.querySelector(".progress-bar");
+  const slideNumber = slider.querySelector(".num .tn-atom");
+  let currentIndex = 0;
+  const totalSlides = cards.length;
+
+  function updateSlider() {
+    cards.forEach((card, index) => {
+      card.classList.add("hidden");
+      if (index === currentIndex) {
+        card.classList.remove("hidden");
+        card.style.zIndex = totalSlides;
+      } else {
+        card.style.zIndex = totalSlides - (index - currentIndex);
+      }
+    });
+    slideNumber.textContent = currentIndex + 1;
+    progressBar.style.width = ((currentIndex + 1) / totalSlides) * 100 + "%";
+  }
+
+  function showNextSlide() {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    updateSlider();
+  }
+
+  function showPrevSlide() {
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    updateSlider();
+  }
+
+  nextBtn.addEventListener("click", showNextSlide);
+  prevBtn.addEventListener("click", showPrevSlide);
+
+  updateSlider();
+</script>
