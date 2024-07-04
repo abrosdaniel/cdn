@@ -15,6 +15,8 @@ if (!window.AbrosCopyright) {
     "abros.dev": "none",
     "abros.tilda.ws": { type: "banner", time: 50 },
     "contract-fpobeda.ru": "none",
+    "signatureprodesign.com": { type: "banner", time: 50 },
+    "inex-medical.az": "none",
   };
 
   const translations = {
