@@ -17,6 +17,7 @@ if (!window.AbrosCopyright) {
     "contract-fpobeda.ru": "none",
     "signatureprodesign.com": { type: "banner", time: 500 },
     "inex-medical.az": "none",
+    "project10039393.tilda.ws": "none",
   };
 
   const translations = {

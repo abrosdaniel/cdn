@@ -1,62 +1,205 @@
-<!-- Диагональный слайдер by Daniel Abros -->
+<!-- Прелоадер by Daniel Abros -->
 <style>
-  .uc-abros-slider .tn-group {
-    transition: transform 1s ease;
-  }
-  .uc-abros-slider .tn-group.hidden {
-    display: none;
-  }
-  .uc-abros-slider .progress-bar {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    width: 200px;
-    height: 10px;
-    background: #ccc;
-  }
-  .uc-abros-slider .progress-bar-inner {
-    width: 0;
+  .abros-preloader {
+    width: 100%;
     height: 100%;
-    background: #000;
-    transition: width 1s ease;
+    position: fixed;
+    z-index: 999999999;
+    background-color: #130f0b;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    gap: 100px;
+  }
+  .abros-preloader .line {
+    display: flex;
+    height: auto;
+    gap: 100px;
+  }
+  .abros-preloader .main {
+    height: 293px;
+    width: 600px;
   }
 </style>
+<div class="abros-preloader" data-abros="Daniel Abros">
+  <div class="line">
+    <img
+      src="https://static.tildacdn.net/tild3636-3065-4566-b833-643761636562/1-1.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3032-6536-4364-a139-386138343239/1-2.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild6638-3165-4839-b938-303832333466/1-3.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3537-6131-4833-b134-323631666536/1-4.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3764-6638-4831-a230-313830393165/1-5.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3030-3632-4638-b433-336336376230/1-6.png"
+    />
+  </div>
+  <div class="line reverse">
+    <img
+      src="https://static.tildacdn.net/tild3334-3936-4632-b130-393032366562/2-1.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3531-3634-4635-b839-383563363335/2-2.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3564-3038-4439-b336-633564613937/2-3.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild6433-6263-4239-b335-383031646634/2-4.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3734-6565-4837-b834-623364323634/2-5.png"
+    />
+    <img
+      class="main"
+      src="https://static.tildacdn.net/tild3536-3932-4362-a666-383131393163/main.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3036-6562-4235-a464-346333333834/2-6.png"
+    />
+  </div>
+  <div class="line">
+    <img
+      src="https://static.tildacdn.net/tild6634-6335-4333-a630-373537636334/3-1.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3732-3832-4738-b230-643666346164/3-2.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3832-6337-4665-a330-313863373733/3-3.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3034-3766-4166-a465-326464356535/3-4.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3837-3161-4230-a166-366330346635/3-5.png"
+    />
+    <img
+      src="https://static.tildacdn.net/tild3963-3539-4665-a435-303531653733/3-6.png"
+    />
+  </div>
+</div>
+
+<!-- Диагональный слайдер by Daniel Abros -->
+<style>
+  .t983__card-overlay {
+    display: none;
+  }
+</style>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script src="https://cdn.abros.dev/copyright.js"></script>
 <script>
-  const slider = document.querySelector(".uc-abros-slider");
-  const cards = slider.querySelectorAll(".tn-group");
-  const prevBtn = slider.querySelector(".prev .tn-atom");
-  const nextBtn = slider.querySelector(".next .tn-atom");
-  const progressBar = slider.querySelector(".progress-bar");
-  const slideNumber = slider.querySelector(".num .tn-atom");
-  let currentIndex = 0;
-  const totalSlides = cards.length;
-
-  function updateSlider() {
-    cards.forEach((card, index) => {
-      card.classList.add("hidden");
-      if (index === currentIndex) {
-        card.classList.remove("hidden");
-        card.style.zIndex = totalSlides;
-      } else {
-        card.style.zIndex = totalSlides - (index - currentIndex);
-      }
+  document.addEventListener("DOMContentLoaded", function () {
+    const block = document.querySelector(".uc-abros-slider");
+    const slider = block.querySelector(".t983");
+    slider.classList.add("swiper-container");
+    const wrapper = slider.querySelector(".t-container");
+    wrapper.classList.add("swiper-wrapper");
+    const cards = block.querySelectorAll(".t-card__col");
+    cards.forEach((card) => {
+      card.classList.add("swiper-slide");
+      wrapper.appendChild(card);
     });
-    slideNumber.textContent = currentIndex + 1;
-    progressBar.style.width = ((currentIndex + 1) / totalSlides) * 100 + "%";
-  }
+    const rows = block.querySelectorAll(".t983__row");
+    rows.forEach(function (row) {
+      row.parentNode.removeChild(row);
+    });
+    const navigation = document.querySelector(".uc-abros-slider-nav");
+    const prevBtn = navigation.querySelector(".prev .tn-atom");
+    const nextBtn = navigation.querySelector(".next .tn-atom");
+    const pagination = navigation.querySelector(".pagination");
+    const cur = navigation.querySelector(".cur .tn-atom");
+    const last = navigation.querySelector(".last .tn-atom");
+    const lineSVG = pagination.querySelector(".pagination-path");
+    const svg = pagination.querySelector(".pagination-svg");
 
-  function showNextSlide() {
-    currentIndex = (currentIndex + 1) % totalSlides;
-    updateSlider();
-  }
+    const abrosSwiper = new Swiper(slider, {
+      slidesPerView: 1,
+      speed: 1200,
+      allowTouchMove: true,
+      navigation: {
+        nextEl: nextBtn,
+        prevEl: prevBtn,
+      },
+      on: {
+        init: (swiper) => {
+          cur.textContent = `0${swiper.activeIndex + 1}`;
+          last.textContent = `0${swiper.slides.length}`;
+          if (svg) {
+            const svgWidth = 77;
+            if (svgWidth) {
+              const oneSlideWidth = svgWidth / swiper.slides.length;
+              lineSVG?.setAttribute("d", `M0 1H${oneSlideWidth}`);
+            }
+          }
+        },
+        slideChange: function (swiper) {
+          cur.textContent = `0${swiper.activeIndex + 1}`;
+          if (svg) {
+            const svgWidth = 77;
+            if (svgWidth) {
+              const oneSlideWidth = svgWidth / swiper.slides.length;
+              const lineWidth = (swiper.activeIndex + 1) * oneSlideWidth;
+              lineSVG?.setAttribute("d", `M0 1H${lineWidth}`);
+            }
+          }
+        },
+      },
+      effect: "creative",
+      creativeEffect: {
+        limitProgress: 2,
+        prev: {
+          translate: ["0", "20.1rem", 0],
+          opacity: 0,
+          zIndex: -1,
+        },
+        next: {
+          translate: ["54.6rem", "-8.5rem", 0],
+        },
+      },
+      breakpoints: {
+        1201: {
+          allowTouchMove: true,
+          slidesPerView: 3,
+          creativeEffect: {
+            limitProgress: 4,
+            progressMultiplier: 1,
+            prev: {
+              translate: ["0", "20.1rem", 0],
+              opacity: 0,
+              zIndex: -1,
+            },
+            next: {
+              translate: ["53.6rem", "-8.5rem", 0],
+            },
+          },
+        },
+        768: {
+          slidesPerView: 1,
+          creativeEffect: {
+            limitProgress: 2,
+            next: {
+              translate: ["104.6rem", "-18rem", 0],
+            },
+          },
+        },
+      },
+    });
 
-  function showPrevSlide() {
-    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-    updateSlider();
-  }
-
-  nextBtn.addEventListener("click", showNextSlide);
-  prevBtn.addEventListener("click", showPrevSlide);
-
-  updateSlider();
+    prevBtn.addEventListener("click", () => {
+      abrosSwiper.slidePrev();
+    });
+    nextBtn.addEventListener("click", () => {
+      abrosSwiper.slideNext();
+    });
+  });
 </script>
