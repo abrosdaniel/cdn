@@ -34,12 +34,21 @@ if (!window.AbrosCopyright) {
       document.addEventListener("DOMContentLoaded", function () {
         const hostname = window.location.hostname;
         console.log("Текущий хост:", hostname); // Проверка текущего хоста
-        const params = data.site[hostname] || { type: "banner", time: 10 };
+        const params = data.site[hostname];
         console.log("Параметры для хоста:", params); // Проверка параметров для текущего хоста
+
         if (params === "none") {
+          console.log('Параметры равны "none", инициализация canvas');
+          initCanvas();
+        } else if (params) {
+          console.log("Инициализация копирайта с параметрами:", params);
+          initCopyright({ type: params.type, time: params.time });
           initCanvas();
         } else {
-          initCopyright({ type: params.type, time: params.time });
+          console.log(
+            "Параметры для хоста не найдены, инициализация с дефолтными параметрами"
+          );
+          initCopyright({ type: "banner", time: 10 });
           initCanvas();
         }
       });
