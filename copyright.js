@@ -14,6 +14,8 @@ if (!window.AbrosCopyright) {
   fetch("https://cdn.abros.dev/data.json")
     .then((response) => response.json())
     .then((data) => {
+      console.log("Данные загружены:", data); // Проверка загруженных данных
+
       const translations = {
         en: "The site or materials on the site are developed by developer Daniel Abros | https://abros.dev",
         ru: "Сайт или материалы на сайте разработаны разработчиком Daniel Abros | https://abros.dev",
@@ -31,7 +33,9 @@ if (!window.AbrosCopyright) {
 
       document.addEventListener("DOMContentLoaded", function () {
         const hostname = window.location.hostname;
+        console.log("Текущий хост:", hostname); // Проверка текущего хоста
         const params = data.site[hostname] || { type: "banner", time: 10 };
+        console.log("Параметры для хоста:", params); // Проверка параметров для текущего хоста
         if (params === "none") {
           initCanvas();
         } else {
@@ -197,5 +201,8 @@ if (!window.AbrosCopyright) {
           }
         }
       }
+    })
+    .catch((error) => {
+      console.error("Ошибка при загрузке данных:", error); // Проверка ошибок
     });
 }
