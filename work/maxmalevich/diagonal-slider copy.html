@@ -1,0 +1,109 @@
+<!-- Диагональный слайдер by Daniel Abros -->
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script src="https://cdn.abros.dev/copyright.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const block = document.querySelector(".uc-abros-slider");
+    const slider = block.querySelector(".t857");
+    slider.classList.add("swiper-container");
+    const wrapper = slider.querySelector(".t-card__container");
+    wrapper.classList.add("swiper-wrapper");
+    const cards = block.querySelectorAll(".t-col");
+    cards.forEach((card) => {
+      card.classList.add("swiper-slide");
+    });
+    const rows = wrapper.querySelectorAll(".t-clear");
+    rows.forEach(function (row) {
+      row.parentNode.removeChild(row);
+    });
+    const navigation = document.querySelector(".uc-abros-slider-nav");
+    const prevBtn = navigation.querySelector(".prev .tn-atom");
+    const nextBtn = navigation.querySelector(".next .tn-atom");
+    const pagination = navigation.querySelector(".pagination");
+    const cur = navigation.querySelector(".cur .tn-atom");
+    const last = navigation.querySelector(".last .tn-atom");
+    const lineSVG = pagination.querySelector(".pagination-path");
+    const svg = pagination.querySelector(".pagination-svg");
+
+    const abrosSwiper = new Swiper(slider, {
+      slidesPerView: 1,
+      speed: 1200,
+      allowTouchMove: true,
+      navigation: {
+        nextEl: nextBtn,
+        prevEl: prevBtn,
+      },
+      on: {
+        init: (swiper) => {
+          cur.textContent = `0${swiper.activeIndex + 1}`;
+          last.textContent = `0${swiper.slides.length}`;
+          if (svg) {
+            const svgWidth = 77;
+            if (svgWidth) {
+              const oneSlideWidth = svgWidth / swiper.slides.length;
+              lineSVG?.setAttribute("d", `M0 1H${oneSlideWidth}`);
+            }
+          }
+        },
+        slideChange: function (swiper) {
+          cur.textContent = `0${swiper.activeIndex + 1}`;
+          if (svg) {
+            const svgWidth = 77;
+            if (svgWidth) {
+              const oneSlideWidth = svgWidth / swiper.slides.length;
+              const lineWidth = (swiper.activeIndex + 1) * oneSlideWidth;
+              lineSVG?.setAttribute("d", `M0 1H${lineWidth}`);
+            }
+          }
+        },
+      },
+      effect: "creative",
+      creativeEffect: {
+        limitProgress: 2,
+        prev: {
+          translate: ["0", "20.1rem", 0],
+          opacity: 0,
+          zIndex: -1,
+        },
+        next: {
+          translate: ["54.6rem", "-8.5rem", 0],
+        },
+      },
+      breakpoints: {
+        1201: {
+          allowTouchMove: true,
+          slidesPerView: 3,
+          creativeEffect: {
+            limitProgress: 4,
+            progressMultiplier: 1,
+            prev: {
+              translate: ["0", "20.1rem", 0],
+              opacity: 0,
+              zIndex: -1,
+            },
+            next: {
+              translate: ["53.6rem", "-8.5rem", 0],
+            },
+          },
+        },
+        768: {
+          slidesPerView: 1,
+          creativeEffect: {
+            limitProgress: 2,
+            next: {
+              translate: ["104.6rem", "-18rem", 0],
+            },
+          },
+        },
+      },
+    });
+
+    prevBtn.addEventListener("click", () => {
+      abrosSwiper.slidePrev();
+    });
+    nextBtn.addEventListener("click", () => {
+      abrosSwiper.slideNext();
+    });
+  });
+</script>
