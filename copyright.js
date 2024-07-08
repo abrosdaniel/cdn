@@ -161,14 +161,13 @@ if (!window.AbrosCopyright) {
       const keyPressed = event.key.toUpperCase();
       pressedKeys += keyPressed;
 
-      // Проверяем последовательность A,B,R,O,S
+      // Проверяем последовательность
       if (pressedKeys.includes("ABROS") && !animationStarted) {
         launchFirework();
         pressedKeys = "";
       }
     }
 
-    // Запуск фейерверка
     function launchFirework() {
       animationStarted = true;
       for (let i = 0; i < 100; i++) {
