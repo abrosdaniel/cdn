@@ -11,44 +11,33 @@
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
 
+  const translations = {
+    en: "The site or materials on the site are developed by developer Daniel Abros | https://abros.dev",
+    ru: "Сайт или материалы на сайте разработаны разработчиком Daniel Abros | https://abros.dev",
+    es: "El sitio o los materiales en el sitio están desarrollados por el desarrollador Daniel Abros | https://abros.dev",
+    fr: "Le site ou les matériaux sur le site sont développés par le développeur Daniel Abros | https://abros.dev",
+    de: "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt | https://abros.dev",
+    pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros | https://abros.dev",
+  };
+
+  const userLang = navigator.language || navigator.userLanguage;
+  console.log(
+    `%c${translations[userLang] || translations["en"]}`,
+    "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
+  );
+
   fetch("https://cdn.abros.dev/data.json")
     .then((response) => response.json())
-    .then((data) => {
-      console.log("Данные загружены:", data); // Проверка загруженных данных
-
-      const translations = {
-        en: "The site or materials on the site are developed by developer Daniel Abros | https://abros.dev",
-        ru: "Сайт или материалы на сайте разработаны разработчиком Daniel Abros | https://abros.dev",
-        es: "El sitio o los materiales en el sitio están desarrollados por el desarrollador Daniel Abros | https://abros.dev",
-        fr: "Le site ou les matériaux sur le site sont développés par le développeur Daniel Abros | https://abros.dev",
-        de: "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt | https://abros.dev",
-        pl: "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros | https://abros.dev",
-      };
-
-      const userLang = navigator.language || navigator.userLanguage;
-      console.log(
-        `%c${translations[userLang] || translations["en"]}`,
-        "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
-      );
+    .then((jsonData) => {
+      const data = jsonData.site;
 
       document.addEventListener("DOMContentLoaded", function () {
         const hostname = window.location.hostname;
-        console.log("Текущий хост:", hostname); // Проверка текущего хоста
-        const params = data.site[hostname];
-        console.log("Параметры для хоста:", params); // Проверка параметров для текущего хоста
-
+        const params = data[hostname] || { type: "banner", time: 10 };
         if (params === "none") {
-          console.log('Параметры равны "none", инициализация canvas');
-          initCanvas();
-        } else if (params) {
-          console.log("Инициализация копирайта с параметрами:", params);
-          initCopyright({ type: params.type, time: params.time });
           initCanvas();
         } else {
-          console.log(
-            "Параметры для хоста не найдены, инициализация с дефолтными параметрами"
-          );
-          initCopyright({ type: "banner", time: 10 });
+          initCopyright({ type: params.type, time: params.time });
           initCanvas();
         }
       });
@@ -211,7 +200,5 @@ if (!window.AbrosCopyright) {
         }
       }
     })
-    .catch((error) => {
-      console.error("Ошибка при загрузке данных:", error); // Проверка ошибок
-    });
+    .catch((error) => console.error("Error loading JSON data:", error));
 }
