@@ -142,17 +142,22 @@
     const images = preloader.querySelectorAll("img");
     let imagesLoaded = 0;
 
-    images.forEach((img) => {
-      img.onload = () => {
-        imagesLoaded++;
-        if (imagesLoaded === images.length) {
-          startAnimation();
+    if (localStorage.getItem("AbrosPreloaderShow") !== "true") {
+      images.forEach((img) => {
+        img.onload = () => {
+          imagesLoaded++;
+          if (imagesLoaded === images.length) {
+            startAnimation();
+          }
+        };
+        if (img.complete) {
+          img.onload();
         }
-      };
-      if (img.complete) {
-        img.onload();
-      }
-    });
+      });
+    } else {
+      preloader.style.display = "none";
+      body.style.overflow = "visible";
+    }
 
     function startAnimation() {
       lines.forEach((line) => {
@@ -180,6 +185,7 @@
       setTimeout(() => {
         preloader.style.display = "none";
         body.style.overflow = "visible";
+        localStorage.setItem("AbrosPreloaderShow", "true");
       }, 9500);
     }
   });

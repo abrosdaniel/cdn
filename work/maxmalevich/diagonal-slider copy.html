@@ -1,30 +1,108 @@
 <!-- Диагональный слайдер by Daniel Abros -->
+<style>
+  html {
+    font-size: 0.5208335vw;
+  }
+  .uc-abros-slider .swiper-container {
+    width: 153.3rem;
+  }
+  .uc-abros-slider .swiper-slide {
+    width: 47.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    font-weight: 400;
+    font-size: 2.8rem;
+    line-height: 1.4;
+    letter-spacing: 0.1rem;
+    text-align: right;
+    color: white;
+    font-family: "Roboto";
+  }
+  .uc-abros-slider .swiper-slide .title {
+    width: 48.9rem;
+    font-size: 2.8rem;
+  }
+  .uc-abros-slider .swiper-slide .category {
+    position: absolute;
+    bottom: 40px;
+    left: 30px;
+    background-color: white;
+    color: black;
+    padding: 1px 10px;
+    border-radius: 50px;
+    font-size: medium;
+    font-weight: 100;
+  }
+  .uc-abros-slider .swiper-slide .img {
+    width: 48.9rem;
+    height: 54rem;
+    object-fit: cover;
+    display: block;
+    overflow: hidden;
+    border-radius: 1.2rem;
+  }
+  .uc-abros-slider .swiper-slide-active,
+  .uc-abros-slider .swiper-slide-prev {
+    z-index: -1 !important;
+  }
+</style>
 <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <script src="https://cdn.abros.dev/copyright.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    const cards = [
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 1",
+        category: "Кухня",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 2",
+        category: "Офис",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 3",
+        category: "Спальня",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 4",
+        category: "Кухня",
+      },
+    ];
+    // Ниже данные не менять
     const block = document.querySelector(".uc-abros-slider");
-    const slider = block.querySelector(".t857");
-    slider.classList.add("swiper-container");
-    const wrapper = slider.querySelector(".t-card__container");
+    const slider = block.querySelector(".swiper-container");
+    const wrapper = document.createElement("div");
     wrapper.classList.add("swiper-wrapper");
-    const cards = block.querySelectorAll(".t-col");
-    cards.forEach((card) => {
-      card.classList.add("swiper-slide");
-    });
-    const rows = wrapper.querySelectorAll(".t-clear");
-    rows.forEach(function (row) {
-      row.parentNode.removeChild(row);
-    });
-    const navigation = document.querySelector(".uc-abros-slider-nav");
-    const prevBtn = navigation.querySelector(".prev .tn-atom");
-    const nextBtn = navigation.querySelector(".next .tn-atom");
-    const pagination = navigation.querySelector(".pagination");
-    const cur = navigation.querySelector(".cur .tn-atom");
-    const last = navigation.querySelector(".last .tn-atom");
+    slider.appendChild(wrapper);
+    const prevBtn = block.querySelector(".prev .tn-atom");
+    const nextBtn = block.querySelector(".next .tn-atom");
+    const pagination = block.querySelector(".pagination");
+    const cur = block.querySelector(".cur .tn-atom");
+    const last = block.querySelector(".last .tn-atom");
     const lineSVG = pagination.querySelector(".pagination-path");
     const svg = pagination.querySelector(".pagination-svg");
+    cards.forEach((card) => {
+      const slide = document.createElement("div");
+      slide.classList.add("swiper-slide");
+      slide.innerHTML = `
+            <h3 class="title">${card.title}</h3>
+            <div class="content">
+              <img class="img" src="${card.img}">
+              <p class="category">${card.category}</p>
+            </div>
+        `;
+      wrapper.appendChild(slide);
+    });
 
     const abrosSwiper = new Swiper(slider, {
       slidesPerView: 1,
