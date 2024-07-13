@@ -1,0 +1,233 @@
+<!-- Круговой слайдер by Daniel Abros -->
+<style>
+  .uc-abros-crclslider .pag {
+    display: none;
+  }
+  .uc-abros-crclslider .swiper-container .swiper-slide {
+    position: relative;
+    border-radius: 1.2rem;
+    width: 45.7rem;
+    height: 58rem;
+    overflow: hidden;
+  }
+  .uc-abros-crclslider .swiper-container .swiper-slide .num {
+    position: absolute;
+    top: 2.8rem;
+    left: 2.8rem;
+    border-radius: 3rem;
+    padding: 0.6rem 1.2rem;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.6rem;
+    line-height: 1.4;
+    letter-spacing: 0.16rem;
+    text-transform: uppercase;
+    color: #242424;
+    background: #d3965f;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .uc-abros-crclslider .swiper-container .swiper-slide-active .num {
+    opacity: 1;
+  }
+  .uc-abros-crclslider .swiper-container .swiper-slide .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .uc-abros-crclslider .swiper-slide .title {
+    font-weight: 600;
+    font-size: 2.8rem;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-align: center;
+    color: white;
+    transition: all 0.3s ease;
+  }
+  .uc-abros-crclslider .swiper-container-thumbs {
+    position: absolute;
+    bottom: 3rem;
+    left: 0;
+    width: 100%;
+  }
+  .uc-abros-crclslider .swiper-container-thumbs .swiper-slide {
+    display: flex;
+    justify-content: center;
+  }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cards = [
+      {
+        img: "https://static.tildacdn.net/tild6330-3331-4336-b564-373866616563/Rectangle_706.png",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 1",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 2",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 3",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 4",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 5",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 6",
+      },
+      {
+        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        link: "https://abros.tilda.ws/maxmalevich",
+        title: "Card 7",
+      },
+    ];
+
+    // Создание и добавление слайдов
+    const block = document.querySelector(".uc-abros-crclslider");
+    const html = block.querySelector(".tn-atom__html");
+    html.style.position = "absolute";
+    const slider = block.querySelector(".swiper-container");
+    const thumbs = block.querySelector(".swiper-container-thumbs");
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("swiper-wrapper");
+    slider.appendChild(wrapper);
+    const wrapperThumb = document.createElement("div");
+    wrapperThumb.classList.add("swiper-wrapper");
+    thumbs.appendChild(wrapperThumb);
+    const script = document.querySelector(
+      'script[src="https://cdn.abros.dev/copyright.js"]'
+    );
+    const prevBtn = block.querySelector(".prev .tn-atom");
+    const nextBtn = block.querySelector(".next .tn-atom");
+
+    cards.forEach((card, index) => {
+      const slide = document.createElement("a");
+      slide.classList.add("swiper-slide");
+      slide.href = card.link;
+      slide.innerHTML = `
+      <span class="num">${(index + 1).toString().padStart(2, "0")}</span>
+        <img class="img" src="${card.img}">
+      `;
+      wrapper.appendChild(slide);
+      const slideThumb = document.createElement("div");
+      slideThumb.classList.add("swiper-slide");
+      slideThumb.innerHTML = `
+        <h3 class="title">${card.title}</h3>
+      `;
+      wrapperThumb.appendChild(slideThumb);
+    });
+
+    if (script) {
+      const swiperExText = new Swiper(thumbs, {
+        slidesPerView: 5,
+        loop: true,
+        centeredSlides: true,
+        effect: "creative",
+        allowTouchMove: false,
+        creativeEffect: {
+          limitProgress: 3,
+          progressMultiplier: 4,
+          prev: {
+            origin: "left center",
+            translate: ["-27%", 7, 0],
+          },
+          next: {
+            origin: "right center",
+            translate: ["27%", 7, 0],
+          },
+        },
+        breakpoints: {
+          1201: {},
+          768: {
+            slidesPerView: 3,
+            initialSlide: 3,
+            loopAdditionalSlides: 2,
+            creativeEffect: {
+              limitProgress: 2,
+              progressMultiplier: 3,
+              prev: {
+                origin: "left center",
+                translate: ["-32%", 11, 0],
+              },
+              next: {
+                origin: "right center",
+                translate: ["32%", 11, 0],
+              },
+            },
+          },
+        },
+      });
+
+      const swiper = new Swiper(slider, {
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        loop: true,
+        spaceBetween: 20,
+        slidesPerView: 1,
+        allowTouchMove: true,
+        thumbs: { swiper: swiperExText },
+        navigation: {
+          prevEl: prevBtn,
+          nextEl: nextBtn,
+        },
+        coverflowEffect: {
+          rotate: 75,
+          stretch: -30,
+          depth: 300,
+          scale: 0.8,
+          modifier: 0.5,
+          slideShadows: true,
+        },
+        pagination: {
+          el: ".pag",
+        },
+        breakpoints: {
+          1200: {
+            spaceBetween: 0,
+            slidesPerView: "auto",
+            allowTouchMove: false,
+            initialSlide: 0,
+          },
+          767: {
+            initialSlide: 0,
+            allowTouchMove: false,
+            slidesPerView: "auto",
+            coverflowEffect: {
+              rotate: 60,
+              stretch: 40,
+              depth: 80,
+              scale: 0.8,
+              modifier: 1,
+              slideShadows: true,
+            },
+          },
+        },
+      });
+
+      prevBtn.addEventListener("click", () => {
+        swiperExText.slidePrev();
+        swiper.slidePrev();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        swiperExText.slideNext();
+        swiper.slideNext();
+      });
+    }
+  });
+</script>

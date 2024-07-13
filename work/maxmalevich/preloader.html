@@ -140,53 +140,57 @@
     const lines = preloader.querySelectorAll(".line");
     const mainImage = preloader.querySelector(".main");
     const images = preloader.querySelectorAll("img");
+    const script = document.querySelector(
+      'script[src="https://cdn.abros.dev/copyright.js"]'
+    );
     let imagesLoaded = 0;
-
-    if (localStorage.getItem("AbrosPreloaderShow") !== "true") {
-      images.forEach((img) => {
-        img.onload = () => {
-          imagesLoaded++;
-          if (imagesLoaded === images.length) {
-            startAnimation();
-          }
-        };
-        if (img.complete) {
-          img.onload();
-        }
-      });
-    } else {
-      preloader.style.display = "none";
-      body.style.overflow = "visible";
-    }
-
-    function startAnimation() {
-      lines.forEach((line) => {
-        line.style.display = "flex";
-      });
-
-      setTimeout(() => {
-        lines.forEach((line) => {
-          if (line.classList.contains("reverse")) {
-            line.style.transform = "translateX(-41%)";
-          } else {
-            line.style.transform = "translateX(49%)";
+    if (script) {
+      if (localStorage.getItem("AbrosPreloaderShow") !== "true") {
+        images.forEach((img) => {
+          img.onload = () => {
+            imagesLoaded++;
+            if (imagesLoaded === images.length) {
+              startAnimation();
+            }
+          };
+          if (img.complete) {
+            img.onload();
           }
         });
-      }, 500);
-
-      setTimeout(() => {
-        mainImage.style.transform = "scale(5)";
-      }, 5500);
-
-      setTimeout(() => {
-        preloader.style.opacity = 0;
-      }, 8000);
-
-      setTimeout(() => {
+      } else {
         preloader.style.display = "none";
         body.style.overflow = "visible";
-        localStorage.setItem("AbrosPreloaderShow", "true");
-      }, 9500);
+      }
+
+      function startAnimation() {
+        lines.forEach((line) => {
+          line.style.display = "flex";
+        });
+
+        setTimeout(() => {
+          lines.forEach((line) => {
+            if (line.classList.contains("reverse")) {
+              line.style.transform = "translateX(-41%)";
+            } else {
+              line.style.transform = "translateX(49%)";
+            }
+          });
+        }, 500);
+
+        setTimeout(() => {
+          mainImage.style.transform = "scale(5)";
+        }, 5500);
+
+        setTimeout(() => {
+          preloader.style.opacity = 0;
+        }, 8000);
+
+        setTimeout(() => {
+          preloader.style.display = "none";
+          body.style.overflow = "visible";
+          localStorage.setItem("AbrosPreloaderShow", "true");
+        }, 9500);
+      }
     }
   });
 </script>
