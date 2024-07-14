@@ -8,23 +8,24 @@
  * <script src="https://cdn.abros.dev/copyright.js"></script>
  * <script type="module" src ="https://cdn.abros.dev/copyright.js"></script>
  */
+
 if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
 
   const data = {
-    "abros.tilda.ws": { type: "banner", time: 50 }, // Test
-    "contract-fpobeda.ru": "none", // Fpobeda
-    "signatureprodesign.com": "none", // Signature Pro
-    "signaturepro.design": "none", // Signature Pro
-    "signatureprodesign.co.tilda.ws": "none", // Signature Pro
-    "writetightc.tilda.ws": "none", // Write Tight C
-    "onetwosign.ru": "none", // One Two Sign
-    "triggerstudio.ru": "none", // Trigger Studio
-    "writetightcourse.ru": "none", // Write Tight Course
-    "woman.writetight.ru": "none", // Write Tight Woman
-    "writetight.tilda.ws": "none", // Write Tight
-    "signatureprocourse.com": "none", // Signature Pro Course
-    "macfree-verify.co": "none", // MacFree
+    "abros.tilda.ws": { type: "banner", time: 50 },
+    "contract-fpobeda.ru": "none",
+    "signatureprodesign.com": "none",
+    "signaturepro.design": "none",
+    "signatureprodesign.co.tilda.ws": "none",
+    "writetightc.tilda.ws": "none",
+    "onetwosign.ru": "none",
+    "triggerstudio.ru": "none",
+    "writetightcourse.ru": "none",
+    "woman.writetight.ru": "none",
+    "writetight.tilda.ws": "none",
+    "signatureprocourse.com": "none",
+    "macfree-verify.co": "none",
   };
 
   const translations = {
@@ -38,104 +39,93 @@ if (!window.AbrosCopyright) {
 
   const userLang = navigator.language || navigator.userLanguage;
   console.log(
-    `%c${translations[userLang] || translations["en"]}`,
+    `%c${translations[userLang] || translations.en}`,
     "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
   );
 
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", () => {
     const hostname = window.location.hostname;
     const params = data[hostname] || { type: "banner", time: 10 };
     if (params === "none") {
       initCanvas();
     } else {
-      initCopyright({ type: params.type, time: params.time });
+      initCopyright(params);
       initCanvas();
     }
   });
 
   function initCopyright(params) {
     if (params.type === "banner") {
-      document.head.insertAdjacentHTML(
-        "beforeend",
-        `
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-            .color-transition {
-              transition: background-color 1s, color 2s;
-            }
-          </style>
-        `
-      );
-
-      function getRandomColor() {
-        const letters = "0123456789ABCDEF";
-        let color = "#";
-        for (let i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-      }
-
-      function setRandomColor() {
-        const newColor = getRandomColor();
-        title.style.backgroundColor = `${newColor}80`;
-      }
-
-      function updateColor() {
-        title.style.transition = "background-color 1s, color 2s";
-        setRandomColor();
-        setTimeout(() => {
-          title.style.transition = "";
-        }, 1000);
-      }
-
-      setInterval(updateColor, 5000);
-      setTimeout(() => {}, 5000);
-
-      const container = document.createElement("div");
-      container.style.cssText =
-        "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
-
-      const link = document.createElement("a");
-      link.href = "https://abros.dev";
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.style.cssText =
-        "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
-
-      const title = document.createElement("p");
-      title.style.cssText =
-        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;font-family:'Montserrat Alternates',sans-serif;";
-      title.textContent = "ABROS";
-
-      const description = document.createElement("p");
-      description.style.cssText =
-        "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;font-family:'Montserrat Alternates',sans-serif;";
-
-      description.textContent = translations[userLang] || translations["en"];
-
-      link.appendChild(title);
-      link.appendChild(description);
-      container.appendChild(link);
-
-      setTimeout(function () {
-        document.documentElement.appendChild(container);
-      }, params.time * 100);
-    } else if (params.type === "push") {
-      const script = document.createElement("script");
-      script.src = `https://cdn.abros.dev/noti/noti.js`;
-      document.head.appendChild(script);
-
-      const text = translations[userLang] || translations["en"];
-
-      setTimeout(function () {
-        abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () =>
-          window.open("https://abros.dev", "_blank")
-        );
-      }, params.time * 100);
-    } else {
-      return null;
+      addBanner(params.time);
     }
+    if (params.type === "push") {
+      addPushNotification(params.time);
+    }
+  }
+
+  function addBanner(time) {
+    const container = document.createElement("div");
+    container.style.cssText =
+      "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
+
+    const link = document.createElement("a");
+    link.href = "https://abros.dev";
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.style.cssText =
+      "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
+
+    const title = document.createElement("p");
+    title.style.cssText =
+      "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;";
+    title.textContent = "ABROS";
+
+    const description = document.createElement("p");
+    description.style.cssText =
+      "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
+    description.textContent = translations[userLang] || translations.en;
+
+    link.appendChild(title);
+    link.appendChild(description);
+    container.appendChild(link);
+
+    document.head.insertAdjacentHTML(
+      "beforeend",
+      `<style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+        .color-transition { transition: background-color 1s, color 2s; }
+      </style>`
+    );
+
+    setInterval(() => {
+      title.style.backgroundColor = `${getRandomColor()}80`;
+    }, 5000);
+
+    setTimeout(() => {
+      document.documentElement.appendChild(container);
+    }, time * 100);
+  }
+
+  function addPushNotification(time) {
+    const script = document.createElement("script");
+    script.src = "https://cdn.abros.dev/noti/noti.js";
+    document.head.appendChild(script);
+
+    const text = translations[userLang] || translations.en;
+    setTimeout(() => {
+      abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () =>
+        window.open("https://abros.dev", "_blank")
+      );
+    }, time * 100);
+  }
+
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   }
 
   function initCanvas() {
@@ -188,14 +178,13 @@ if (!window.AbrosCopyright) {
       const x = Math.random() * canvas.width;
       const y = canvas.height;
       const speed = { x: (Math.random() - 0.5) * 8, y: Math.random() * -6 };
-      const size = Math.random() * 30 + 20; // Размер изображения
+      const size = Math.random() * 30 + 20;
       return { x, y, speed, size };
     }
 
     function animateFirework() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particles.length; i++) {
-        const particle = particles[i];
+      particles.forEach((particle, index) => {
         particle.x += particle.speed.x;
         particle.y += particle.speed.y;
         particle.size -= 0.1;
@@ -207,10 +196,9 @@ if (!window.AbrosCopyright) {
           particle.size
         );
         if (particle.size <= 0 || particle.y > canvas.height) {
-          particles.splice(i, 1);
-          i--;
+          particles.splice(index, 1);
         }
-      }
+      });
       if (particles.length > 0) {
         requestAnimationFrame(animateFirework);
       } else {
