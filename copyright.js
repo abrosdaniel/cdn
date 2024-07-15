@@ -47,10 +47,10 @@ if (!window.AbrosCopyright) {
     const hostname = window.location.hostname;
     const params = data[hostname] || { type: "banner", time: 10 };
     if (params === "none") {
-      AbrosFunctions.initCanvas();
+      abros.initCanvas();
     } else {
-      AbrosFunctions.initCopyright(params);
-      AbrosFunctions.initCanvas();
+      abros.initCopyright(params);
+      abros.initCanvas();
     }
   });
 
