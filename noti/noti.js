@@ -14,12 +14,12 @@ document.body.insertAdjacentHTML("beforeend", `<div class="abrosnoti"></div>`);
 // Стили ассистента
 var styleNoti = document.createElement("style");
 styleNoti.textContent = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
 
   .abrosnoti {
     --gradient: linear-gradient(to bottom, #2eadff, #3d83ff, #7e61ff);
     --color: #fff;
-    font-family: "Inter";
+    font-family: "Montserrat Alternates", sans-serif;
     font-size: 16px;
     width: 18rem;
     display: flex;
