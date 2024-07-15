@@ -113,8 +113,8 @@ if (!window.AbrosCopyright) {
       document.head.appendChild(script);
 
       const text = translations[userLang] || translations.en;
-      setTimeout(() => {
-        abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () =>
+      setInterval(() => {
+        abrosnoti.create("abros", "ABROS", `${text}`, 2, true, () =>
           window.open("https://abros.dev", "_blank")
         );
       }, time * 100);
