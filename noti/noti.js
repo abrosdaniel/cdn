@@ -44,6 +44,7 @@ styleNoti.textContent = `
     transition: height 300ms ease;
     flex-shrink: 0;
     opacity: 1;
+    cursor: default;
   }
   .abrosnoti .noti.out {animation: notiOut 500ms ease forwards}
   @keyframes notiOut {
