@@ -13,7 +13,7 @@ if (!window.AbrosCopyright) {
   window.AbrosCopyright = true;
 
   const data = {
-    "abros.tilda.ws": { type: "banner", time: 50 },
+    "abros.tilda.ws": { type: "banner", time: 1 },
     "contract-fpobeda.ru": "none",
     "signatureprodesign.com": "none",
     "signaturepro.design": "none",
