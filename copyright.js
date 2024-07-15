@@ -140,8 +140,6 @@ if (!window.AbrosCopyright) {
       let animationStarted = false;
       const image = new Image();
       image.src = "https://cdn.abros.dev/abros.svg";
-
-      document.addEventListener("keydown", this.handleKeyDown);
       let pressedKeys = "";
 
       this.handleKeyDown = (event) => {
@@ -210,6 +208,9 @@ if (!window.AbrosCopyright) {
           animationStarted = false;
         }
       };
+      document.addEventListener("keydown", (event) =>
+        this.handleKeyDown(event)
+      );
     },
   };
 }
