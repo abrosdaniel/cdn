@@ -47,163 +47,165 @@ if (!window.AbrosCopyright) {
     const hostname = window.location.hostname;
     const params = data[hostname] || { type: "banner", time: 10 };
     if (params === "none") {
-      initCanvas();
+      AbrosFunctions.initCanvas();
     } else {
-      initCopyright(params);
-      initCanvas();
+      AbrosFunctions.initCopyright(params);
+      AbrosFunctions.initCanvas();
     }
   });
 
-  function initCopyright(params) {
-    if (params.type === "banner") {
-      addBanner(params.time);
-    }
-    if (params.type === "push") {
-      addPushNotification(params.time);
-    }
-  }
+  window.abros = {
+    initCopyright(params) {
+      if (params.type === "banner") {
+        this.addBanner(params.time);
+      }
+      if (params.type === "push") {
+        this.addPushNotification(params.time);
+      }
+    },
 
-  function addBanner(time) {
-    const container = document.createElement("div");
-    container.style.cssText =
-      "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
+    addBanner(time) {
+      const container = document.createElement("div");
+      container.style.cssText =
+        "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
 
-    const link = document.createElement("a");
-    link.href = "https://abros.dev";
-    link.target = "_blank";
-    link.rel = "noopener";
-    link.style.cssText =
-      "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
+      const link = document.createElement("a");
+      link.href = "https://abros.dev";
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.style.cssText =
+        "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
 
-    const title = document.createElement("p");
-    title.style.cssText =
-      "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;";
-    title.textContent = "ABROS";
+      const title = document.createElement("p");
+      title.style.cssText =
+        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;";
+      title.textContent = "ABROS";
 
-    const description = document.createElement("p");
-    description.style.cssText =
-      "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
-    description.textContent = translations[userLang] || translations.en;
+      const description = document.createElement("p");
+      description.style.cssText =
+        "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
+      description.textContent = translations[userLang] || translations.en;
 
-    link.appendChild(title);
-    link.appendChild(description);
-    container.appendChild(link);
+      link.appendChild(title);
+      link.appendChild(description);
+      container.appendChild(link);
 
-    document.head.insertAdjacentHTML(
-      "beforeend",
-      `<style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-        .color-transition { transition: background-color 1s, color 2s; }
-      </style>`
-    );
-
-    setInterval(() => {
-      title.style.backgroundColor = `${getRandomColor()}80`;
-    }, 5000);
-
-    setTimeout(() => {
-      document.documentElement.appendChild(container);
-    }, time * 100);
-  }
-
-  function addPushNotification(time) {
-    const script = document.createElement("script");
-    script.src = "https://cdn.abros.dev/noti/noti.js";
-    document.head.appendChild(script);
-
-    const text = translations[userLang] || translations.en;
-    setTimeout(() => {
-      abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () =>
-        window.open("https://abros.dev", "_blank")
+      document.head.insertAdjacentHTML(
+        "beforeend",
+        `<style>
+          @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+          .color-transition { transition: background-color 1s, color 2s; }
+        </style>`
       );
-    }, time * 100);
-  }
 
-  function getRandomColor() {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
+      setInterval(() => {
+        title.style.backgroundColor = `${this.getRandomColor()}80`;
+      }, 5000);
 
-  function initCanvas() {
-    let canvas;
-    let ctx;
-    let particles = [];
-    let animationStarted = false;
-    const image = new Image();
-    image.src = "https://cdn.abros.dev/abros.svg";
+      setTimeout(() => {
+        document.documentElement.appendChild(container);
+      }, time * 100);
+    },
 
-    document.addEventListener("keydown", handleKeyDown);
-    let pressedKeys = "";
+    addPushNotification(time) {
+      const script = document.createElement("script");
+      script.src = "https://cdn.abros.dev/noti/noti.js";
+      document.head.appendChild(script);
 
-    function handleKeyDown(event) {
-      const keyPressed = event.key.toUpperCase();
-      pressedKeys += keyPressed;
-
-      // Проверяем последовательность
-      if (pressedKeys.includes("ABROS") && !animationStarted) {
-        if (!canvas) {
-          createCanvas();
-        }
-        launchFirework();
-        pressedKeys = "";
-      }
-    }
-
-    function createCanvas() {
-      canvas = document.createElement("canvas");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      canvas.style.position = "fixed";
-      canvas.style.top = "0";
-      canvas.style.left = "0";
-      canvas.style.pointerEvents = "none";
-      canvas.style.zIndex = "999999999";
-      document.documentElement.appendChild(canvas);
-      ctx = canvas.getContext("2d");
-    }
-
-    function launchFirework() {
-      animationStarted = true;
-      for (let i = 0; i < 100; i++) {
-        particles.push(createParticle());
-      }
-      animateFirework();
-    }
-
-    function createParticle() {
-      const x = Math.random() * canvas.width;
-      const y = canvas.height;
-      const speed = { x: (Math.random() - 0.5) * 8, y: Math.random() * -6 };
-      const size = Math.random() * 30 + 20;
-      return { x, y, speed, size };
-    }
-
-    function animateFirework() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((particle, index) => {
-        particle.x += particle.speed.x;
-        particle.y += particle.speed.y;
-        particle.size -= 0.1;
-        ctx.drawImage(
-          image,
-          particle.x,
-          particle.y,
-          particle.size,
-          particle.size
+      const text = translations[userLang] || translations.en;
+      setTimeout(() => {
+        abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () =>
+          window.open("https://abros.dev", "_blank")
         );
-        if (particle.size <= 0 || particle.y > canvas.height) {
-          particles.splice(index, 1);
-        }
-      });
-      if (particles.length > 0) {
-        requestAnimationFrame(animateFirework);
-      } else {
-        animationStarted = false;
+      }, time * 100);
+    },
+
+    getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
       }
-    }
-  }
+      return color;
+    },
+
+    initCanvas() {
+      let canvas;
+      let ctx;
+      let particles = [];
+      let animationStarted = false;
+      const image = new Image();
+      image.src = "https://cdn.abros.dev/abros.svg";
+
+      document.addEventListener("keydown", this.handleKeyDown);
+      let pressedKeys = "";
+
+      this.handleKeyDown = (event) => {
+        const keyPressed = event.key.toUpperCase();
+        pressedKeys += keyPressed;
+
+        // Проверяем последовательность
+        if (pressedKeys.includes("ABROS") && !animationStarted) {
+          if (!canvas) {
+            this.createCanvas();
+          }
+          this.launchFirework();
+          pressedKeys = "";
+        }
+      };
+
+      this.createCanvas = () => {
+        canvas = document.createElement("canvas");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.position = "fixed";
+        canvas.style.top = "0";
+        canvas.style.left = "0";
+        canvas.style.pointerEvents = "none";
+        canvas.style.zIndex = "999999999";
+        document.documentElement.appendChild(canvas);
+        ctx = canvas.getContext("2d");
+      };
+
+      this.launchFirework = () => {
+        animationStarted = true;
+        for (let i = 0; i < 100; i++) {
+          particles.push(this.createParticle());
+        }
+        this.animateFirework();
+      };
+
+      this.createParticle = () => {
+        const x = Math.random() * canvas.width;
+        const y = canvas.height;
+        const speed = { x: (Math.random() - 0.5) * 8, y: Math.random() * -6 };
+        const size = Math.random() * 30 + 20;
+        return { x, y, speed, size };
+      };
+
+      this.animateFirework = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((particle, index) => {
+          particle.x += particle.speed.x;
+          particle.y += particle.speed.y;
+          particle.size -= 0.1;
+          ctx.drawImage(
+            image,
+            particle.x,
+            particle.y,
+            particle.size,
+            particle.size
+          );
+          if (particle.size <= 0 || particle.y > canvas.height) {
+            particles.splice(index, 1);
+          }
+        });
+        if (particles.length > 0) {
+          requestAnimationFrame(this.animateFirework);
+        } else {
+          animationStarted = false;
+        }
+      };
+    },
+  };
 }
