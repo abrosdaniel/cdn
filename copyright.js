@@ -78,7 +78,7 @@ if (!window.AbrosCopyright) {
 
       const title = document.createElement("p");
       title.style.cssText =
-        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small;";
+        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small; transition: background-color 1s, color 2s;";
       title.textContent = "ABROS";
 
       const description = document.createElement("p");
