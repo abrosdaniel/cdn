@@ -60,7 +60,7 @@ if (!window.AbrosCopyright) {
         this.addBanner(params.time);
       }
       if (params.type === "push") {
-        this.addPushNotification(params.time);
+        this.addPush(params.time);
       }
     },
 
@@ -107,7 +107,7 @@ if (!window.AbrosCopyright) {
       }, time * 100);
     },
 
-    addPushNotification(time) {
+    addPush(time) {
       const script = document.createElement("script");
       script.src = "https://cdn.abros.dev/noti/noti.js";
       document.head.appendChild(script);
