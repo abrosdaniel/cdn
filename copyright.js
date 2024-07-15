@@ -113,10 +113,15 @@ if (!window.AbrosCopyright) {
       document.head.appendChild(script);
 
       const text = translations[userLang] || translations.en;
+      let noti = false;
       setInterval(() => {
-        abrosnoti.create("abros", "ABROS", `${text}`, 5, true, () =>
-          window.open("https://abros.dev", "_blank")
-        );
+        if (!noti) {
+          abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () => {
+            window.open("https://abros.dev", "_blank");
+            noti = false;
+          });
+          noti = true;
+        }
       }, time * 1000);
     },
 
