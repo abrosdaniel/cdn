@@ -104,7 +104,7 @@ if (!window.AbrosCopyright) {
 
       setTimeout(() => {
         document.documentElement.appendChild(container);
-      }, time * 100);
+      }, time * 1000);
     },
 
     addPush(time) {
@@ -114,7 +114,7 @@ if (!window.AbrosCopyright) {
 
       const text = translations[userLang] || translations.en;
       setInterval(() => {
-        abrosnoti.create("abros", "ABROS", `${text}`, 2, true, () =>
+        abrosnoti.create("abros", "ABROS", `${text}`, 5, true, () =>
           window.open("https://abros.dev", "_blank")
         );
       }, time * 1000);
