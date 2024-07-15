@@ -117,7 +117,7 @@ if (!window.AbrosCopyright) {
         abrosnoti.create("abros", "ABROS", `${text}`, 2, true, () =>
           window.open("https://abros.dev", "_blank")
         );
-      }, time * 100);
+      }, time * 1000);
     },
 
     getRandomColor() {
