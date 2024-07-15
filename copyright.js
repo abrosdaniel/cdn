@@ -94,7 +94,6 @@ if (!window.AbrosCopyright) {
         "beforeend",
         `<style>
           @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-          .color-transition { transition: background-color 1s, color 2s; }
         </style>`
       );
 
