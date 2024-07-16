@@ -29,7 +29,9 @@ if (!window.abros) {
     const translations = data.translations;
     const siteData = data.data;
 
-    const userLang = navigator.language || navigator.userLanguage;
+    const userLang = (navigator.language || navigator.userLanguage).split(
+      "-"
+    )[0];
     console.log(
       `%c${translations[userLang] || translations.en}`,
       "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
