@@ -68,8 +68,7 @@ if (!window.abros) {
     },
 
     addBanner(time) {
-      const translations = this.translations;
-      const userLang = this.userLang;
+      const { translations, userLang } = this;
 
       const container = document.createElement("div");
       container.style.cssText =
@@ -113,8 +112,7 @@ if (!window.abros) {
     },
 
     addPush(time) {
-      const translations = this.translations;
-      const userLang = this.userLang;
+      const { translations, userLang } = this;
 
       const script = document.createElement("script");
       script.src = "https://cdn.abros.dev/noti/noti.js";
@@ -143,9 +141,6 @@ if (!window.abros) {
     },
 
     initCanvas() {
-      const translations = this.translations;
-      const userLang = this.userLang;
-
       let canvas;
       let ctx;
       let particles = [];
