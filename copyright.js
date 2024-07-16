@@ -17,7 +17,7 @@ if (!window.abros) {
       const response = await fetch("https://cdn.abros.dev/copyright.json");
       return await response.json();
     } catch (error) {
-      console.error("Ошибка при загрузке данных:", error);
+      console.error(error);
       return null;
     }
   }
