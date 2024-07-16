@@ -41,24 +41,24 @@ if (!window.AbrosCopyright) {
       time: 10,
     };
     if (params.type === "none") {
-      abros.initCanvas();
+      abros.initCanvas(translations, userLang);
     } else {
-      abros.initCopyright(params);
-      abros.initCanvas();
+      abros.initCopyright(params, translations, userLang);
+      abros.initCanvas(translations, userLang);
     }
   }
 
   window.abros = {
-    initCopyright(params) {
+    initCopyright(params, translations, userLang) {
       if (params.type === "banner") {
-        this.addBanner(params.time);
+        this.addBanner(params.time, translations, userLang);
       }
       if (params.type === "push") {
-        this.addPush(params.time);
+        this.addPush(params.time, translations, userLang);
       }
     },
 
-    addBanner(time) {
+    addBanner(time, translations, userLang) {
       const container = document.createElement("div");
       container.style.cssText =
         "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
@@ -100,7 +100,7 @@ if (!window.AbrosCopyright) {
       }, time * 1000);
     },
 
-    addPush(time) {
+    addPush(time, translations, userLang) {
       const script = document.createElement("script");
       script.src = "https://cdn.abros.dev/noti/noti.js";
       document.head.appendChild(script);
@@ -127,7 +127,7 @@ if (!window.AbrosCopyright) {
       return color;
     },
 
-    initCanvas() {
+    initCanvas(translations, userLang) {
       let canvas;
       let ctx;
       let particles = [];
