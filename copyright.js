@@ -9,8 +9,8 @@
  * <script type="module" src ="https://cdn.abros.dev/copyright.js"></script>
  */
 
-if (!window.AbrosCopyright) {
-  window.AbrosCopyright = true;
+if (!window.abros) {
+  window.abros = {};
 
   async function fetchData() {
     try {
@@ -40,25 +40,35 @@ if (!window.AbrosCopyright) {
       type: "banner",
       time: 10,
     };
+
+    window.abros.translations = translations;
+    window.abros.userLang = userLang;
+
     if (params.type === "none") {
-      abros.initCanvas(translations, userLang);
+      abros.initCanvas();
     } else {
-      abros.initCopyright(params, translations, userLang);
-      abros.initCanvas(translations, userLang);
+      abros.initCopyright(params);
+      abros.initCanvas();
     }
   }
 
   window.abros = {
-    initCopyright(params, translations, userLang) {
+    translations: null,
+    userLang: null,
+
+    initCopyright(params) {
       if (params.type === "banner") {
-        this.addBanner(params.time, translations, userLang);
+        this.addBanner(params.time);
       }
       if (params.type === "push") {
-        this.addPush(params.time, translations, userLang);
+        this.addPush(params.time);
       }
     },
 
-    addBanner(time, translations, userLang) {
+    addBanner(time) {
+      const translations = this.translations;
+      const userLang = this.userLang;
+
       const container = document.createElement("div");
       container.style.cssText =
         "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
@@ -100,7 +110,10 @@ if (!window.AbrosCopyright) {
       }, time * 1000);
     },
 
-    addPush(time, translations, userLang) {
+    addPush(time) {
+      const translations = this.translations;
+      const userLang = this.userLang;
+
       const script = document.createElement("script");
       script.src = "https://cdn.abros.dev/noti/noti.js";
       document.head.appendChild(script);
@@ -127,7 +140,10 @@ if (!window.AbrosCopyright) {
       return color;
     },
 
-    initCanvas(translations, userLang) {
+    initCanvas() {
+      const translations = this.translations;
+      const userLang = this.userLang;
+
       let canvas;
       let ctx;
       let particles = [];
