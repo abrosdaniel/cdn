@@ -1,5 +1,5 @@
 /*!
- * Copyright.js v1.0.0a
+ * Copyright.js v1.0.9
  * (c) 2023-2024
  * by Daniel Abros
  * Сайт → https://abros.dev

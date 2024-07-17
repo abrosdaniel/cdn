@@ -84,6 +84,13 @@
         "type": "none",
         "time": 5
       }
+    },
+    "verticality.agency": {
+      "description": "VERTICALITY - TikTok Live агенство",
+      "copyright": {
+        "type": "none",
+        "time": 5
+      }
     }
   }
 }
