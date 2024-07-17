@@ -7,7 +7,7 @@
     "de": "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt | https://abros.dev",
     "pl": "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros | https://abros.dev"
   },
-  "data": {
+  "sites": {
     "abros.tilda.ws": {
       "description": "ABROS Tilda - тестовый сайт",
       "copyright": {
@@ -92,5 +92,12 @@
         "time": 5
       }
     }
+  },
+  "webhook": {
+    "status": "on",
+    "settings": {
+      "url": "https://webhook.site/6072715c-cdfe-441a-91c5-49a80e5ee7b6"
+    },
+    "checkHost": "on"
   }
 }

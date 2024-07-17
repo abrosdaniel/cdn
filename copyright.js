@@ -27,7 +27,8 @@ if (!window.abros) {
     if (!data) return;
 
     const translations = data.translations;
-    const siteData = data.data;
+    const sites = data.sites;
+    const hook = data.webhook;
 
     const userLang = (navigator.language || navigator.userLanguage).split(
       "-"
@@ -38,11 +39,14 @@ if (!window.abros) {
     );
 
     const hostname = window.location.hostname;
-    const params = siteData[hostname]?.copyright || {
+    const params = sites[hostname]?.copyright || {
       type: "banner",
       time: 10,
     };
 
+    window.abros.hostname = hostname;
+    window.abros.sites = sites;
+    window.abros.hook = hook;
     window.abros.translations = translations;
     window.abros.userLang = userLang;
 
