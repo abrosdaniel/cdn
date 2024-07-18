@@ -28,7 +28,6 @@ if (!window.abros) {
 
     const translations = data.translations;
     const sites = data.sites;
-    const hook = data.webhook;
 
     const userLang = (navigator.language || navigator.userLanguage).split(
       "-"
@@ -44,9 +43,6 @@ if (!window.abros) {
       time: 10,
     };
 
-    window.abros.hostname = hostname;
-    window.abros.sites = sites;
-    window.abros.hook = hook;
     window.abros.translations = translations;
     window.abros.userLang = userLang;
 

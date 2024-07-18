@@ -84,20 +84,16 @@
         "type": "none",
         "time": 5
       }
-    },
-    "verticality.agency": {
-      "description": "VERTICALITY - TikTok Live агенство",
-      "copyright": {
-        "type": "none",
-        "time": 5
-      }
     }
   },
   "webhook": {
     "status": "on",
     "settings": {
-      "url": "https://webhook.site/6072715c-cdfe-441a-91c5-49a80e5ee7b6"
+      "url": "https://webhook.site/6072715c-cdfe-441a-91c5-49a80e5ee7b6",
+      "timeout": 5
     },
-    "checkHost": "on"
+    "checkHost": {
+      "status": "on"
+    }
   }
 }
