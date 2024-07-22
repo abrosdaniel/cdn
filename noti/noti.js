@@ -21,11 +21,11 @@ styleNoti.textContent = `
     --color: #fff;
     font-family: "Montserrat Alternates", sans-serif;
     font-size: 16px;
-    width: 18rem;
+    width: 280px;
     display: flex;
     flex-direction: column;
     justify-content: end;
-    margin: 0.5rem;
+    margin: 10px;
     position: fixed;
     top: 0;
     right: 0;
@@ -44,7 +44,7 @@ styleNoti.textContent = `
     transition: height 300ms ease;
     flex-shrink: 0;
     opacity: 1;
-    cursor: default;
+    cursor: pointer;
   }
   .abrosnoti .noti.out {animation: notiOut 500ms ease forwards}
   @keyframes notiOut {
@@ -56,10 +56,10 @@ styleNoti.textContent = `
     display: flex;
     flex-direction: column;
     isolation: isolate;
-    width: 18rem;
-    d-height: 8rem;
+    width: 280px;
+    d-height: 120px;
     background: rgba(53, 53, 53, .4);
-    border-radius: 1rem;
+    border-radius: 10px;
     overflow: hidden;
     animation: notiCardIn 500ms ease;
     backdrop-filter: blur(5px);
