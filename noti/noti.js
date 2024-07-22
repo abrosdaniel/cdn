@@ -5,7 +5,7 @@
  * Site → https://abros.dev
  * Telegram → https://t.me/abrosxd
  * Уведомления.
- * <script src = 'https://abros.dev/dev/noti.js'></script>
+ * <script src='https://abros.dev/dev/noti.js'></script>
  */
 
 // Компонент ассистента
@@ -67,7 +67,6 @@ styleNoti.textContent = `
 }
 @keyframes notiCardIn {
   from {
-    /* transform: translateX(50%); */
     opacity: 0;
   }
 }
@@ -78,13 +77,40 @@ styleNoti.textContent = `
     transform: scale(0.5)
   }
 }
-.abrosnoti .noticard:before {
-  position: absolute;
-  content: "";
-  inset: 0.0625rem;
-  border-radius: 0.9375rem;
-  background: rgba(53, 53, 53, .4);
-  z-index: 2
+@supports(color: color-mix(in oklch, red 0%, white)) {
+  [data-theme="dark"] .abrosnoti .noticard {
+    border-color: color-mix(in oklch, var(--color) 5%, oklch(100% 0 0 / 15%));
+    background: color-mix(in oklch, var(--color) 50%, oklch(0% 0 0 / 50%));
+    color: color-mix(in oklch, var(--color) 50%, oklch(100% 0 0));
+  }
+  [data-theme="light"] .abrosnoti .noticard {
+    border-color: color-mix(in oklch, var(--color) 50%, oklch(100% 0 0 / 15%));
+    background: color-mix(in oklch, var(--color) 25%, oklch(100% 0 0 / 50%));
+    color: color-mix(in oklch, var(--color) 100%, oklch(100% 0 0));
+  }
+  .abrosnoti .noticard::selection {
+    background: color-mix(in oklch, var(--color) 90%, oklch(100% 0 0));
+    color: color-mix(in oklch, var(--color) 10%, oklch(100% 0 0));
+  }
+}
+
+@supports (color: rgb(from white r g b)) {
+  [data-theme=dark] .abrosnoti .noticard {
+    border-color: oklch(from var(--color) l c h / 0.25);
+    background: oklch(from var(--color) calc(l * 0.75) c h / 0.5);
+    color: oklch(from var(--color) calc(l * 1.5) c h);
+  }
+  
+  [data-theme=light] .abrosnoti .noticard {
+    border-color: oklch(from var(--color) l c h / 25%);
+    background: oklch(from var(--color) calc(l * 1) c h / 20%);
+    color: oklch(from var(--color) calc(l * 1) c h);
+  }
+
+  .abrosnoti .noticard::selection {
+    background: oklch(from var(--color) calc(l * 1.1) c h);
+    color: oklch(from var(--color) 1 c h);
+  }
 }
 .abrosnoti .notiicon {
   position: absolute;
@@ -92,13 +118,11 @@ styleNoti.textContent = `
   inset: 10px auto 10px 8px;
   transition: transform 300ms ease;
   z-index: 5;
-  color: var(--color);
 }
 .abrosnoti .noti:hover .notiicon {
   transform: translateX(0.15rem)
 }
 .abrosnoti .notitext {
-  color: var(--color);
   padding: 13px 5px 10px 35px;
   transition: transform 300ms ease;
   z-index: 5;
@@ -106,7 +130,7 @@ styleNoti.textContent = `
 .abrosnoti .noti:hover .notitext {
   transform: translateX(0.25rem)
 }
-.abrosnoti .notiglow, .abrosassistant .notiborderglow {
+.abrosnoti .notiglow, .abrosnoti .notiborderglow {
   position: absolute;
   width: 320px;
   height: 320px;
@@ -121,7 +145,6 @@ styleNoti.textContent = `
 .abrosnoti .noti:hover .notiborderglow {opacity: 0.1}
 [data-abrosnoti=error] {
   --color: oklch(62.8% 0.25 29.23);
-  --color: red;
 }
 [data-abrosnoti=ai] {
   --color: oklch(58.11% 0.31 307.02);
@@ -134,7 +157,6 @@ styleNoti.textContent = `
 }
 [data-abrosnoti=success] {
   --color: oklch(47.06% 0.17 148.76);
-  --color: hsl(145 100% 25%);
 }
 [data-abrosnoti=note] {
   --color: oklch(41.84% 0 0);
@@ -161,12 +183,6 @@ class noti {
   addType(el, type) {
     el.setAttribute("data-abrosnoti", type);
   }
-  createImg(className = "") {
-    const el = document.createElement("img");
-    el.classList.add(className);
-    return el;
-  }
-
   async addIcon(el, type) {
     const response = await fetch(`${domain}/icons/${type}.svg`);
     const svgText = await response.text();
@@ -222,7 +238,6 @@ class noti {
 
     this.el.appendChild(notiEl);
 
-    // console.log("height", notiCardEl.scrollHeight)
     requestAnimationFrame(function () {
       notiEl.style.height =
         "calc(0.25rem + " + notiCardEl.getBoundingClientRect().height + "px)";
@@ -233,7 +248,6 @@ class noti {
       const localX = (event.clientX - rect.left) / rect.width;
       const localY = (event.clientY - rect.top) / rect.height;
 
-      // console.log(localX, localY)
       glowEl.style.left = localX * 100 + "%";
       glowEl.style.top = localY * 100 + "%";
 
@@ -260,22 +274,20 @@ class noti {
     return notiEl;
   }
 }
-abrosnoti = new noti(document.querySelector(".abrosnoti"));
+const abrosnoti = new noti(document.querySelector(".abrosnoti"));
 
 /*
 Как использовать:
 
-Создайте объект уведомления, используя new Notifications и передайте ему элемент оболочки уведомления например:
-const notis = new abrosnoti(document.querySelector(".abrosnoti"))
+Создайте объект уведомления, используя new noti и передайте ему элемент оболочки уведомления например:
+const notis = new noti(document.querySelector(".abrosnoti"))
 
 Создавайте уведомления с помощью notis.create()
 
 Параметры notis.create():
-  Заголовок: string,
-  Описание: string,
-  Продолжительность: секунды (по умолчанию: 2 секунды, 0 означает бесконечное время),
-  Уничтожить при клике: boolean
-    (определяет, должно ли уведомление исчезнуть при нажатии, по умолчанию: false)
-  Функция клика: function
-    (вызывается при нажатии на уведомление, если не определено, по умолчанию: undefined)
+  Тип: string (тип уведомления, по умолчанию: "abros")
+  Текст: string (текст уведомления)
+  Продолжительность: number (секунды, по умолчанию: 2 секунды, 0 означает бесконечное время)
+  Уничтожить при клике: boolean (определяет, должно ли уведомление исчезнуть при нажатии, по умолчанию: false)
+  Функция клика: function (вызывается при нажатии на уведомление, если не определено, по умолчанию: undefined)
 */
