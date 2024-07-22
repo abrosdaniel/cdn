@@ -143,23 +143,29 @@ styleNoti.textContent = `
 .abrosnoti .notiborderglow { z-index: 1; }
 .abrosnoti .noti:hover .notiglow {opacity: 0.1}
 .abrosnoti .noti:hover .notiborderglow {opacity: 0.1}
-[data-abrosnoti=error] {
+[data-abrosnoti=abros] {
   --color: oklch(62.8% 0.25 29.23);
 }
 [data-abrosnoti=ai] {
   --color: oklch(58.11% 0.31 307.02);
+}
+[data-abrosnoti=error] {
+  --color: oklch(62.8% 0.25 29.23);
+}
+[data-abrosnoti=lang] {
+  --color: oklch(41.84% 0 0);
+}
+[data-abrosnoti=note] {
+  --color: oklch(41.84% 0 0);
+}
+[data-abrosnoti=success] {
+  --color: oklch(47.06% 0.17 148.76);
 }
 [data-abrosnoti=tip] {
   --color: oklch(53.24% 0.23 256.22);
 }
 [data-abrosnoti=warning] {
   --color: oklch(61.47% 0.16 64.21);
-}
-[data-abrosnoti=success] {
-  --color: oklch(47.06% 0.17 148.76);
-}
-[data-abrosnoti=note] {
-  --color: oklch(41.84% 0 0);
 }
 `;
 document.head.appendChild(styleNoti);
