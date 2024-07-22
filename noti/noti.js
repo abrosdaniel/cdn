@@ -219,7 +219,6 @@ class noti {
     notiCardEl.appendChild(glowEl);
     notiCardEl.appendChild(borderEl);
     notiCardEl.appendChild(iconEl);
-    notiCardEl.appendChild(titleEl);
     notiCardEl.appendChild(textEl);
 
     this.el.appendChild(notiEl);
