@@ -93,14 +93,13 @@ styleNoti.textContent = `
   transition: transform 300ms ease;
   z-index: 5;
   color: var(--color);
-  padding: 0 8px 14px 8px;
 }
 .abrosnoti .noti:hover .notiicon {
   transform: translateX(0.15rem)
 }
 .abrosnoti .notitext {
   color: var(--color);
-  padding: 0 8px 14px 8px;
+  padding: 13px 5px 10px 35px;
   transition: transform 300ms ease;
   z-index: 5;
 }
