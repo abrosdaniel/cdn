@@ -177,24 +177,23 @@ class noti {
     el.classList.add(className);
     return el;
   }
-  addIcon(el, icon) {
-    const url = `${domain}/icons/${icon}.svg`;
+  addIcon(el, type) {
+    const url = `${domain}/icons/${type}.svg`;
     el.src = url;
   }
   addText(el, text) {
     el.appendChild(document.createTextNode(text));
   }
   create(
-    icon,
-    type = "abros",
-    title = "Untitled notification",
+    type = "",
+    title = "",
     description = "",
     duration = 2,
     destroyOnClick = false,
     clickFunction = undefined
   ) {
-    if (icon === "" || icon === " " || icon === undefined) {
-      icon = "abros";
+    if (type === "" || type === " " || type === undefined) {
+      type = "abros";
     }
     function destroy(animate) {
       if (animate) {
@@ -214,7 +213,7 @@ class noti {
     const borderEl = this.createDiv("notiborderglow");
 
     const iconEl = this.createImg("notiicon");
-    this.addIcon(iconEl, icon);
+    this.addIcon(iconEl, type);
 
     const titleEl = this.createDiv("notititle");
     this.addText(titleEl, title);
