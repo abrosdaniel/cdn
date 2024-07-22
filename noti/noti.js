@@ -45,6 +45,7 @@ styleNoti.textContent = `
     flex-shrink: 0;
     opacity: 1;
     cursor: pointer;
+    margin: 5px 0;
   }
   .abrosnoti .noti.out {animation: notiOut 500ms ease forwards}
   @keyframes notiOut {
@@ -88,8 +89,8 @@ styleNoti.textContent = `
   }
   .abrosnoti .notiicon {
     position: absolute;
-    width: 1.5rem;
-    inset: 0.65rem auto 0.65rem 0.5rem;
+    width: 24px;
+    inset: 10px auto 10px 8px;
     transition: transform 300ms ease;
     z-index: 5;
   }
@@ -98,9 +99,9 @@ styleNoti.textContent = `
   }
   .abrosnoti .notititle {
     color: var(--color);
-    padding: 0.65rem 0.5rem 0.4rem 2.5rem;
+    padding: 10.4px 8px 6.4px 40px;
     font-weight: 500;
-    font-size: 1.1rem;
+    font-size: 18px;
     transition: transform 300ms ease;
     z-index: 5;
   }
@@ -109,7 +110,7 @@ styleNoti.textContent = `
   }
   .abrosnoti .notidesc {
     color: #c1c1c1;
-    padding: 0 0.5rem 0.85rem 0.5rem;
+    padding: 0 8px 14px 8px;
     transition: transform 300ms ease;
     z-index: 5;
   }
@@ -118,8 +119,8 @@ styleNoti.textContent = `
   }
   .abrosnoti .notiglow, .abrosassistant .notiborderglow {
     position: absolute;
-    width: 20rem;
-    height: 20rem;
+    width: 320px;
+    height: 320px;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle closest-side at center, white, transparent);
     opacity: 0;
@@ -129,6 +130,26 @@ styleNoti.textContent = `
   .abrosnoti .notiborderglow { z-index: 1; }
   .abrosnoti .noti:hover .notiglow {opacity: 0.1}
   .abrosnoti .noti:hover .notiborderglow {opacity: 0.1}
+  [data-abrosnoti=error] {
+    --color: oklch(62.8% 0.25 29.23);
+    --color: red;
+  }
+  [data-abrosnoti=ai] {
+    --color: oklch(58.11% 0.31 307.02);
+  }
+  [data-abrosnoti=tip] {
+    --color: oklch(53.24% 0.23 256.22);
+  }
+  [data-abrosnoti=warning] {
+    --color: oklch(61.47% 0.16 64.21);
+  }
+  [data-abrosnoti=success] {
+    --color: oklch(47.06% 0.17 148.76);
+    --color: hsl(145 100% 25%);
+  }
+  [data-abrosnoti=note] {
+    --color: oklch(41.84% 0 0);
+  }
 `;
 document.head.appendChild(styleNoti);
 
@@ -148,6 +169,9 @@ class noti {
     el.classList.add(className);
     return el;
   }
+  addType(el, type) {
+    el.setAttribute("data-abrosnoti", type);
+  }
   createImg(className = "") {
     const el = document.createElement("img");
     el.classList.add(className);
@@ -161,7 +185,8 @@ class noti {
     el.appendChild(document.createTextNode(text));
   }
   create(
-    icon = "abros",
+    icon,
+    type = "abros",
     title = "Untitled notification",
     description = "",
     duration = 2,
@@ -182,6 +207,8 @@ class noti {
       }
     }
     const notiEl = this.createDiv("noti");
+    this.addType(notiEl, type);
+
     const notiCardEl = this.createDiv("noticard");
     const glowEl = this.createDiv("notiglow");
     const borderEl = this.createDiv("notiborderglow");
