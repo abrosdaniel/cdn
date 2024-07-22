@@ -78,36 +78,36 @@ styleNoti.textContent = `
   }
 }
 @supports(color: color-mix(in oklch, red 0%, white)) {
-  [data-theme="dark"] .abrosnoti .noticard {
+  [data-theme="dark"] .noticard {
     border-color: color-mix(in oklch, var(--color) 5%, oklch(100% 0 0 / 15%));
     background: color-mix(in oklch, var(--color) 50%, oklch(0% 0 0 / 50%));
     color: color-mix(in oklch, var(--color) 50%, oklch(100% 0 0));
   }
-  [data-theme="light"] .abrosnoti .noticard {
+  [data-theme="light"] .noticard {
     border-color: color-mix(in oklch, var(--color) 50%, oklch(100% 0 0 / 15%));
     background: color-mix(in oklch, var(--color) 25%, oklch(100% 0 0 / 50%));
     color: color-mix(in oklch, var(--color) 100%, oklch(100% 0 0));
   }
-  .abrosnoti .noticard::selection {
+  .noticard::selection {
     background: color-mix(in oklch, var(--color) 90%, oklch(100% 0 0));
     color: color-mix(in oklch, var(--color) 10%, oklch(100% 0 0));
   }
 }
 
 @supports (color: rgb(from white r g b)) {
-  [data-theme=dark] .abrosnoti .noticard {
+  [data-theme=dark] .noticard {
     border-color: oklch(from var(--color) l c h / 0.25);
     background: oklch(from var(--color) calc(l * 0.75) c h / 0.5);
     color: oklch(from var(--color) calc(l * 1.5) c h);
   }
   
-  [data-theme=light] .abrosnoti .noticard {
+  [data-theme=light] .noticard {
     border-color: oklch(from var(--color) l c h / 25%);
     background: oklch(from var(--color) calc(l * 1) c h / 20%);
     color: oklch(from var(--color) calc(l * 1) c h);
   }
 
-  .abrosnoti .noticard::selection {
+  .noticard::selection {
     background: oklch(from var(--color) calc(l * 1.1) c h);
     color: oklch(from var(--color) 1 c h);
   }
@@ -164,7 +164,7 @@ styleNoti.textContent = `
 `;
 document.head.appendChild(styleNoti);
 
-if (location.pathname.match(/fullcpgrid/i) ? true : false) {
+if (location.pathname.match(/fullcpgrid/i)) {
   document.querySelector(".abrosnoti").style.fontSize = "32px";
   document.querySelector(".abrosnoti").style.transform =
     "translate(0.5rem, calc(-50% + 3rem))";
@@ -202,15 +202,12 @@ class noti {
   }
   create(
     theme = "light",
-    type = "",
+    type = "abros",
     text = "",
     duration = 2,
     destroyOnClick = false,
     clickFunction = undefined
   ) {
-    if (type === "" || type === " " || type === undefined) {
-      type = "abros";
-    }
     function destroy(animate) {
       if (animate) {
         notiEl.classList.add("out");
@@ -244,7 +241,7 @@ class noti {
 
     this.el.appendChild(notiEl);
 
-    requestAnimationFrame(function () {
+    requestAnimationFrame(() => {
       notiEl.style.height =
         "calc(0.25rem + " + notiCardEl.getBoundingClientRect().height + "px)";
     });
@@ -285,15 +282,30 @@ const abrosnoti = new noti(document.querySelector(".abrosnoti"));
 /*
 Как использовать:
 
-Создайте объект уведомления, используя new noti и передайте ему элемент оболочки уведомления например:
+Создайте объект уведомления, используя new noti и передайте ему элемент оболочки уведомления, например:
 const notis = new noti(document.querySelector(".abrosnoti"))
 
 Создавайте уведомления с помощью notis.create()
 
 Параметры notis.create():
+  Тема: string (тема уведомления, по умолчанию: "light", возможные значения: "light", "dark")
   Тип: string (тип уведомления, по умолчанию: "abros")
   Текст: string (текст уведомления)
   Продолжительность: number (секунды, по умолчанию: 2 секунды, 0 означает бесконечное время)
   Уничтожить при клике: boolean (определяет, должно ли уведомление исчезнуть при нажатии, по умолчанию: false)
   Функция клика: function (вызывается при нажатии на уведомление, если не определено, по умолчанию: undefined)
+*/
+
+/*
+Пример использования:
+abrosnoti.create(
+  "dark", // Тема
+  "success", // Тип уведомления
+  "Success Notification", // Текст уведомления
+  5, // Продолжительность
+  true, // Уничтожить при клике
+  () => {
+    console.log("Notification clicked!");
+  }
+);
 */
