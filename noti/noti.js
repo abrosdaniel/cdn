@@ -44,7 +44,6 @@ styleNoti.textContent = `
   flex-shrink: 0;
   opacity: 1;
   cursor: pointer;
-  margin: 5px 0;
 }
 .abrosnoti .noti.out {animation: notiOut 500ms ease forwards}
 @keyframes notiOut {
@@ -135,7 +134,7 @@ styleNoti.textContent = `
   width: 320px;
   height: 320px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle closest-side at center, white, transparent);
+  background: radial-gradient(circle closest-side at center, var(--color), transparent)
   opacity: 0;
   transition: opacity 300ms ease;
 }
@@ -292,10 +291,10 @@ const notis = new noti(document.querySelector(".abrosnoti"))
 
 Параметры notis.create():
   Тема: string (тема уведомления, по умолчанию: "light", возможные значения: "light", "dark")
-  Тип: string (тип уведомления, по умолчанию: "abros")
+  Тип: string (тип уведомления, возможные значения: "ai", "error", "lang", "note", "success", "tip", "warning")
   Текст: string (текст уведомления)
   Продолжительность: number (секунды, по умолчанию: 2 секунды, 0 означает бесконечное время)
-  Уничтожить при клике: boolean (определяет, должно ли уведомление исчезнуть при нажатии, по умолчанию: false)
+  Уничтожить при клике: boolean (определяет, должно ли уведомление исчезнуть при нажатии, по умолчанию: false, возможные значения: "true", "false")
   Функция клика: function (вызывается при нажатии на уведомление, если не определено, по умолчанию: undefined)
 */
 
