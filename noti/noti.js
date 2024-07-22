@@ -177,9 +177,17 @@ class noti {
     el.classList.add(className);
     return el;
   }
-  addIcon(el, type) {
-    const url = `${domain}/icons/${type}.svg`;
-    el.src = url;
+
+  async addIcon(el, type) {
+    const response = await fetch(`${domain}/icons/${type}.svg`);
+    const svgText = await response.text();
+    const svgElement = this.createSvgElement(svgText);
+    el.appendChild(svgElement);
+  }
+  createSvgElement(svgString) {
+    const template = document.createElement("template");
+    template.innerHTML = svgString.trim();
+    return template.content.firstChild;
   }
   addText(el, text) {
     el.appendChild(document.createTextNode(text));
@@ -212,7 +220,7 @@ class noti {
     const glowEl = this.createDiv("notiglow");
     const borderEl = this.createDiv("notiborderglow");
 
-    const iconEl = this.createImg("notiicon");
+    const iconEl = this.createDiv("notiicon");
     this.addIcon(iconEl, type);
 
     const titleEl = this.createDiv("notititle");
