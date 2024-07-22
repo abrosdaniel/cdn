@@ -183,6 +183,9 @@ class noti {
   addType(el, type) {
     el.setAttribute("data-abrosnoti", type);
   }
+  addTheme(el, theme) {
+    el.setAttribute("data-theme", theme);
+  }
   async addIcon(el, type) {
     const response = await fetch(`${domain}/icons/${type}.svg`);
     const svgText = await response.text();
@@ -198,6 +201,7 @@ class noti {
     el.appendChild(document.createTextNode(text));
   }
   create(
+    theme = "light",
     type = "",
     text = "",
     duration = 2,
@@ -221,6 +225,8 @@ class noti {
     this.addType(notiEl, type);
 
     const notiCardEl = this.createDiv("noticard");
+    this.addTheme(notiCardEl, theme);
+
     const glowEl = this.createDiv("notiglow");
     const borderEl = this.createDiv("notiborderglow");
 
