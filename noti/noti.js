@@ -143,9 +143,6 @@ styleNoti.textContent = `
 .abrosnoti .notiborderglow { z-index: 1; }
 .abrosnoti .noti:hover .notiglow {opacity: 0.1}
 .abrosnoti .noti:hover .notiborderglow {opacity: 0.1}
-[data-abrosnoti=abros] {
-  --color: oklch(62.8% 0.25 29.23);
-}
 [data-abrosnoti=ai] {
   --color: oklch(58.11% 0.31 307.02);
 }
@@ -153,7 +150,7 @@ styleNoti.textContent = `
   --color: oklch(62.8% 0.25 29.23);
 }
 [data-abrosnoti=lang] {
-  --color: oklch(41.84% 0 0);
+  --color: #2eadff;
 }
 [data-abrosnoti=note] {
   --color: oklch(41.84% 0 0);
@@ -208,7 +205,7 @@ class noti {
   }
   create(
     theme = "light",
-    type = "abros",
+    type = "",
     text = "",
     duration = 2,
     destroyOnClick = false,
@@ -308,7 +305,7 @@ abrosnoti.create(
   "dark", // Тема
   "success", // Тип уведомления
   "Success Notification", // Текст уведомления
-  5, // Продолжительность
+  0, // Продолжительность
   true, // Уничтожить при клике
   () => {
     console.log("Notification clicked!");
