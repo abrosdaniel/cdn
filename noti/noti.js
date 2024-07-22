@@ -14,142 +14,132 @@ document.body.insertAdjacentHTML("beforeend", `<div class="abrosnoti"></div>`);
 // Стили ассистента
 var styleNoti = document.createElement("style");
 styleNoti.textContent = `
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
 
-  .abrosnoti {
-    --gradient: linear-gradient(to bottom, #2eadff, #3d83ff, #7e61ff);
-    --color: #fff;
-    font-family: "Montserrat Alternates", sans-serif;
-    font-size: 16px;
-    width: 280px;
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    margin: 10px;
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 99999999999;
-  }
-  @media (max-width: 767px) {
-    .abrosnoti {
-      margin: 0.5rem 0;
-      right: 50%;
-      transform: translateX(50%);
-    }
+.abrosnoti {
+  --gradient: linear-gradient(to bottom, #2eadff, #3d83ff, #7e61ff);
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: 16px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  margin: 10px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 99999999999;
 }
-  .abrosnoti .noti {
-    position: relative;
-    height: 0;
-    transition: height 300ms ease;
-    flex-shrink: 0;
-    opacity: 1;
-    cursor: pointer;
-    margin: 5px 0;
+@media (max-width: 767px) {
+  .abrosnoti {
+    margin: 0.5rem 0;
+    right: 50%;
+    transform: translateX(50%);
   }
-  .abrosnoti .noti.out {animation: notiOut 500ms ease forwards}
-  @keyframes notiOut {
-    to {height: 0;}
-  }
-  .abrosnoti .noticard {
-    position: absolute;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    isolation: isolate;
-    width: 280px;
-    d-height: 120px;
-    background: rgba(53, 53, 53, .4);
-    border-radius: 10px;
-    overflow: hidden;
-    animation: notiCardIn 500ms ease;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-  }
-  @keyframes notiCardIn {
-    from {
-      /* transform: translateX(50%); */
-      opacity: 0;
-    }
-  }
-  .abrosnoti .noti.out .noticard {animation: notiCardOut 500ms ease forwards}
-  @keyframes notiCardOut {
-    to {
-      opacity: 0;
-      transform: scale(0.5)
-    }
-  }
-  .abrosnoti .noticard:before {
-    position: absolute;
-    content: "";
-    inset: 0.0625rem;
-    border-radius: 0.9375rem;
-    background: rgba(53, 53, 53, .4);
-    z-index: 2
-  }
-  .abrosnoti .notiicon {
-    position: absolute;
-    width: 24px;
-    inset: 10px auto 10px 8px;
-    transition: transform 300ms ease;
-    z-index: 5;
-  }
-  .abrosnoti .noti:hover .notiicon {
-    transform: translateX(0.15rem)
-  }
-  .abrosnoti .notititle {
-    color: var(--color);
-    padding: 10.4px 8px 6.4px 40px;
-    font-weight: 500;
-    font-size: 18px;
-    transition: transform 300ms ease;
-    z-index: 5;
-  }
-  .abrosnoti .noti:hover .notititle {
-    transform: translateX(0.15rem)
-  }
-  .abrosnoti .notidesc {
-    color: #c1c1c1;
-    padding: 0 8px 14px 8px;
-    transition: transform 300ms ease;
-    z-index: 5;
-  }
-  .abrosnoti .noti:hover .notidesc {
-    transform: translateX(0.25rem)
-  }
-  .abrosnoti .notiglow, .abrosassistant .notiborderglow {
-    position: absolute;
-    width: 320px;
-    height: 320px;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle closest-side at center, white, transparent);
+}
+.abrosnoti .noti {
+  position: relative;
+  height: 0;
+  transition: height 300ms ease;
+  flex-shrink: 0;
+  opacity: 1;
+  cursor: pointer;
+  margin: 5px 0;
+}
+.abrosnoti .noti.out {animation: notiOut 500ms ease forwards}
+@keyframes notiOut {
+  to {height: 0;}
+}
+.abrosnoti .noticard {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  width: 280px;
+  d-height: 120px;
+  background: rgba(53, 53, 53, .4);
+  border-radius: 10px;
+  overflow: hidden;
+  animation: notiCardIn 500ms ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+@keyframes notiCardIn {
+  from {
+    /* transform: translateX(50%); */
     opacity: 0;
-    transition: opacity 300ms ease;
   }
-  .abrosnoti .notiglow { z-index: 3; }
-  .abrosnoti .notiborderglow { z-index: 1; }
-  .abrosnoti .noti:hover .notiglow {opacity: 0.1}
-  .abrosnoti .noti:hover .notiborderglow {opacity: 0.1}
-  [data-abrosnoti=error] {
-    --color: oklch(62.8% 0.25 29.23);
-    --color: red;
+}
+.abrosnoti .noti.out .noticard {animation: notiCardOut 500ms ease forwards}
+@keyframes notiCardOut {
+  to {
+    opacity: 0;
+    transform: scale(0.5)
   }
-  [data-abrosnoti=ai] {
-    --color: oklch(58.11% 0.31 307.02);
-  }
-  [data-abrosnoti=tip] {
-    --color: oklch(53.24% 0.23 256.22);
-  }
-  [data-abrosnoti=warning] {
-    --color: oklch(61.47% 0.16 64.21);
-  }
-  [data-abrosnoti=success] {
-    --color: oklch(47.06% 0.17 148.76);
-    --color: hsl(145 100% 25%);
-  }
-  [data-abrosnoti=note] {
-    --color: oklch(41.84% 0 0);
-  }
+}
+.abrosnoti .noticard:before {
+  position: absolute;
+  content: "";
+  inset: 0.0625rem;
+  border-radius: 0.9375rem;
+  background: rgba(53, 53, 53, .4);
+  z-index: 2
+}
+.abrosnoti .notiicon {
+  position: absolute;
+  width: 24px;
+  inset: 10px auto 10px 8px;
+  transition: transform 300ms ease;
+  z-index: 5;
+  color: var(--color);
+  padding: 0 8px 14px 8px;
+}
+.abrosnoti .noti:hover .notiicon {
+  transform: translateX(0.15rem)
+}
+.abrosnoti .notitext {
+  color: var(--color);
+  padding: 0 8px 14px 8px;
+  transition: transform 300ms ease;
+  z-index: 5;
+}
+.abrosnoti .noti:hover .notitext {
+  transform: translateX(0.25rem)
+}
+.abrosnoti .notiglow, .abrosassistant .notiborderglow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle closest-side at center, white, transparent);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.abrosnoti .notiglow { z-index: 3; }
+.abrosnoti .notiborderglow { z-index: 1; }
+.abrosnoti .noti:hover .notiglow {opacity: 0.1}
+.abrosnoti .noti:hover .notiborderglow {opacity: 0.1}
+[data-abrosnoti=error] {
+  --color: oklch(62.8% 0.25 29.23);
+  --color: red;
+}
+[data-abrosnoti=ai] {
+  --color: oklch(58.11% 0.31 307.02);
+}
+[data-abrosnoti=tip] {
+  --color: oklch(53.24% 0.23 256.22);
+}
+[data-abrosnoti=warning] {
+  --color: oklch(61.47% 0.16 64.21);
+}
+[data-abrosnoti=success] {
+  --color: oklch(47.06% 0.17 148.76);
+  --color: hsl(145 100% 25%);
+}
+[data-abrosnoti=note] {
+  --color: oklch(41.84% 0 0);
+}
 `;
 document.head.appendChild(styleNoti);
 
@@ -194,8 +184,7 @@ class noti {
   }
   create(
     type = "",
-    title = "",
-    description = "",
+    text = "",
     duration = 2,
     destroyOnClick = false,
     clickFunction = undefined
@@ -223,18 +212,15 @@ class noti {
     const iconEl = this.createDiv("notiicon");
     this.addIcon(iconEl, type);
 
-    const titleEl = this.createDiv("notititle");
-    this.addText(titleEl, title);
-
-    const descriptionEl = this.createDiv("notidesc");
-    this.addText(descriptionEl, description);
+    const textEl = this.createDiv("notitext");
+    this.addText(textEl, text);
 
     notiEl.appendChild(notiCardEl);
     notiCardEl.appendChild(glowEl);
     notiCardEl.appendChild(borderEl);
     notiCardEl.appendChild(iconEl);
     notiCardEl.appendChild(titleEl);
-    notiCardEl.appendChild(descriptionEl);
+    notiCardEl.appendChild(textEl);
 
     this.el.appendChild(notiEl);
 
@@ -277,27 +263,6 @@ class noti {
   }
 }
 abrosnoti = new noti(document.querySelector(".abrosnoti"));
-
-// demo
-
-// const demonotis = [
-//   () => {abrosnoti.create("Neon notifications", "wow, these notifications really do look beautiful", 5)},
-//   () => {abrosnoti.create("Hover effects", "and the hover effects make it even better!", 5)},
-//   () => {abrosnoti.create("Ease of use", "on top of that, you can easily add this to any project", 10)},
-//   () => {abrosnoti.create("Customisation", "you can even customise the duration and add actions on click", 10)},
-//   () => {abrosnoti.create("Click me", "try clicking this for a surprise!", 5, true, () => notis.create("Surprise", "Wow, you clicked the previous notification,", 4))},
-//   () => {abrosnoti.create("Animations", "all the animations stay smooth even when notifications disappear out of order or when multiple appear at once", 15)},
-// ]
-// let i = 1;
-// demonotis[0]()
-// setInterval(()=>{
-//   if (i == demonotis.length) {
-//     notis.create("Demo done", "click on this notification to restart the demo or go look at the code if you're interested", 0, true, () => {i = 0})
-//   } else if (i < demonotis.length) {
-//     demonotis[i]()
-//   }
-//   i++
-// }, 4000)
 
 /*
 Как использовать:
