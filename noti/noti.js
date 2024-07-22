@@ -59,6 +59,7 @@ styleNoti.textContent = `
   width: 280px;
   d-height: 120px;
   background: rgba(53, 53, 53, .4);
+  border: 1px solid;
   border-radius: 10px;
   overflow: hidden;
   animation: notiCardIn 500ms ease;
