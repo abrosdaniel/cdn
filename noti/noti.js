@@ -78,36 +78,35 @@ styleNoti.textContent = `
   }
 }
 @supports(color: color-mix(in oklch, red 0%, white)) {
-  [data-theme="dark"] .noticard {
+  .abrosnoti .noticard[data-theme="dark"] {
     border-color: color-mix(in oklch, var(--color) 5%, oklch(100% 0 0 / 15%));
     background: color-mix(in oklch, var(--color) 50%, oklch(0% 0 0 / 50%));
     color: color-mix(in oklch, var(--color) 50%, oklch(100% 0 0));
   }
-  [data-theme="light"] .noticard {
+  .abrosnoti .noticard[data-theme="light"] {
     border-color: color-mix(in oklch, var(--color) 50%, oklch(100% 0 0 / 15%));
     background: color-mix(in oklch, var(--color) 25%, oklch(100% 0 0 / 50%));
     color: color-mix(in oklch, var(--color) 100%, oklch(100% 0 0));
   }
-  .noticard::selection {
+  .abrosnoti .noticard::selection {
     background: color-mix(in oklch, var(--color) 90%, oklch(100% 0 0));
     color: color-mix(in oklch, var(--color) 10%, oklch(100% 0 0));
   }
 }
-
 @supports (color: rgb(from white r g b)) {
-  [data-theme=dark] .noticard {
+  .abrosnoti .noticard[data-theme="dark"] {
     border-color: oklch(from var(--color) l c h / 0.25);
     background: oklch(from var(--color) calc(l * 0.75) c h / 0.5);
     color: oklch(from var(--color) calc(l * 1.5) c h);
   }
   
-  [data-theme=light] .noticard {
+  .abrosnoti .noticard[data-theme="light"] {
     border-color: oklch(from var(--color) l c h / 25%);
     background: oklch(from var(--color) calc(l * 1) c h / 20%);
     color: oklch(from var(--color) calc(l * 1) c h);
   }
 
-  .noticard::selection {
+  .abrosnoti .noticard::selection {
     background: oklch(from var(--color) calc(l * 1.1) c h);
     color: oklch(from var(--color) 1 c h);
   }
