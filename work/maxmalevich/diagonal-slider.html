@@ -37,24 +37,24 @@
   document.addEventListener("DOMContentLoaded", function () {
     const cards = [
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://static.tildacdn.com/tild3937-6339-4930-a339-616631316264/Rectangle_726.png",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 1",
+        title: "Для квартиры",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://static.tildacdn.com/tild6530-3961-4231-b462-616136366134/Rectangle_706.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 2",
+        title: "Для загородного дома",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://static.tildacdn.com/tild6334-3439-4161-b839-333164393964/image_19374.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 3",
+        title: "Для офиса",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://static.tildacdn.com/tild3338-3334-4533-b861-626632376365/6ltvcljv5cqhl4g9j0px.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 4",
+        title: "Для коммерческих пространств",
       },
     ];
     // Ниже данные не менять
@@ -132,9 +132,38 @@
           },
         },
         breakpoints: {
-          1201: {
-            allowTouchMove: true,
+          1920: {
             slidesPerView: 3,
+            creativeEffect: {
+              limitProgress: 4,
+              progressMultiplier: 1,
+              prev: {
+                translate: ["0", "20.1rem", 0],
+                opacity: 0,
+                zIndex: -1,
+              },
+              next: {
+                translate: ["53.6rem", "-8.5rem", 0],
+              },
+            },
+          },
+          1536: {
+            slidesPerView: 3,
+            creativeEffect: {
+              limitProgress: 4,
+              progressMultiplier: 1,
+              prev: {
+                translate: ["0", "20.1rem", 0],
+                opacity: 0,
+                zIndex: -1,
+              },
+              next: {
+                translate: ["53.6rem", "-8.5rem", 0],
+              },
+            },
+          },
+          1200: {
+            slidesPerView: 2,
             creativeEffect: {
               limitProgress: 4,
               progressMultiplier: 1,

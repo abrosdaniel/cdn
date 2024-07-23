@@ -60,39 +60,34 @@
   document.addEventListener("DOMContentLoaded", function () {
     const cards = [
       {
-        img: "https://static.tildacdn.net/tild6330-3331-4336-b564-373866616563/Rectangle_706.png",
+        img: "https://optim.tildacdn.com/tild3937-6339-4930-a339-616631316264/-/resize/687x/-/format/webp/Rectangle_726.png",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 1",
+        title: "Кухни на заказ",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://optim.tildacdn.com/tild3964-3530-4534-b532-613636373266/-/resize/512x/-/format/webp/19jdf79nz1fhkcksh75d.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 2",
+        title: "Спальни",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://optim.tildacdn.com/tild3563-3761-4261-b732-633465353038/-/resize/384x/-/format/webp/6e1s4lzo3arjgdbmcn1v.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 3",
+        title: "Гостиные",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://optim.tildacdn.com/tild6235-3037-4635-b036-303836316531/-/resize/512x/-/format/webp/vgue9562ij8ee9j4rmf6.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 4",
+        title: "Гардеробные",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://optim.tildacdn.com/tild6634-6262-4766-a561-666436323066/-/resize/384x/-/format/webp/7scl6ebcqpmq1i6g12rr.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 5",
+        title: "Шкафы и зоны хранения",
       },
       {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
+        img: "https://optim.tildacdn.com/tild6533-6666-4233-a462-396164366166/-/resize/384x/-/format/webp/m2tumjy8j01wvsxyofoz.jpg",
         link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 6",
-      },
-      {
-        img: "https://static.tildacdn.net/tild6436-3466-4063-a530-346132356463/paykyb8er8ianschneider.jpg",
-        link: "https://abros.tilda.ws/maxmalevich",
-        title: "Card 7",
+        title: "Ванные комнаты",
       },
     ];
 
@@ -199,7 +194,19 @@
         breakpoints: {
           1200: {
             spaceBetween: 0,
-            slidesPerView: "auto",
+            slidesPerView: 5, // Количество видимых слайдов на разрешении 1200 и выше
+            allowTouchMove: false,
+            initialSlide: 0,
+          },
+          1536: {
+            slidesPerView: 5, // Количество видимых слайдов на разрешении 1536 и выше
+            spaceBetween: 0,
+            allowTouchMove: false,
+            initialSlide: 0,
+          },
+          1920: {
+            slidesPerView: 5, // Количество видимых слайдов на разрешении 1920 и выше
+            spaceBetween: 0,
             allowTouchMove: false,
             initialSlide: 0,
           },
