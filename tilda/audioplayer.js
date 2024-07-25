@@ -1,5 +1,5 @@
 /*!
- * Player.js v1.0
+ * AudioPlayer.js v1.0
  * (c) 2024-2024
  * by Daniel Abros
  * Site → https://abros.dev
