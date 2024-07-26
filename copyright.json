@@ -15,6 +15,13 @@
         "time": 1
       }
     },
+    "verticality.agency": {
+      "description": "Verticality - стрим агенство TikTok",
+      "copyright": {
+        "type": "none",
+        "time": 5
+      }
+    },
     "contract-fpobeda.ru": {
       "description": "F Pobeda",
       "copyright": {
