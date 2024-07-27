@@ -222,6 +222,15 @@ const AudioPlayer = (function () {
           this.onElement = false;
         });
       }
+
+      this.audio.addEventListener("ended", this.playNext.bind(this));
+      this.audio.addEventListener("loadeddata", () => {
+        if (!this.audio.paused) {
+          this.audio.play().catch((error) => {
+            console.error("Failed to play the audio:", error);
+          });
+        }
+      });
     };
 
     player.initCatalog = function () {
@@ -446,7 +455,12 @@ const AudioPlayer = (function () {
           .indexOf(true);
         this.audio.dataset.trackNumber = num;
       }
-      this.isPlaying() ? this.audio.pause() : this.audio.play();
+      this.audio.pause();
+      if (!this.audio.src || this.audio.src === track) {
+        this.audio.play().catch((error) => {
+          console.error("Failed to play the audio:", error);
+        });
+      }
       let btnPlayImg = this.player.querySelector(".player-play .tn-atom img");
       btnPlayImg.src = this.isPlaying()
         ? `${this.settings.styles.player.icons.pause}`
@@ -514,18 +528,24 @@ const AudioPlayer = (function () {
     player.playNext = function () {
       let numNow = Number(this.audio.dataset.trackNumber);
       let numNew = numNow + 1 < this.playlist.length ? numNow + 1 : 0;
+      this.audio.pause();
       this.audio.src = this.trackLink(this.playlist[numNew]);
       this.audio.dataset.trackNumber = numNew;
-      this.audio.play();
+      this.audio.play().catch((error) => {
+        console.error("Failed to play the audio:", error);
+      });
       this.playerInfo();
     };
 
     player.playPrev = function () {
       let numNow = Number(this.audio.dataset.trackNumber);
       let numNew = numNow - 1 > -1 ? numNow - 1 : this.playlist.length - 1;
+      this.audio.pause();
       this.audio.src = this.trackLink(this.playlist[numNew]);
       this.audio.dataset.trackNumber = numNew;
-      this.audio.play();
+      this.audio.play().catch((error) => {
+        console.error("Failed to play the audio:", error);
+      });
       this.playerInfo();
     };
 
