@@ -57,6 +57,7 @@ if (!window.abros) {
   window.abros = {
     translations: null,
     userLang: null,
+    domain: "https://abros.dev",
 
     initCopyright(params) {
       if (params.type === "footer") {
@@ -71,14 +72,14 @@ if (!window.abros) {
     },
 
     addFooter(time) {
-      const { translations, userLang } = this;
+      const { translations, userLang, domain } = this;
 
       const container = document.createElement("div");
       container.style.cssText =
         "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
 
       const link = document.createElement("a");
-      link.href = "https://abros.dev";
+      link.href = domain;
       link.target = "_blank";
       link.rel = "noopener";
       link.style.cssText =
@@ -115,7 +116,7 @@ if (!window.abros) {
     },
 
     addPush(time) {
-      const { translations, userLang } = this;
+      const { translations, userLang, domain } = this;
 
       const script = document.createElement("script");
       script.src = "https://cdn.abros.dev/noti/noti.js";
@@ -126,7 +127,7 @@ if (!window.abros) {
       setInterval(() => {
         if (!noti) {
           abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () => {
-            window.open("https://abros.dev", "_blank");
+            window.open(domain, "_blank");
             noti = false;
           });
           noti = true;
@@ -135,7 +136,7 @@ if (!window.abros) {
     },
 
     addBanner(time) {
-      const { translations, userLang } = this;
+      const { translations, userLang, domain } = this;
 
       const container = document.createElement("div");
       container.style.cssText =
@@ -150,7 +151,7 @@ if (!window.abros) {
       stick.style.cssText =
         "height: 90%;width: 4px;position: absolute;right: 6px;border-radius: 50px;overflow: hidden;transition: background-color 1s, color 2s;animation: abroscopyright 4s infinite alternate;";
       const link = document.createElement("a");
-      link.href = "https://abros.dev";
+      link.href = domain;
       link.target = "_blank";
       link.rel = "noopener";
       link.style.cssText =
