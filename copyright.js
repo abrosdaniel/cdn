@@ -59,15 +59,18 @@ if (!window.abros) {
     userLang: null,
 
     initCopyright(params) {
-      if (params.type === "banner") {
-        this.addBanner(params.time);
+      if (params.type === "footer") {
+        this.addFooter(params.time);
       }
       if (params.type === "push") {
         this.addPush(params.time);
       }
+      if (params.type === "banner") {
+        this.addBanner(params.time);
+      }
     },
 
-    addBanner(time) {
+    addFooter(time) {
       const { translations, userLang } = this;
 
       const container = document.createElement("div");
@@ -128,6 +131,57 @@ if (!window.abros) {
           });
           noti = true;
         }
+      }, time * 1000);
+    },
+
+    addBanner(time) {
+      const { translations, userLang } = this;
+
+      const container = document.createElement("div");
+      container.style.cssText =
+        "width:110px;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: fixed;bottom: 50%;right: -100px;z-index: 999999999999999;transform: translateY(50%);border: 1px solid white;border-radius: 10px 0 0 10px;transition: right 0.5s;";
+      container.onmouseenter = () => {
+        container.style.right = "0";
+      };
+      container.onmouseleave = () => {
+        container.style.right = "-100px";
+      };
+      const stick = document.createElement("div");
+      const link = document.createElement("a");
+      link.href = "https://abros.dev";
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.style.cssText =
+        "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
+
+      const title = document.createElement("p");
+      title.style.cssText =
+        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small; transition: background-color 1s, color 2s;";
+      title.textContent = "ABROS";
+
+      const description = document.createElement("p");
+      description.style.cssText =
+        "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
+      description.textContent = translations[userLang] || translations.en;
+
+      link.appendChild(title);
+      link.appendChild(description);
+      container.appendChild(link);
+      container.appendChild(stick);
+
+      document.head.insertAdjacentHTML(
+        "beforeend",
+        `<style>
+          @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+        </style>`
+      );
+
+      setInterval(() => {
+        title.style.backgroundColor = `${this.getRandomColor()}80`;
+      }, 5000);
+
+      setTimeout(() => {
+        document.documentElement.appendChild(container);
       }, time * 1000);
     },
 
