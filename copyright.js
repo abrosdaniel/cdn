@@ -148,13 +148,13 @@ if (!window.abros) {
       };
       const stick = document.createElement("div");
       stick.style.cssText =
-        "height: 90%;width: 4px;position: absolute;right: 6px;border-radius: 50px;overflow: hidden;";
+        "height: 90%;width: 4px;position: absolute;right: 6px;border-radius: 50px;overflow: hidden;transition: background-color 1s, color 2s;animation: abroscopyright 2s infinite;";
       const link = document.createElement("a");
       link.href = "https://abros.dev";
       link.target = "_blank";
       link.rel = "noopener";
       link.style.cssText =
-        "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;transition: background-color 1s, color 2s;animation: abroscopyright 2s infinite;";
+        "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
 
       const title = document.createElement("p");
       title.style.cssText =
