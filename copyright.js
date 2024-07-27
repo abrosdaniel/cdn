@@ -153,7 +153,7 @@ if (!window.abros) {
 
       const stickColor = document.createElement("div");
       stickColor.style.cssText =
-        "width: 10px;height: 40px;transform: translateX(-50%);position: absolute;left: 50%;transition: background-color 1s, color 2s;mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);-webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);";
+        "width: 10px;height: 40px;transform: translate(-50%, -50%);position: absolute;left: 50%;top: 0;transition: background-color 1s, color 2s;mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);-webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);animation: moveTop 2s infinite alternate;";
 
       const link = document.createElement("a");
       link.href = domain;
@@ -182,6 +182,10 @@ if (!window.abros) {
         "beforeend",
         `<style>
           @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+          @keyframes moveTop {
+            0% { top: 0; }
+            100% { top: 100%; }
+          }    
         </style>`
       );
 
