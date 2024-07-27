@@ -18,7 +18,7 @@
     "tvoy-hit.ru": {
       "description": "Verticality - стрим агенство TikTok",
       "copyright": {
-        "type": "none",
+        "type": "banner",
         "time": 5
       }
     },
