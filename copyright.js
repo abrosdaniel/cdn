@@ -152,6 +152,9 @@ if (!window.abros) {
         "height: 90%;width: 4px;position: absolute;right: 6px;border-radius: 50px;overflow: hidden;";
 
       const stickColor = document.createElement("div");
+      stickColor.style.cssText =
+        "width: 10px;height: 40px;transform: translateX(-50%);position: absolute;left: 50%;mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);-webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);";
+
       const link = document.createElement("a");
       link.href = domain;
       link.target = "_blank";
@@ -184,7 +187,7 @@ if (!window.abros) {
 
       setInterval(() => {
         title.style.backgroundColor = `${this.getRandomColor()}80`;
-        stick.style.backgroundColor = `${this.getRandomColor()}80`;
+        stickColor.style.backgroundColor = `${this.getRandomColor()}80`;
       }, 5000);
 
       setTimeout(() => {
