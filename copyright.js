@@ -187,7 +187,7 @@ if (!window.abros) {
 
       setInterval(() => {
         title.style.backgroundColor = `${this.getRandomColor()}80`;
-        stickColor.style.backgroundColor = `${this.getRandomColor()}80`;
+        // stickColor.style.backgroundColor = `${this.getRandomColor()}80`;
       }, 5000);
 
       setTimeout(() => {
