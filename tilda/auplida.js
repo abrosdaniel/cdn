@@ -7,89 +7,191 @@ const AudioPlayer = (function () {
     player.initStyles = function () {
       const stylePlayer = document.createElement("style");
       stylePlayer.textContent = `
-              ${this.settings.areaID} {
-                  position: fixed;
-                  bottom: 0;
-                  left: 0;
-                  width: 100%;
-                  height: 80px;
-                  z-index: 90;
-              }
-              ${this.settings.playerID} {
-                  position: fixed;
-                  bottom: -85px;
-                  left: 0;
-                  width: 100%;
-                  z-index: 100;
-                  transition: bottom .2s ease-in-out;
-              }
-              ${this.settings.playerID}.show {
-                  bottom: 0px;
-              }
-              .play-wrapper {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  z-index: 1;
-                  width: 100%;
-                  height: 100%;
-                  background-color: ${this.settings.styles.wrapper.backgroundColor};
-                  border-radius: ${this.settings.styles.wrapper.borderRadius};
-              }
-              .btn-music {
-                  width: 60px;
-                  height: 60px;
-                  background-position: center center;
-                  background-repeat: no-repeat;
-                  background-size: cover;
-                  position: absolute;
-                  top: 50%;
-                  left: 50%;
-                  z-index: 2;
-                  transform: translate(-50%, -50%) scale(100%);
-                  transition: all .2s ease-in-out;
-              }
-              .btn-music:hover {
-                  transform: translate(-50%, -50%) scale(110%);
-              }
-              .play {
-                  background-image: ${this.settings.styles.wrapper.icons.play};
-              }
-              .pause {
-                  background-image: ${this.settings.styles.wrapper.icons.pause};
-              }
-              ${this.settings.playerID} .music-range.volume,
-              ${this.settings.playerID} .music-range.progress {
-                  --gradient: linear-gradient(90deg, ${this.settings.styles.trackSlide.colorEnd} 0%, ${this.settings.styles.trackSlide.colorEnd} 100%, ${this.settings.styles.trackSlide.colorStart} 100%)
-                  height:8px;
-                  border-radius: ${this.settings.styles.trackSlide.borderRadius};
-                  -webkit-appearance: none;
-                  margin: 10px 0;
-                  width: 100%;
-              }
-              ${this.settings.playerID} .music-range:focus {
-                  outline: none;
-              }
-              ${this.settings.playerID} .music-range::-webkit-slider-runnable-track {
-                  width: 100%;
-                  height:8px;
-                  cursor: pointer;
-                  animate: 0.2s;
-                  background: var(--gradient);
-                  border-radius: ${this.settings.styles.trackSlide.borderRadius};
-              }
-              ${this.settings.playerID} .music-range::-webkit-slider-thumb {
-                  height: 20px;
-                  width: 20px;
-                  border-radius: ${this.settings.styles.trackSlide.thumbBorderRadius};
-                  background: ${this.settings.styles.trackSlide.thumbColor};
-                  cursor: pointer;
-                  -webkit-appearance: none;
-                  margin-top: -6px;
-                  border: none;
-                  box-shadow: none;
-              }
-          `;
+      /* Область для плеера */
+      ${this.settings.areaID} {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      z-index: 90;
+      }
+      /* Сам плеер */
+      ${this.settings.playerID} {
+      position: fixed;
+      bottom: -85px;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      transition: bottom .2s ease-in-out;
+      }
+      ${this.settings.playerID}.show {
+      bottom: 0px;
+      }
+      /* Элементы плеера */
+      ${this.settings.playerID} .player-cover,
+      ${this.settings.playerID} .player-prev,
+      ${this.settings.playerID} .player-play,
+      ${this.settings.playerID} .player-next,
+      ${this.settings.playerID} .player-volume,
+      ${this.settings.playerID} .player-volume-picker,
+      ${this.settings.playerID} .player-volume-full,
+      ${this.settings.playerID} .player-progress-picker,
+      ${this.settings.playerID} .player-progress-full,
+      ${this.settings.playerID} .player-text,
+      ${this.settings.playerID} .player-title {
+      cursor: pointer;
+      }
+      ${this.settings.playerID} .player-cover .tn-atom {
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      }
+      ${this.settings.playerID} .player-prev.disabled .tn-atom,
+      ${this.settings.playerID} .player-next.disabled .tn-atom {
+      opacity: .5;
+      pointer-events: none;
+      }
+      ${this.settings.playerID} .player-title {
+      top: 50% !important;
+      transform: translateY(-50%);
+      }
+      /* Кнопки play/pause и многоточие на карточках товаров */
+      /* Wrapper для элементов */
+      .play-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      background-color: ${this.settings.styles.wrapper.backgroundColor};
+      border-radius: ${this.settings.styles.wrapper.borderRadius};
+      }
+      .btn-music {
+      width: 60px;
+      height: 60px;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 2;
+      transform: translate(-50%, -50%) scale(100%);
+      transition: all .2s ease-in-out;
+      }
+      .btn-music:hover {
+      transform: translate(-50%, -50%) scale(110%);
+      }
+      .play {
+      background-image: ${this.settings.styles.wrapper.icons.play};
+      }
+      .pause {
+      background-image: ${this.settings.styles.wrapper.icons.pause};
+      }
+      /* Input громкости и прогресса песни */
+      ${this.settings.playerID} .music-range.volume,
+      ${this.settings.playerID} .music-range.progress {
+      --gradient: linear-gradient(90deg, ${this.settings.styles.trackSlide.colorEnd} 0%, ${this.settings.styles.trackSlide.colorEnd} 100%, ${this.settings.styles.trackSlide.colorStart} 100%)
+      height:8px;
+      border-radius: ${this.settings.styles.trackSlide.borderRadius};
+      -webkit-appearance: none;
+      margin: 10px 0;
+      width: 100%;
+      }
+      ${this.settings.playerID} .music-range:focus {
+      outline: none;
+      }
+      ${this.settings.playerID} .music-range::-webkit-slider-runnable-track {
+      width: 100%;
+      height:8px;
+      cursor: pointer;
+      animate: 0.2s;
+      background: var(--gradient);
+      border-radius: ${this.settings.styles.trackSlide.borderRadius};
+      }
+      ${this.settings.playerID} .music-range::-webkit-slider-runnable-track:after {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      animate: 0.2s;
+      background: var(--gradient);
+      border-radius: ${this.settings.styles.trackSlide.borderRadius};
+      border: none;
+      box-shadow: none;
+      }
+      ${this.settings.playerID} .music-range::-webkit-slider-thumb {
+      height: 20px;
+      width: 20px;
+      border-radius: ${this.settings.styles.trackSlide.thumbBorderRadius};
+      background: ${this.settings.styles.trackSlide.thumbColor};
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -6px;
+      border: none;
+      box-shadow: none;
+      }
+      ${this.settings.playerID} .music-range:focus::-webkit-slider-runnable-track {
+        background: var(--gradient);
+    }
+    ${this.settings.playerID} .music-range::-moz-range-track {
+        width: 100%;
+        height: 4px;
+        cursor: pointer;
+        animate: 0.2s;
+        background: var(--gradient);
+        border-radius: ${this.settings.styles.trackSlide.borderRadius};
+        border: none;
+        box-shadow: none;
+    }
+    ${this.settings.playerID} .music-range::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: ${this.settings.styles.trackSlide.thumbBorderRadius};
+        background: ${this.settings.styles.trackSlide.thumbColor};
+        cursor: pointer;
+        border: none;
+        box-shadow: none;
+    }
+    ${this.settings.playerID} .music-range::-ms-track {
+        width: 100%;
+        height: 4px;
+        cursor: pointer;
+        animate: 0.2s;
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+    }
+    ${this.settings.playerID} .music-range::-ms-fill-lower {
+        background: ${this.settings.styles.trackSlide.colorEnd};
+        border-radius: 4px;
+        border: none;
+        box-shadow: none;
+    }
+    ${this.settings.playerID} .music-range::-ms-fill-upper {
+        background: ${this.settings.styles.trackSlide.colorStart};
+        border-radius: 4px;
+        border: none;
+        box-shadow: none;
+    }
+    ${this.settings.playerID} .music-range::-ms-thumb {
+        margin-top: 1px;
+        height: 20px;
+        width: 20px;
+        border-radius: ${this.settings.styles.trackSlide.thumbBorderRadius};
+        background: ${this.settings.styles.trackSlide.thumbColor};
+        cursor: pointer;
+        border: none;
+        box-shadow: none;
+    }
+    ${this.settings.playerID} .music-range:focus::-ms-fill-lower {
+        background: ${this.settings.styles.trackSlide.colorEnd};
+    }
+    ${this.settings.playerID} .music-range:focus::-ms-fill-upper {
+        background: ${this.settings.styles.trackSlide.colorStart};
+    }
+      `;
       document.head.appendChild(stylePlayer);
     };
 
