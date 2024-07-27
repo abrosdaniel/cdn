@@ -200,26 +200,39 @@ const AudioPlayer = (function () {
       this.player = document.querySelector(this.settings.playerID);
       this.volumeInput = this.player.querySelector('input[name="volume"]');
       this.progressInput = this.player.querySelector('input[name="progress"]');
-      this.volumeInput.addEventListener("input", this.volumeControl.bind(this));
-      this.progressInput.addEventListener(
-        "input",
-        this.progressListen.bind(this)
-      );
-      this.player.addEventListener("mouseenter", () => {
-        this.onElement = true;
-      });
-      this.player.addEventListener("mouseleave", () => {
-        this.onElement = false;
-      });
+
+      if (this.volumeInput) {
+        this.volumeInput.addEventListener(
+          "input",
+          this.volumeControl.bind(this)
+        );
+      }
+      if (this.progressInput) {
+        this.progressInput.addEventListener(
+          "input",
+          this.progressListen.bind(this)
+        );
+      }
+
+      if (this.player) {
+        this.player.addEventListener("mouseenter", () => {
+          this.onElement = true;
+        });
+        this.player.addEventListener("mouseleave", () => {
+          this.onElement = false;
+        });
+      }
     };
 
     player.initCatalog = function () {
       this.catalog = document.querySelector(this.settings.catalogID);
       this.storeGrid = this.catalog.querySelector(".js-store-grid-cont");
-      this.storeGrid.addEventListener(
-        "tStoreRendered",
-        this.onStoreRendered.bind(this)
-      );
+      if (this.storeGrid) {
+        this.storeGrid.addEventListener(
+          "tStoreRendered",
+          this.onStoreRendered.bind(this)
+        );
+      }
     };
 
     player.onStoreRendered = function () {
@@ -257,11 +270,16 @@ const AudioPlayer = (function () {
       } else {
         this.products.forEach((product) => {
           const cover = product.querySelector(".js-product-img");
-          cover.addEventListener("mouseenter", this.enter.bind(this));
-          cover.addEventListener("mouseleave", this.leave.bind(this));
+          if (cover) {
+            cover.addEventListener("mouseenter", this.enter.bind(this));
+            cover.addEventListener("mouseleave", this.leave.bind(this));
+          }
         });
-        this.area.addEventListener("mouseenter", this.areaEnter.bind(this));
-        this.area.addEventListener("mouseleave", this.areaLeave.bind(this));
+        const area = document.querySelector(this.settings.areaID);
+        if (area) {
+          area.addEventListener("mouseenter", this.areaEnter.bind(this));
+          area.addEventListener("mouseleave", this.areaLeave.bind(this));
+        }
       }
     };
 
