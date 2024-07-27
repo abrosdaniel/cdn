@@ -153,7 +153,7 @@ if (!window.abros) {
 
       const stickColor = document.createElement("div");
       stickColor.style.cssText =
-        "width: 10px;height: 40px;transform: translateX(-50%);position: absolute;left: 50%;transition: background-color 1s, color 2s;mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 100%);-webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);";
+        "width: 10px;height: 40px;transform: translateX(-50%);position: absolute;left: 50%;transition: background-color 1s, color 2s;mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);-webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);";
 
       const link = document.createElement("a");
       link.href = domain;
