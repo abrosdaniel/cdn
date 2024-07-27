@@ -411,7 +411,7 @@ const AudioPlayer = (function () {
 
     player.playPause = function (e) {
       let track;
-      if (e.target.classList.contains("btn-music")) {
+      if (e && e.target.classList.contains("btn-music")) {
         e.preventDefault();
         const product = e.target.closest(".js-product");
         let pagination = this.catalog.querySelector(".t-store__pagination");
@@ -445,8 +445,7 @@ const AudioPlayer = (function () {
             e.target.classList.add("pause");
           }
         }
-      }
-      if (this.audio.src === "") {
+      } else if (this.audio.src === "") {
         let num = 0;
         this.audio.dataset.trackNumber = num;
         track = this.trackLink(this.playlist[num]);
