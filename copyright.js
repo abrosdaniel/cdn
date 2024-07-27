@@ -139,12 +139,12 @@ if (!window.abros) {
 
       const container = document.createElement("div");
       container.style.cssText =
-        "width:110px;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: fixed;bottom: 50%;right: -100px;z-index: 999999999999999;transform: translateY(50%);border: 1px solid white;border-radius: 10px 0 0 10px;transition: right 0.5s;";
+        "width:110px;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: fixed;bottom: 50%;left: -100px;z-index: 999999999999999;transform: translateY(50%);border: 1px solid white;border-radius: 10px 0 0 10px;transition: right 0.5s;";
       container.onmouseenter = () => {
-        container.style.right = "0";
+        container.style.left = "0";
       };
       container.onmouseleave = () => {
-        container.style.right = "-100px";
+        container.style.left = "-100px";
       };
       const stick = document.createElement("div");
       const link = document.createElement("a");
