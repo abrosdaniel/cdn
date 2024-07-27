@@ -410,6 +410,7 @@ const AudioPlayer = (function () {
     };
 
     player.playPause = function (e) {
+      let track;
       if (e.target.classList.contains("btn-music")) {
         e.preventDefault();
         const product = e.target.closest(".js-product");
@@ -422,7 +423,7 @@ const AudioPlayer = (function () {
           trackNum < this.playlist.length
             ? trackNum
             : this.productsArr.indexOf(product);
-        let track =
+        track =
           trackNum !== -1
             ? this.trackLink(this.playlist[trackNum])
             : this.trackLink(this.playlist[0]);
@@ -448,7 +449,8 @@ const AudioPlayer = (function () {
       if (this.audio.src === "") {
         let num = 0;
         this.audio.dataset.trackNumber = num;
-        this.audio.src = this.trackLink(this.playlist[num]);
+        track = this.trackLink(this.playlist[num]);
+        this.audio.src = track;
       } else {
         let num = this.playlist
           .map((obj) => this.trackLink(obj) === this.audio.src)
