@@ -18,7 +18,7 @@
     "tvoy-hit.ru": {
       "description": "Твой Хит - магазин песен",
       "copyright": {
-        "type": "banner",
+        "type": "none",
         "time": 1
       }
     },
