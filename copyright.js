@@ -148,7 +148,7 @@ if (!window.abros) {
       };
       const stick = document.createElement("div");
       stick.style.cssText =
-        "height: 90%;width: 4px;position: absolute;right: 6px;border-radius: 50px;overflow: hidden;transition: background-color 1s, color 2s;animation: abroscopyright 2s infinite;";
+        "height: 90%;width: 4px;position: absolute;right: 6px;border-radius: 50px;overflow: hidden;transition: background-color 1s, color 2s;animation: abroscopyright 4s infinite alternate;";
       const link = document.createElement("a");
       link.href = "https://abros.dev";
       link.target = "_blank";
@@ -176,9 +176,8 @@ if (!window.abros) {
         `<style>
           @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
           @keyframes abroscopyright {
-            0% { background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%); }
+            0%, 100% { background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%); }
             50% { background: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 100%); }
-            100% { background: linear-gradient(to top, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%); }
           }
         </style>`
       );
