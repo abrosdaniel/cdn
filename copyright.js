@@ -139,14 +139,16 @@ if (!window.abros) {
 
       const container = document.createElement("div");
       container.style.cssText =
-        "width:110px;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: fixed;bottom: 50%;left: -100px;z-index: 999999999999999;transform: translateY(50%);border: 1px solid white;border-radius: 10px 0 0 10px;transition: right 0.5s;";
+        "width:110px;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: fixed;bottom: 50%;left: -100px;z-index: 999999999999999;transform: translateY(50%);border: 1px solid white;border-radius: 0 10px 10px 0;transition: left 0.5s;";
       container.onmouseenter = () => {
-        container.style.left = "0";
+        container.style.left = "-10px";
       };
       container.onmouseleave = () => {
         container.style.left = "-100px";
       };
       const stick = document.createElement("div");
+      stick.style.cssText =
+        "height: 90%;width: 4px;position: absolute;right: 6px;border-radius: 50px;overflow: hidden;";
       const link = document.createElement("a");
       link.href = "https://abros.dev";
       link.target = "_blank";
@@ -178,6 +180,7 @@ if (!window.abros) {
 
       setInterval(() => {
         title.style.backgroundColor = `${this.getRandomColor()}80`;
+        stick.style.backgroundColor = `${this.getRandomColor()}80`;
       }, 5000);
 
       setTimeout(() => {
