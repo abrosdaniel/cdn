@@ -18,8 +18,8 @@
     "tvoy-hit.ru": {
       "description": "Твой Хит - магазин песен",
       "copyright": {
-        "type": "none",
-        "time": 1
+        "type": "banner",
+        "time": 2
       }
     },
     "verticality.agency": {

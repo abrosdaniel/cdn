@@ -140,7 +140,7 @@ if (!window.abros) {
 
       const container = document.createElement("div");
       container.style.cssText =
-        "width:110px;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: fixed;bottom: 50%;left: -100px;z-index: 999999999999999;transform: translateY(50%);border: 1px solid white;border-radius: 0 10px 10px 0;transition: left 0.5s;";
+        "width:110px;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: fixed;bottom: 50%;left: -100px;z-index: 999999999999999;transform: translateY(50%);border: 1px solid white;border-radius: 0 10px 10px 0;opacity: 0;transition: left 0.5s, opacity 1s;";
       container.onmouseenter = () => {
         container.style.left = "-10px";
       };
@@ -177,6 +177,7 @@ if (!window.abros) {
       stick.appendChild(stickColor);
       container.appendChild(link);
       container.appendChild(stick);
+      document.documentElement.appendChild(container);
 
       document.head.insertAdjacentHTML(
         "beforeend",
@@ -195,7 +196,7 @@ if (!window.abros) {
       }, 5000);
 
       setTimeout(() => {
-        document.documentElement.appendChild(container);
+        container.style.opacity = "1";
       }, time * 1000);
     },
 
