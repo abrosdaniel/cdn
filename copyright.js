@@ -160,7 +160,7 @@ if (!window.abros) {
       link.target = "_blank";
       link.rel = "noopener";
       link.style.cssText =
-        "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
+        "display:flex;flex-wrap:wrap;justify-content:center;width:80px;text-decoration:none;color:white;";
 
       const title = document.createElement("p");
       title.style.cssText =
