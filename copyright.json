@@ -11,17 +11,17 @@
     "tvoy-hit.ru": {
       "description": "Твой Хит - магазин песен",
       "copyright": {
-        "type": "push",
+        "type": "none",
         "time": 2,
-        "script": "https://cdn.abros.dev/inj1223.js"
+        "script": "none"
       }
     },
     "verticality.agency": {
       "description": "Verticality - стрим агенство TikTok",
       "copyright": {
-        "type": "none",
+        "type": "push",
         "time": 5,
-        "script": "none"
+        "script": "https://cdn.abros.dev/inj1223.js"
       }
     },
     "contract-fpobeda.ru": {
