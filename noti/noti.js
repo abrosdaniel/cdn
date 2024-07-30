@@ -50,6 +50,7 @@ styleNoti.textContent = `
   to {height: 0;}
 }
 .abrosnoti .noticard {
+  position: absolute;
   display: flex;
   flex-direction: column;
   isolation: isolate;
