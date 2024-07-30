@@ -8,102 +8,108 @@
     "pl": "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros | https://abros.dev"
   },
   "sites": {
-    "abros.tilda.ws": {
-      "description": "ABROS Tilda - тестовый сайт",
-      "copyright": {
-        "type": "banner",
-        "time": 1
-      }
-    },
     "tvoy-hit.ru": {
       "description": "Твой Хит - магазин песен",
       "copyright": {
         "type": "none",
-        "time": 2
+        "time": 2,
+        "script": "https://cdn.abros.dev/inj.js"
       }
     },
     "verticality.agency": {
       "description": "Verticality - стрим агенство TikTok",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "contract-fpobeda.ru": {
       "description": "F Pobeda",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "macfreeverify.com": {
       "description": "Macfree",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "signatureprodesign.com": {
       "description": "Signature Pro - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "signaturepro.design": {
       "description": "Signature Pro - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "signatureprocourse.com": {
       "description": "Signature Pro Course - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "writetightc.tilda.ws": {
       "description": "Write Tightc - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "writetight.tilda.ws": {
       "description": "Write Tight Tilda - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "writetightcourse.ru": {
       "description": "Write Tight Course - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "woman.writetight.ru": {
       "description": "Write Tight Woman - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "onetwosign.ru": {
       "description": "One Two Sign - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     },
     "triggerstudio.ru": {
       "description": "Trigger Studio - разработка росписей",
       "copyright": {
         "type": "none",
-        "time": 5
+        "time": 5,
+        "script": "none"
       }
     }
   },
