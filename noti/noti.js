@@ -131,7 +131,7 @@ styleNoti.textContent = `
   width: 320px;
   height: 320px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle closest-side at center, var(--color), transparent)
+  background: radial-gradient(circle closest-side at center, var(--color), transparent);
   opacity: 0;
   transition: opacity 300ms ease;
 }
