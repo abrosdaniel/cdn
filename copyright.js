@@ -101,13 +101,13 @@ if (!window.abros) {
 
       document.head.insertAdjacentHTML(
         "beforeend",
-        <style>
+        `<style>
           @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-        </style>
+        </style>`
       );
 
       setInterval(() => {
-        title.style.backgroundColor = ${this.getRandomColor()}80;
+        title.style.backgroundColor = `${this.getRandomColor()}80`;
       }, 5000);
 
       setTimeout(() => {
@@ -126,7 +126,7 @@ if (!window.abros) {
       let noti = false;
       setInterval(() => {
         if (!noti) {
-          abrosnoti.create("abros", "ABROS", ${text}, 0, true, () => {
+          abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () => {
             window.open(domain, "_blank");
             noti = false;
           });
@@ -181,18 +181,18 @@ if (!window.abros) {
 
       document.head.insertAdjacentHTML(
         "beforeend",
-        <style>
+        `<style>
           @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
           @keyframes abroscopyright {
             0% { top: 0; }
             100% { top: 100%; }
           }    
-        </style>
+        </style>`
       );
 
       setInterval(() => {
-        title.style.backgroundColor = ${this.getRandomColor()}80;
-        stickColor.style.backgroundColor = ${this.getRandomColor()}80;
+        title.style.backgroundColor = `${this.getRandomColor()}80`;
+        stickColor.style.backgroundColor = `${this.getRandomColor()}80`;
       }, 5000);
 
       setTimeout(() => {
