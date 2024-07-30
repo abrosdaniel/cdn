@@ -19,7 +19,7 @@ styleNoti.textContent = `
 .abrosnoti {
   --gradient: linear-gradient(to bottom, #2eadff, #3d83ff, #7e61ff);
   font-family: "Montserrat Alternates", sans-serif;
-  font-size: 1vw;
+  font-size: 0.85rem;
   width: 280px;
   display: flex;
   flex-direction: column;
