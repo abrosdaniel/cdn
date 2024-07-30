@@ -126,7 +126,7 @@ if (!window.abros) {
       let noti = false;
       setInterval(() => {
         if (!noti) {
-          abrosnoti.create("abros", "ABROS", `${text}`, 0, true, () => {
+          abrosnoti.create("dark", "tip", `${text}`, 0, true, () => {
             window.open(domain, "_blank");
             noti = false;
           });
