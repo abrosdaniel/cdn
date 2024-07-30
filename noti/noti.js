@@ -243,7 +243,7 @@ class noti {
 
     requestAnimationFrame(() => {
       notiEl.style.height =
-        "calc(20px + " + notiCardEl.getBoundingClientRect().height + "px)";
+        "calc(10px + " + notiCardEl.getBoundingClientRect().height + "px)";
     });
 
     notiEl.addEventListener("mousemove", (event) => {
