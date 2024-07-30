@@ -51,6 +51,7 @@ styleNoti.textContent = `
 }
 .abrosnoti .noticard {
   position: absolute;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   isolation: isolate;
