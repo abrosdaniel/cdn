@@ -32,6 +32,22 @@
   .uc-abros-diagslider .swiper-slide-prev {
     z-index: -1 !important;
   }
+  @media (max-width: 960px) {
+    .uc-abros-diagslider .swiper-slide .img {
+      width: 118.9rem;
+      height: 154rem;
+      border-radius: 4.2rem;
+    }
+    .uc-abros-diagslider .swiper-slide .title {
+      font-size: 5.8rem;
+      width: 117.9rem;
+    }
+  }
+  @media (max-width: 480px) {
+    .uc-abros-diagslider .swiper-slide .title {
+      font-size: 7.8rem;
+    }
+  }
 </style>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -57,7 +73,7 @@
         title: "Для коммерческих пространств",
       },
     ];
-    // Ниже данные не менять
+
     const block = document.querySelector(".uc-abros-diagslider");
     const slider = block.querySelector(".swiper-container");
     const wrapper = document.createElement("div");
@@ -66,6 +82,7 @@
     const prevBtn = block.querySelector(".prev .tn-atom");
     const nextBtn = block.querySelector(".next .tn-atom");
     const pagination = block.querySelector(".pagination");
+    const paginationDots = block.querySelector(".swiper-pagination");
     const cur = block.querySelector(".cur .tn-atom");
     const last = block.querySelector(".last .tn-atom");
     const lineSVG = pagination.querySelector(".pagination-path");
@@ -73,19 +90,21 @@
     const script = document.querySelector(
       'script[src="https://cdn.abros.dev/copyright.js"]'
     );
+
     cards.forEach((card) => {
       const slide = document.createElement("div");
       slide.classList.add("swiper-slide");
       slide.innerHTML = `
-          <a href="${card.link}">
-            <h3 class="title">${card.title}</h3>
-            <div class="content">
-              <img class="img" src="${card.img}">
-            </div>
-          </a>
-        `;
+        <a href="${card.link}">
+          <h3 class="title">${card.title}</h3>
+          <div class="content">
+            <img class="img" src="${card.img}">
+          </div>
+        </a>
+      `;
       wrapper.appendChild(slide);
     });
+
     if (script) {
       const abrosSwiper = new Swiper(slider, {
         slidesPerView: 1,
@@ -94,6 +113,10 @@
         navigation: {
           nextEl: nextBtn,
           prevEl: prevBtn,
+        },
+        pagination: {
+          el: paginationDots,
+          clickable: true,
         },
         on: {
           init: (swiper) => {
@@ -179,10 +202,27 @@
           },
           768: {
             slidesPerView: 1,
+            pagination: {
+              el: paginationDots,
+              clickable: true,
+            },
             creativeEffect: {
               limitProgress: 2,
               next: {
-                translate: ["104.6rem", "-18rem", 0],
+                translate: ["144.6rem", "-18rem", 0],
+              },
+            },
+          },
+          320: {
+            slidesPerView: 1,
+            pagination: {
+              el: paginationDots,
+              clickable: true,
+            },
+            creativeEffect: {
+              limitProgress: 2,
+              next: {
+                translate: ["150rem", "-18rem", 0],
               },
             },
           },

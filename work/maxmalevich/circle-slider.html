@@ -55,6 +55,33 @@
     display: flex;
     justify-content: center;
   }
+  @media (max-width: 960px) {
+    .uc-abros-crclslider .swiper-container .swiper-slide {
+      height: 92rem;
+    }
+  }
+  @media (max-width: 640px) {
+    .uc-abros-crclslider .swiper-container .swiper-slide {
+      height: 152rem;
+      border-radius: 4.2rem;
+    }
+    .uc-abros-crclslider .swiper-container .swiper-slide .num {
+      font-size: 6.6rem;
+      padding: 0.6rem 4.2rem;
+      border-radius: 7rem;
+      font-weight: 400;
+    }
+    .uc-abros-crclslider .swiper-slide .title {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: x-large;
+    }
+    .uc-abros-crclslider .swiper-container-thumbs {
+      display: none;
+    }
+  }
 </style>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -97,6 +124,7 @@
     html.style.position = "absolute";
     const slider = block.querySelector(".swiper-container");
     const thumbs = block.querySelector(".swiper-container-thumbs");
+    const paginationDots = block.querySelector(".swiper-pagination");
     const wrapper = document.createElement("div");
     wrapper.classList.add("swiper-wrapper");
     slider.appendChild(wrapper);
@@ -116,6 +144,7 @@
       slide.innerHTML = `
       <span class="num">${(index + 1).toString().padStart(2, "0")}</span>
         <img class="img" src="${card.img}">
+        <h3 class="title">${card.title}</h3>
       `;
       wrapper.appendChild(slide);
       const slideThumb = document.createElement("div");
@@ -134,8 +163,8 @@
         effect: "creative",
         allowTouchMove: false,
         creativeEffect: {
-          limitProgress: 3,
-          progressMultiplier: 4,
+          limitProgress: 5,
+          progressMultiplier: 3,
           prev: {
             origin: "left center",
             translate: ["-27%", 7, 0],
@@ -146,13 +175,30 @@
           },
         },
         breakpoints: {
-          1201: {},
+          1920: {
+            creativeEffect: {
+              limitProgress: 5,
+              progressMultiplier: 3,
+            },
+          },
+          1536: {
+            creativeEffect: {
+              limitProgress: 5,
+              progressMultiplier: 3,
+            },
+          },
+          1200: {
+            creativeEffect: {
+              limitProgress: 5,
+              progressMultiplier: 3,
+            },
+          },
           768: {
-            slidesPerView: 3,
+            slidesPerView: 1,
             initialSlide: 3,
             loopAdditionalSlides: 2,
             creativeEffect: {
-              limitProgress: 2,
+              limitProgress: 1,
               progressMultiplier: 3,
               prev: {
                 origin: "left center",
@@ -189,7 +235,8 @@
           slideShadows: true,
         },
         pagination: {
-          el: ".pag",
+          el: paginationDots,
+          clickable: true,
         },
         breakpoints: {
           1200: {
@@ -210,10 +257,20 @@
             allowTouchMove: false,
             initialSlide: 0,
           },
+          960: {
+            slidesPerView: 3, // Количество видимых слайдов на разрешении 960 и выше
+            spaceBetween: 0,
+            allowTouchMove: false,
+            initialSlide: 0,
+          },
           767: {
             initialSlide: 0,
-            allowTouchMove: false,
-            slidesPerView: "auto",
+            allowTouchMove: true,
+            slidesPerView: 1,
+            pagination: {
+              el: paginationDots,
+              clickable: true,
+            },
             coverflowEffect: {
               rotate: 60,
               stretch: 40,

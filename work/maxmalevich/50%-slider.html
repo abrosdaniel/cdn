@@ -31,6 +31,18 @@
       {
         img: "https://static.tildacdn.com/tild3338-3334-4533-b861-626632376365/6ltvcljv5cqhl4g9j0px.jpg",
       },
+      {
+        img: "https://static.tildacdn.com/tild3937-6339-4930-a339-616631316264/Rectangle_726.png",
+      },
+      {
+        img: "https://static.tildacdn.com/tild6530-3961-4231-b462-616136366134/Rectangle_706.jpg",
+      },
+      {
+        img: "https://static.tildacdn.com/tild6334-3439-4161-b839-333164393964/image_19374.jpg",
+      },
+      {
+        img: "https://static.tildacdn.com/tild3338-3334-4533-b861-626632376365/6ltvcljv5cqhl4g9j0px.jpg",
+      },
     ];
     // Ниже данные не менять
     block.setAttribute("data-abrosmod", "50slider");
@@ -44,6 +56,7 @@
     const prevBtn = block.querySelector(".prev .tn-atom");
     const nextBtn = block.querySelector(".next .tn-atom");
     const pagination = block.querySelector(".pagination");
+    const paginationDots = block.querySelector(".swiper-pagination");
     const cur = block.querySelector(".cur .tn-atom");
     const last = block.querySelector(".last .tn-atom");
     const lineSVG = pagination.querySelector(".pagination-path");
@@ -54,9 +67,7 @@
     cards.forEach((card) => {
       const slide = document.createElement("div");
       slide.classList.add("swiper-slide");
-      slide.innerHTML = `
-                    <img class="img" src="${card.img}">
-              `;
+      slide.innerHTML = `<img class="img" src="${card.img}">`;
       wrapper.appendChild(slide);
     });
     if (script) {
@@ -64,46 +75,35 @@
         slidesPerView: 1,
         slidesPerGroup: 1,
         effect: "creative",
-
         creativeEffect: {
           limitProgress: 2,
           perspective: true,
-
           next: {
             translate: ["20.1rem", 0, -1],
             scale: 0.85,
             shadow: true,
           },
-
           prev: {
             translate: ["-100%", 0, 0],
           },
         },
-
+        pagination: {
+          el: paginationDots,
+          clickable: true,
+        },
         breakpoints: {
-          768: {
-            creativeEffect: {
-              next: {
-                translate: ["63.7rem", 0, -1],
-              },
-            },
-          },
-
           1200: {
             creativeEffect: {
               limitProgress: 5,
-
               next: {
                 translate: ["21.25rem", 0, -1],
               },
-
               prev: {
                 translate: ["-100%", 0, 0],
               },
             },
           },
         },
-
         on: {
           init: (swiper) => {
             cur.textContent = `0${swiper.activeIndex + 1}`;
@@ -124,7 +124,6 @@
             }
           },
         },
-
         navigation: {
           nextEl: nextBtn,
           prevEl: prevBtn,
