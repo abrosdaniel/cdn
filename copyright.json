@@ -25,7 +25,23 @@
       }
     },
     "cavins.es": {
-      "description": "Cavins - ресторан испанский",
+      "description": "Cavins - ресторан (испанский)",
+      "copyright": {
+        "type": "none",
+        "time": 5,
+        "script": "none"
+      }
+    },
+    "eng.cavins.es": {
+      "description": "Cavins - ресторан (английский)",
+      "copyright": {
+        "type": "none",
+        "time": 5,
+        "script": "none"
+      }
+    },
+    "de.cavins.es": {
+      "description": "Cavins - ресторан (немецкий)",
       "copyright": {
         "type": "none",
         "time": 5,
