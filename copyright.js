@@ -26,20 +26,24 @@ if (!window.abros) {
     const data = await fetchData();
     if (!data) return;
 
-    const { translations, sites } = data;
+    const { console, sites } = data;
     const userLang = (navigator.language || navigator.userLanguage).split(
       "-"
     )[0];
-    console.log(
-      `%c${translations[userLang] || translations.en}`,
-      "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
-    );
 
     const hostname = window.location.hostname;
     const site = sites.find((site) => site.domain.includes(hostname));
     const params = site
       ? site.copyright
       : { type: "footer", time: 10, script: "none" };
+
+    console.groupCollapsed(
+      `%cDevelopment by ABROS`,
+      "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
+    );
+    console.log(`${console.title[userLang] || console.title.en}`);
+    console.log(`Site: ${console.site}`);
+    console.groupEnd();
 
     window.abros.translations = translations;
     window.abros.userLang = userLang;
