@@ -36,11 +36,10 @@ if (!window.abros) {
     );
 
     const hostname = window.location.hostname;
-    const params = sites[hostname]?.copyright || {
-      type: "footer",
-      time: 10,
-      script: "none",
-    };
+    const site = sites.find((site) => site.domain.includes(hostname));
+    const params = site
+      ? site.copyright
+      : { type: "footer", time: 10, script: "none" };
 
     window.abros.translations = translations;
     window.abros.userLang = userLang;

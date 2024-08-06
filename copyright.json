@@ -7,136 +7,72 @@
     "de": "Die Website oder Materialien auf der Website wurden vom Entwickler Daniel Abros entwickelt | https://abros.dev",
     "pl": "Strona lub materiały na stronie są opracowane przez dewelopera Daniel Abros | https://abros.dev"
   },
-  "sites": {
-    "tvoy-hit.ru": {
-      "description": "Твой Хит - магазин песен",
+  "sites": [
+    {
+      "name": "Твой Хит - магазин песен",
+      "domain": ["tvoy-hit.ru"],
       "copyright": {
         "type": "none",
         "time": 2,
         "script": "none"
       }
     },
-    "verticality.agency": {
-      "description": "Verticality - стрим агенство TikTok",
+    {
+      "name": "Verticality - стрим агенство TikTok",
+      "domain": ["verticality.agency"],
       "copyright": {
         "type": "none",
         "time": 5,
         "script": "none"
       }
     },
-    "cavins.es": {
-      "description": "Cavins - ресторан (испанский)",
+    {
+      "name": "MaxMalevich - мебель на заказ",
+      "domain": ["maxmalevich.com"],
       "copyright": {
         "type": "none",
         "time": 5,
         "script": "none"
       }
     },
-    "eng.cavins.es": {
-      "description": "Cavins - ресторан (английский)",
+    {
+      "name": "Cavins - ресторан (испанский)",
+      "domain": ["cavins.es", "eng.cavins.es", "de.cavins.es"],
       "copyright": {
         "type": "none",
         "time": 5,
         "script": "none"
       }
     },
-    "de.cavins.es": {
-      "description": "Cavins - ресторан (немецкий)",
+    {
+      "name": "F Pobeda",
+      "domain": ["contract-fpobeda.ru"],
       "copyright": {
         "type": "none",
         "time": 5,
         "script": "none"
       }
     },
-    "contract-fpobeda.ru": {
-      "description": "F Pobeda",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "macfreeverify.com": {
-      "description": "Macfree",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "signatureprodesign.com": {
-      "description": "Signature Pro - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "signaturepro.design": {
-      "description": "Signature Pro - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "signatureprocourse.com": {
-      "description": "Signature Pro Course - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "writetightc.tilda.ws": {
-      "description": "Write Tightc - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "writetight.tilda.ws": {
-      "description": "Write Tight Tilda - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "writetightcourse.ru": {
-      "description": "Write Tight Course - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "woman.writetight.ru": {
-      "description": "Write Tight Woman - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "onetwosign.ru": {
-      "description": "One Two Sign - разработка росписей",
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    "triggerstudio.ru": {
-      "description": "Trigger Studio - разработка росписей",
+    {
+      "name": "Signature Pro / Write Tightc / One Two Sign / Trigger Studio - разработка росписей",
+      "domain": [
+        "signatureprodesign.com",
+        "signaturepro.design",
+        "signatureprocourse.com",
+        "writetightc.tilda.ws",
+        "writetight.tilda.ws",
+        "writetightcourse.ru",
+        "woman.writetight.ru",
+        "onetwosign.ru",
+        "triggerstudio.ru"
+      ],
       "copyright": {
         "type": "none",
         "time": 5,
         "script": "none"
       }
     }
-  },
+  ],
   "webhook": {
     "status": "on",
     "settings": {
