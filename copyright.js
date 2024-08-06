@@ -26,7 +26,7 @@ if (!window.abros) {
     const data = await fetchData();
     if (!data) return;
 
-    const { console, sites } = data;
+    const { info, sites } = data;
     const userLang = (navigator.language || navigator.userLanguage).split(
       "-"
     )[0];
@@ -41,11 +41,11 @@ if (!window.abros) {
       `%cDevelopment by ABROS`,
       "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
     );
-    console.log(`${console.title[userLang] || console.title.en}`);
-    console.log(`Site: ${console.site}`);
+    console.log(`${info.title[userLang] || info.title.en}`);
+    console.log(`Site: ${info.site}`);
     console.groupEnd();
 
-    window.abros.translations = translations;
+    window.abros.info = info;
     window.abros.userLang = userLang;
 
     if (params.script !== "none") abros.loadScript(params.script);
@@ -56,7 +56,7 @@ if (!window.abros) {
   };
 
   window.abros = {
-    translations: null,
+    info: null,
     userLang: null,
     domain: "https://abros.dev",
 
@@ -75,7 +75,7 @@ if (!window.abros) {
     },
 
     addFooter(time) {
-      const { translations, userLang, domain } = this;
+      const { info, userLang, domain } = this;
 
       const container = document.createElement("div");
       container.style.cssText =
@@ -96,7 +96,7 @@ if (!window.abros) {
       const description = document.createElement("p");
       description.style.cssText =
         "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
-      description.textContent = translations[userLang] || translations.en;
+      description.textContent = info.title[userLang] || info.title.en;
 
       link.appendChild(title);
       link.appendChild(description);
@@ -119,13 +119,13 @@ if (!window.abros) {
     },
 
     addPush(time) {
-      const { translations, userLang, domain } = this;
+      const { info, userLang, domain } = this;
 
       const script = document.createElement("script");
       script.src = "https://cdn.abros.dev/noti/noti.js";
       document.head.appendChild(script);
 
-      const text = translations[userLang] || translations.en;
+      const text = info.title[userLang] || info.title.en;
       let noti = false;
       setInterval(() => {
         if (!noti) {
@@ -139,7 +139,7 @@ if (!window.abros) {
     },
 
     addBanner(time) {
-      const { translations, userLang, domain } = this;
+      const { info, userLang, domain } = this;
 
       const container = document.createElement("div");
       container.style.cssText =
@@ -173,7 +173,7 @@ if (!window.abros) {
       const description = document.createElement("p");
       description.style.cssText =
         "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
-      description.textContent = translations[userLang] || translations.en;
+      description.textContent = info.title[userLang] || info.title.en;
 
       link.appendChild(title);
       link.appendChild(description);
