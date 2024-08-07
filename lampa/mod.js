@@ -180,7 +180,7 @@
     /* Abros */
     Lampa.SettingsApi.addComponent({
       component: "abros",
-      name: "Abros",
+      name: "Pirate Store",
       icon: icon_abros,
     });
 
