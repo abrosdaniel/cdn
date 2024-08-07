@@ -12,6 +12,16 @@
 
   window.abros = true;
 
+  console.groupCollapsed(
+    `%c👨🏻‍💻 Development by ABROS`,
+    "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
+  );
+  console.log(
+    "✨ Сторонний магазин плагинов Pirate Store разработан Daniel Abros"
+  );
+  console.log(`💻 Site: https://abros.dev`);
+  console.groupEnd();
+
   /* Домен-регулятор */
   const domain = "https://cdn.abros.dev/lampa";
 
@@ -36,9 +46,9 @@
   Lampa.Storage.set("needRebootSettingExit", false);
 
   /* Подключение скриптов и стилей для визуала */
-  loadScript(`${domain}/main/js/slick.min.js`);
-  loadCSS(`${domain}/main/css/slick.css`);
-  loadCSS(`${domain}/main/css/slick-theme.css`);
+  loadScript(`${domain}/main/slick/slick.min.js`);
+  loadCSS(`${domain}/main/slick/slick.css`);
+  loadCSS(`${domain}/main/slick/slick-theme.css`);
   function loadScript(src) {
     document.head.appendChild(
       Object.assign(document.createElement("script"), { src })
@@ -52,7 +62,7 @@
 
   /* Загрузка данных */
   function loadData() {
-    fetch(`${domain}/store/storelist.json`)
+    fetch(`${domain}/storelist.json`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
