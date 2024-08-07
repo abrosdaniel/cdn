@@ -38,11 +38,11 @@ if (!window.abros) {
       : { type: "footer", time: 10, script: "none" };
 
     console.groupCollapsed(
-      `%cDevelopment by ABROS`,
+      `%c👨🏻‍💻 Development by ABROS`,
       "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
     );
-    console.log(`${info.title[userLang] || info.title.en}`);
-    console.log(`Site: ${info.site}`);
+    console.log(`✨ ${info.title[userLang] || info.title.en}`);
+    console.log(`💻 Site: ${info.site}`);
     console.groupEnd();
 
     window.abros.info = info;
