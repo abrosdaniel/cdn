@@ -523,7 +523,7 @@
         $(".settings__title").text(Lampa.Lang.translate("title_settings"));
       }
       if (e.name == "skull") {
-        $(".settings__title").text("Skull Store");
+        $(".settings__title").text("💀 Skull Store");
         $("#newsbody").slick({
           infinite: true,
           slidesToShow: 1,
@@ -570,7 +570,7 @@
             if (regex.test(descr)) {
               $(e)
                 .find(".extensions__item-author")
-                .html("🏴‍☠️")
+                .html("💀")
                 .append(
                   '<span class="extensions__item-premium">Development by @abrosxd</span>'
                 );
