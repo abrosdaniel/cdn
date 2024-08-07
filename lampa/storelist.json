@@ -1,7 +1,7 @@
 {
   "plugins": [
     {
-      "component": "abros_online",
+      "component": "skull_online",
       "param": {
         "name": "Showy"
       },
@@ -14,7 +14,7 @@
       }
     },
     {
-      "component": "abros_online",
+      "component": "skull_online",
       "param": {
         "name": "Stream"
       },
@@ -27,7 +27,7 @@
       }
     },
     {
-      "component": "abros_online",
+      "component": "skull_online",
       "param": {
         "name": "Online_mod"
       },
@@ -40,7 +40,7 @@
       }
     },
     {
-      "component": "abros_online",
+      "component": "skull_online",
       "param": {
         "name": "MODSs"
       },
@@ -53,7 +53,7 @@
       }
     },
     {
-      "component": "abros_online",
+      "component": "skull_online",
       "param": {
         "name": "BwaJS"
       },
@@ -66,7 +66,7 @@
       }
     },
     {
-      "component": "abros_online",
+      "component": "skull_online",
       "param": {
         "name": "BwaJS18"
       },
@@ -79,7 +79,7 @@
       }
     },
     {
-      "component": "abros_tv",
+      "component": "skull_tv",
       "param": {
         "name": "TVskaz2"
       },
@@ -92,7 +92,7 @@
       }
     },
     {
-      "component": "abros_tv",
+      "component": "skull_tv",
       "param": {
         "name": "TVskaz"
       },
@@ -105,7 +105,7 @@
       }
     },
     {
-      "component": "abros_tv",
+      "component": "skull_tv",
       "param": {
         "name": "Kulik"
       },
@@ -118,7 +118,7 @@
       }
     },
     {
-      "component": "abros_torpars",
+      "component": "skull_torpars",
       "param": {
         "name": "AddParser"
       },
@@ -131,7 +131,7 @@
       }
     },
     {
-      "component": "abros_torpars",
+      "component": "skull_torpars",
       "param": {
         "name": "PublicParser"
       },
@@ -144,7 +144,7 @@
       }
     },
     {
-      "component": "abros_control",
+      "component": "skull_control",
       "param": {
         "name": "TypControl"
       },
@@ -157,7 +157,7 @@
       }
     },
     {
-      "component": "abros_interface",
+      "component": "skull_interface",
       "param": {
         "name": "AddCategory"
       },
@@ -170,7 +170,7 @@
       }
     },
     {
-      "component": "abros_interface",
+      "component": "skull_interface",
       "param": {
         "name": "OldStyle"
       },
@@ -183,7 +183,7 @@
       }
     },
     {
-      "component": "abros_control",
+      "component": "skull_control",
       "param": {
         "name": "ResetSubtitle"
       },
@@ -196,7 +196,7 @@
       }
     },
     {
-      "component": "abros_control",
+      "component": "skull_control",
       "param": {
         "name": "OffTouch"
       },
@@ -209,7 +209,7 @@
       }
     },
     {
-      "component": "abros_interface",
+      "component": "skull_interface",
       "param": {
         "name": "Comments"
       },
@@ -222,7 +222,7 @@
       }
     },
     {
-      "component": "abros_torpars",
+      "component": "skull_torpars",
       "param": {
         "name": "PreloadTS"
       },
@@ -235,7 +235,7 @@
       }
     },
     {
-      "component": "abros_interface",
+      "component": "skull_interface",
       "param": {
         "name": "Tricks"
       },
@@ -248,7 +248,7 @@
       }
     },
     {
-      "component": "abros_control",
+      "component": "skull_control",
       "param": {
         "name": "OffWebsocket"
       },
@@ -261,7 +261,7 @@
       }
     },
     {
-      "component": "abros_control",
+      "component": "skull_control",
       "param": {
         "name": "NewVersion"
       },
@@ -274,7 +274,7 @@
       }
     },
     {
-      "component": "abros_control",
+      "component": "skull_control",
       "param": {
         "name": "HotKeys"
       },
@@ -287,7 +287,7 @@
       }
     },
     {
-      "component": "abros_control",
+      "component": "skull_control",
       "param": {
         "name": "Redirect"
       },
