@@ -1,0 +1,264 @@
+ru: |
+  <h2>Плеер с плейлистом для сайта</h2>
+  <img src="/public/projects/Tilda/Player/assets/logo_mini.svg">
+  <h3>Сайт известного композитора. Обратились ко мне с задачей создать для сайта плеер.</h3>
+  <h3>Плеер был реализован библиотекой, поэтому данную модификацию можно использовать в других проектах.</h3>
+  <img src="/public/projects/Tilda/Player/assets/site.gif">
+  <h3>Инструкция</h3>
+  <h4>Создание плейлиста</h4>  
+  <p>1. В товарах создать товар в котором:</p>
+  <ul>
+    <li>Заголовок: Название трека</li>
+    <li>Изображение: Обложка трека</li>
+    <li>Разделы каталога: можно поместить в раздел, если у вас есть еще и другие товары или разные плейлисты</li>
+    <li>В характеристиках добавить новую характеристику (Название: music, Значение: прямая ссылка на трек)</li>
+    <li>В ссылку на страницу с товаром добавить ссылку для перехода по кнопке (Ниже поймете для каких)</li>
+  </ul>
+  <p>2. Добавить все треки по инструкции 1.</p>
+  <h4>Создание плеера</h4>
+  <p>1. Добавить каталог ST310N</p>
+  <p>2. Подключить раздел товаров с вашей музыкой</p> 
+  <p>3. Настроить стиль каталога, обязательно должно быть:</p>
+  <ul>
+    <li>Карточки -> Показывать второе изображение при наведении - отключено</li>
+    <li>Карточки -> Показывать пагинацию (вместо кнопки «Загрузить еще») - включено</li>
+    <li>Карточки -> Два товара в ряд на мобильных устройствах - включено</li>
+    <li>Карточки -> Количество видимых товаров до кнопки «Загрузить ещё» - любое, оптимально 12</li>
+    <li>Секция «Смотрите также» -> Блок 'Смотрите также' - не выводить</li>
+    <li>Стиль галереи -> Соотношение сторон - 1:1 квадрат</li>
+    <li>Фильтры & Разделы -> Спрятать фильтры - включено</li>
+    <li>Фильтры & Разделы -> Спрятать список разделов каталога - включено</li>
+    <li>Фильтры & Разделы -> Сортировка товаров по умолчанию - порядок по умолчанию</li>
+  </ul>
+
+  <p>4. Под блоком каталога создать зероблок, в настройках задать ему класс какой захотите (Например uc-player)</p>
+  <p>5. В этом зероблоке создаёте плеер, обязательно должно быть:</p>
+  <ul>
+    <li>Высота контейнера 70px на всех экранах</li>
+    <li>HTML блок на всю длинну страницы это прогресс бар трека
+    Туда вставить код:</li>
+  </ul>
+  <pre>
+    <code>
+      <input type="range" name="progress" class="music-range progress" min="0" max="100" value="0">
+    </code>
+  </pre>
+  <ul>
+    <li>HTML блок это прогресс бар звука
+    Туда вставить код:</li>
+  </ul>
+  <pre>
+    <code>
+      <input type="range" name="volume" class="music-range volume" min="0" max="100" value="100">
+    </code>
+  </pre>
+  <ul>
+    <li>Две кнопки/картинки с классами player-btn-buy и player-text они будут перенаправлять на страницу играющего трека, если такой функционал не требуется, то просто их спрячте за пределами видимости</li>
+    <li>Картинка с классом player-play это будет кнопка Play|Pause</li>
+    <li>Картинка с классом player-next это будет кнопка следующей песни</li>
+    <li>Картинка с классом player-prev это будет кнопка предыдущей песни</li>
+    <li>Картинка с классом player-volume это будет кнопка включения/выключения звука</li>
+    <li>Текст с текстом "Ничего не исполняется" с классом player-title это будет название играющей песни</li>
+    <li>Шейп с классом player-cover это будет картинка играющей песни</li>
+  </ul>
+  <p>6. Все остальное можно настраивать по своему вкусу</p> 
+  <p>7. Под блоком плеера добавить T123</p> 
+  <p>8. Перейти в группу телеграм в тему "Аудиоплеер Tilda" и в закрепленном сообщении скопировать код. Код вставить в T123 и настроить все переменные для плеера</p>
+  <p>Если у вас нет подписки на группу, то её можно оформить кликнув по иконке телеграм ниже</p>
+  <p>Если вы не знаете где найти ID Storepart, то под каталогом создайте T123, вставте код ниже, опубликуйте и зайдите на сайт, вы увидите свой ID Storepart. После чего код можно удалить</p>
+  <pre>
+    <code>
+      <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var scripts = document.querySelectorAll('script');
+        var alertShown = false;
+        scripts.forEach(function(script) {
+          if (alertShown) return;
+          var scriptText = script.textContent || script.innerText;
+          if (scriptText.includes('storepart')) {
+            var match = scriptText.match(/storepart: ['\"]([^'\"]+)['\"]/);
+            if (match && match[1]) {
+              var storepartValue = match[1];
+              alert('Ваш storepart: "' + storepartValue + '"');
+              alertShown = true;
+            }
+          }
+        });
+      });
+      </script>
+    </code>
+  </pre>
+en: |
+  <h2>Player with Playlist for the Website</h2>
+  <img src="/public/projects/Tilda/Player/assets/logo_mini.svg">
+  <h3>A website for a famous composer approached me to create a player for their site.</h3>
+  <h3>The player was implemented using a library, making this modification usable in other projects.</h3>
+  <img src="/public/projects/Tilda/Player/assets/site.gif">
+  <h3>Instructions</h3>
+  <h4>Creating the Playlist</h4>
+  <p>1. In the products section, create a product with the following details:</p>
+  <ul>
+    <li>Title: Track Name</li>
+    <li>Image: Track Cover</li>
+    <li>Catalog Sections: You can place it in a section if you have other products or different playlists</li>
+    <li>In the specifications, add a new characteristic (Name: music, Value: direct link to the track)</li>
+    <li>Add a link to the product page in the link for the button (you'll understand which buttons below)</li>
+  </ul>
+  <p>2. Add all tracks following instruction 1.</p>
+  <h4>Creating the Player</h4>
+  <p>1. Add catalog ST310N</p>
+  <p>2. Connect the product section with your music</p>
+  <p>3. Configure the catalog style, ensuring the following settings:</p>
+  <ul>
+    <li>Cards -> Show second image on hover - disabled</li>
+    <li>Cards -> Show pagination (instead of the "Load more" button) - enabled</li>
+    <li>Cards -> Two items per row on mobile devices - enabled</li>
+    <li>Cards -> Number of visible items before "Load more" button - any, optimally 12</li>
+    <li>"You might also like" section -> Do not display the "You might also like" block</li>
+    <li>Gallery style -> Aspect ratio - 1:1 square</li>
+    <li>Filters & Sections -> Hide filters - enabled</li>
+    <li>Filters & Sections -> Hide catalog section list - enabled</li>
+    <li>Filters & Sections -> Default product sorting - default order</li>
+  </ul>
+  <p>4. Under the catalog block, create a zero block and assign it any class you want (e.g., uc-player)</p>
+  <p>5. In this zero block, create the player with the following requirements:</p>
+  <ul>
+    <li>Container height 70px on all screens</li>
+    <li>HTML block spanning the entire page length for the track progress bar, with the following code:</li>
+  </ul>
+  <pre>
+    <code>
+      <input type="range" name="progress" class="music-range progress" min="0" max="100" value="0">
+    </code>
+  </pre>
+  <ul>
+    <li>HTML block for the volume progress bar with the following code:</li>
+  </ul>
+  <pre>
+    <code>
+      <input type="range" name="volume" class="music-range volume" min="0" max="100" value="100">
+    </code>
+  </pre>
+  <ul>
+    <li>Two buttons/images with classes player-btn-buy and player-text that will redirect to the playing track's page. If this functionality is not needed, hide them out of view.</li>
+    <li>An image with class player-play that will be the Play|Pause button</li>
+    <li>An image with class player-next that will be the next track button</li>
+    <li>An image with class player-prev that will be the previous track button</li>
+    <li>An image with class player-volume that will be the mute/unmute button</li>
+    <li>Text with "Nothing is playing" and class player-title that will be the track title</li>
+    <li>A shape with class player-cover that will be the playing track's cover image</li>
+  </ul>
+  <p>6. Customize everything else to your liking</p>
+  <p>7. Add T123 under the player block</p>
+  <p>8. Go to the Telegram group on the topic "Tilda Audio Player" and copy the code from the pinned message. Paste the code into T123 and configure all the variables for the player</p>
+  <p>If you don't have a subscription to the group, you can subscribe by clicking the Telegram icon below.</p>
+  <p>If you don't know where to find the Storepart ID, create T123 under the catalog, insert the code below, publish it, and visit the site to see your Storepart ID. You can then delete the code.</p>
+  <pre>
+    <code>
+      <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var scripts = document.querySelectorAll('script');
+        var alertShown = false;
+        scripts.forEach(function(script) {
+          if (alertShown) return;
+          var scriptText = script.textContent || script.innerText;
+          if (scriptText.includes('storepart')) {
+            var match = scriptText.match(/storepart: ['\"]([^'\"]+)['\"]/);
+            if (match && match[1]) {
+              var storepartValue = match[1];
+              alert('Your storepart: "' + storepartValue + '"');
+              alertShown = true;
+            }
+          }
+        });
+      });
+      </script>
+    </code>
+  </pre>
+pl: |
+  <h2>Odtwarzacz z Playlistą na Stronę Internetową</h2>
+  <img src="/public/projects/Tilda/Player/assets/logo_mini.svg">
+  <h3>Strona znanego kompozytora zwróciła się do mnie z prośbą o stworzenie odtwarzacza na ich stronę.</h3>
+  <h3>Odtwarzacz został zaimplementowany za pomocą biblioteki, co umożliwia wykorzystanie tej modyfikacji w innych projektach.</h3>
+  <img src="/public/projects/Tilda/Player/assets/site.gif">
+  <h3>Instrukcja</h3>
+  <h4>Tworzenie Playlisty</h4>
+  <p>1. W sekcji produktów utwórz produkt z następującymi danymi:</p>
+  <ul>
+    <li>Tytuł: Nazwa utworu</li>
+    <li>Obraz: Okładka utworu</li>
+    <li>Sekcje katalogu: Możesz umieścić go w sekcji, jeśli masz inne produkty lub różne playlisty</li>
+    <li>W specyfikacjach dodaj nową cechę (Nazwa: music, Wartość: bezpośredni link do utworu)</li>
+    <li>Dodaj link do strony produktu w linku dla przycisku (zrozumiesz, do których przycisków poniżej)</li>
+  </ul>
+  <p>2. Dodaj wszystkie utwory zgodnie z instrukcją 1.</p>
+  <h4>Tworzenie Odtwarzacza</h4>
+  <p>1. Dodaj katalog ST310N</p>
+  <p>2. Połącz sekcję produktów z Twoją muzyką</p> 
+  <p>3. Skonfiguruj styl katalogu, upewniając się, że ustawienia są następujące:</p>
+  <ul>
+    <li>Karty -> Pokaż drugie zdjęcie przy najechaniu - wyłączone</li>
+    <li>Karty -> Pokaż paginację (zamiast przycisku "Załaduj więcej") - włączone</li>
+    <li>Karty -> Dwa produkty w rzędzie na urządzeniach mobilnych - włączone</li>
+    <li>Karty -> Liczba widocznych produktów przed przyciskiem "Załaduj więcej" - dowolna, optymalnie 12</li>
+    <li>Sekcja "Możesz także polubić" -> Nie wyświetlaj bloku "Możesz także polubić"</li>
+    <li>Styl galerii -> Proporcje - kwadrat 1:1</li>
+    <li>Filtry i Sekcje -> Ukryj filtry - włączone</li>
+    <li>Filtry i Sekcje -> Ukryj listę sekcji katalogu - włączone</li>
+    <li>Filtry i Sekcje -> Domyślne sortowanie produktów - domyślny porządek</li>
+  </ul>
+  <p>4. Pod blokiem katalogu stwórz zeroblok i nadaj mu dowolną klasę (np. uc-player)</p>
+  <p>5. W tym zerobloku stwórz odtwarzacz z następującymi wymaganiami:</p>
+  <ul>
+    <li>Wysokość kontenera 70px na wszystkich ekranach</li>
+    <li>Blok HTML na całą długość strony jako pasek postępu utworu, z poniższym kodem:</li>
+  </ul>
+  <pre>
+    <code>
+      <input type="range" name="progress" class="music-range progress" min="0" max="100" value="0">
+    </code>
+  </pre>
+  <ul>
+    <li>Blok HTML jako pasek postępu głośności z poniższym kodem:</li>
+  </ul>
+  <pre>
+    <code>
+      <input type="range" name="volume" class="music-range volume" min="0" max="100" value="100">
+    </code>
+  </pre>
+  <ul>
+    <li>Dwa przyciski/obrazki z klasami player-btn-buy i player-text będą przekierowywać na stronę grającego utworu. Jeśli ta funkcjonalność nie jest potrzebna, ukryj je poza widocznością.</li>
+    <li>Obrazek z klasą player-play będzie przyciskiem Play|Pause</li>
+    <li>Obrazek z klasą player-next będzie przyciskiem następnego utworu</li>
+    <li>Obrazek z klasą player-prev będzie przyciskiem poprzedniego utworu</li>
+    <li>Obrazek z klasą player-volume będzie przyciskiem włączania/wyłączania dźwięku</li>
+    <li>Tekst "Nic nie jest odtwarzane" z klasą player-title będzie nazwą grającego utworu</li>
+    <li>Kształt z klasą player-cover będzie obrazkiem grającego utworu</li>
+  </ul>
+  <p>6. Resztę można dostosować według własnych upodobań</p> 
+  <p>7. Pod blokiem odtwarzacza dodaj T123</p> 
+  <p>8. Przejdź do grupy Telegram w temacie "Odtwarzacz audio Tilda" i skopiuj kod z przypiętej wiadomości. Wklej kod do T123 i skonfiguruj wszystkie zmienne dla odtwarzacza</p>
+  <p>Jeśli nie masz subskrypcji na grupę, możesz ją wykupić, klikając ikonę Telegram poniżej.</p>
+  <p>Jeśli nie wiesz, gdzie znaleźć ID Storepart, utwórz T123 pod katalogiem, wstaw poniższy kod, opublikuj go i wejdź na stronę, aby zobaczyć swój ID Storepart. Następnie możesz usunąć ten kod.</p>
+  <pre>
+    <code>
+      <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var scripts = document.querySelectorAll('script');
+        var alertShown = false;
+        scripts.forEach(function(script) {
+          if (alertShown) return;
+          var scriptText = script.textContent || script.innerText;
+          if (scriptText includes('storepart')) {
+            var match = scriptText.match(/storepart: ['\"]([^'\"]+)['\"]/);
+            if (match && match[1]) {
+              var storepartValue = match[1];
+              alert('Twój storepart: "' + storepartValue + '"');
+              alertShown = true;
+            }
+          }
+        });
+      });
+      </script>
+    </code>
+  </pre>

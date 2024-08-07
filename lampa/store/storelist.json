@@ -319,23 +319,5 @@
       "colortext": "#000",
       "bg": "background: linear-gradient(to right, rgba(254, 244, 222, 1) 1%, rgba(237, 207, 171, 1) 100%);"
     }
-  ],
-  "reklama": [
-    {
-      "image": "https://image.tmdb.org/t/p/w200//3aLghRkuJc9cs770fxo4a6YWht3.jpg",
-      "text": " ",
-      "colortext": "#fff"
-    },
-    {
-      "image": "https://image.tmdb.org/t/p/w200//3aLghRkuJc9cs770fxo4a6YWht3.jpg",
-      "text": " ",
-      "colortext": "#fff"
-    }
-  ],
-  "vip": [
-    {
-      "email": "danyaabros@gmail.com",
-      "subscribe": "25.05.2025"
-    }
   ]
 }
