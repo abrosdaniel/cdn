@@ -30,6 +30,15 @@
       }
     },
     {
+      "name": "ИПНИН - институт практической нейропсихологии и нейрореабилитации",
+      "domain": ["ipnin.com"],
+      "copyright": {
+        "type": "none",
+        "time": 5,
+        "script": "none"
+      }
+    },
+    {
       "name": "Cavins - ресторан (испанский)",
       "domain": ["cavins.es", "eng.cavins.es", "de.cavins.es"],
       "copyright": {

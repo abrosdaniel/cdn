@@ -23,13 +23,13 @@
       }
       loadSCA();
     })();
-    const hardToSeeButton = document.querySelector('a[href="#hardtosee"]');
-    if (hardToSeeButton) {
-      hardToSeeButton.addEventListener("click", function (event) {
+    const hardToSeeButtons = document.querySelectorAll('a[href="#hardtosee"]');
+    hardToSeeButtons.forEach(function (button) {
+      button.addEventListener("click", function (event) {
         event.preventDefault();
         localStorage.setItem("HardToSee", hardToSee ? "false" : "true");
         window.location.reload();
       });
-    }
+    });
   });
 </script>
