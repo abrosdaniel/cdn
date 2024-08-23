@@ -33,7 +33,7 @@
       "name": "EDEN - ресторан",
       "domain": ["eden-menu.tilda.ws"],
       "copyright": {
-        "type": "none",
+        "type": "banner",
         "time": 5,
         "script": "none"
       }
