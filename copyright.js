@@ -79,7 +79,7 @@ if (!window.abros) {
 
       const container = document.createElement("div");
       container.style.cssText =
-        "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;";
+        "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: relative;z-index: 99999999999999999;";
 
       const link = document.createElement("a");
       link.href = domain;
