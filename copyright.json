@@ -12,77 +12,13 @@
   },
   "sites": [
     {
-      "name": "Твой Хит - магазин песен",
-      "domain": ["tvoy-hit.ru"],
+      "name": "Название",
+      "domain": ["site.com"],
       "copyright": {
-        "type": "none",
-        "time": 2,
-        "script": "none"
-      }
-    },
-    {
-      "name": "MaxMalevich - мебель на заказ",
-      "domain": ["maxmalevich.com", "maxmalevich.ru", "kuhni-premium.moscow"],
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    {
-      "name": "EDEN - ресторан",
-      "domain": ["eden-menu.tilda.ws"],
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    {
-      "name": "ИПНИН - институт практической нейропсихологии и нейрореабилитации",
-      "domain": ["ipnin.com"],
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    {
-      "name": "Cavins - ресторан (испанский)",
-      "domain": ["cavins.es", "eng.cavins.es", "de.cavins.es"],
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    {
-      "name": "F Pobeda",
-      "domain": ["contract-fpobeda.ru"],
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
-    },
-    {
-      "name": "Signature Pro / Write Tightc / One Two Sign / Trigger Studio - разработка росписей",
-      "domain": [
-        "signatureprodesign.com",
-        "signaturepro.design",
-        "signatureprocourse.com",
-        "writetightc.tilda.ws",
-        "writetight.tilda.ws",
-        "writetightcourse.ru",
-        "woman.writetight.ru",
-        "onetwosign.ru",
-        "triggerstudio.ru"
-      ],
-      "copyright": {
-        "type": "none",
-        "time": 5,
-        "script": "none"
-      }
+        "type": "footer/banner/push",
+        "time": 2
+      },
+      "script": "https://site.com/script/js"
     }
   ],
   "webhook": {

@@ -33,9 +33,9 @@ if (!window.abros) {
 
     const hostname = window.location.hostname;
     const site = sites.find((site) => site.domain.includes(hostname));
-    const params = site
-      ? site.copyright
-      : { type: "footer", time: 10, script: "none" };
+    if (!site) return;
+    const params = site.copyright;
+    const script = site.script;
 
     console.groupCollapsed(
       `%c👨🏻‍💻 Development by ABROS`,
@@ -48,8 +48,7 @@ if (!window.abros) {
     window.abros.info = info;
     window.abros.userLang = userLang;
 
-    if (params.script !== "none") abros.loadScript(params.script);
-
+    if (script !== "none") abros.loadScript(script);
     if (params.type !== "none") abros.initCopyright(params);
 
     abros.initCanvas();

@@ -1,9 +1,37 @@
 <style>
-  .t-store__prod-popup__price-wrapper {
+  .t-store
+    .t-popup
+    .t-popup__container
+    .t-store__product-popup
+    .t-typography__title,
+  .t-store
+    .t-popup
+    .t-popup__container
+    .t-store__product-popup
+    .js-store-prod-all-text {
+    text-align: center;
+  }
+  .t-store
+    .t-popup
+    .t-popup__container
+    .t-store__product-popup
+    .js-store-prod-all-text {
+    margin: auto 50px;
+  }
+  .t-store
+    .t-popup
+    .t-popup__container
+    .t-store__product-popup
+    .t-store__prod-popup__price-wrapper {
     display: none;
   }
-  .t-store .t-popup .t-store__product-popup .t-typography__title {
-    text-align: center;
+  .t-store
+    .t-popup
+    .t-popup__container
+    .t-store__product-popup
+    .js-store-prod-name.js-product-name.t-store__prod-popup__name.t-typography__title.t-name.t-name_xl {
+    font-size: xx-large;
+    text-transform: uppercase;
   }
 </style>
 <script>
@@ -31,8 +59,8 @@
         if (product) {
           const text = category.textContent || category.innerText;
           const title = document.createElement("div");
-          title.classList.add("t-title");
-          title.classList.add("t-title_md");
+          title.classList.add("t-name");
+          title.classList.add("t-name_xl");
           title.classList.add("t-store__prod-popup__title-wrapper");
           const t = document.createElement("div");
           t.classList.add("t-typography__title");
