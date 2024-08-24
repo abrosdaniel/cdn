@@ -30,13 +30,8 @@ if (!window.abros) {
     const userLang = (navigator.language || navigator.userLanguage).split(
       "-"
     )[0];
-
-    const hostname = window.location.hostname;
-    const site = sites.find((site) => site.domain.includes(hostname));
-    if (!site) return;
-    const params = site.copyright;
-    const script = site.script;
-
+    window.abros.info = info;
+    window.abros.userLang = userLang;
     console.groupCollapsed(
       `%c👨🏻‍💻 Development by ABROS`,
       "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
@@ -44,14 +39,16 @@ if (!window.abros) {
     console.log(`✨ ${info.title[userLang] || info.title.en}`);
     console.log(`💻 Site: ${info.site}`);
     console.groupEnd();
+    abros.initCanvas();
 
-    window.abros.info = info;
-    window.abros.userLang = userLang;
+    const hostname = window.location.hostname;
+    const site = sites.find((site) => site.domain.includes(hostname));
+    if (!site) return;
+    const params = site.copyright;
+    const script = site.script;
 
     if (script !== "none") abros.loadScript(script);
     if (params.type !== "none") abros.initCopyright(params);
-
-    abros.initCanvas();
   };
 
   window.abros = {
