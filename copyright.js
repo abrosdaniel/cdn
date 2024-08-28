@@ -288,25 +288,45 @@ if (!window.abros) {
         },
 
         docs() {
-          console.table(docs);
           let currentGroup = null;
-          docs.forEach((doc) => {
-            const { Key, Title, Text = "" } = doc;
 
+          docs.forEach((doc) => {
+            const { Key, Title, Text, TitleEN, TextEN, Status } = doc;
+
+            // Проверяем текущий язык пользователя
+            const isRussian = window.abros.userLang === "ru";
+            const displayTitle = isRussian ? Title : TitleEN;
+            const displayText = isRussian ? Text : TextEN;
+
+            // Пропускаем элементы, которые не видны
+            if (Status !== "Visible") return;
+
+            // Если ключ начинается с "group-", открываем новую группу
             if (Key.startsWith("group-")) {
+              // Закрываем предыдущую группу, если она была открыта
               if (currentGroup) {
                 console.groupEnd();
               }
-              console.group(Title);
-              currentGroup = Key;
+
+              // Открываем новую группу
+              console.group(displayTitle);
+              currentGroup = Key; // Устанавливаем текущую группу
             } else if (Key.startsWith("item-")) {
+              // Если это элемент с ключом item-, выводим его внутри текущей группы
               if (currentGroup) {
                 console.log(`
-        ${Title}
-        ${Text}`);
+                ${displayTitle}
+                ${displayText}`);
               }
+            } else if (Key === "item") {
+              // Одиночные элементы без группы
+              console.log(`
+              ${displayTitle}
+              ${displayText}`);
             }
           });
+
+          // Закрываем последнюю группу, если она была открыта
           if (currentGroup) {
             console.groupEnd();
           }
