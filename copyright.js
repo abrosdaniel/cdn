@@ -288,6 +288,7 @@ if (!window.abros) {
         },
 
         docs() {
+          console.table(docs);
           let currentGroup = null;
           docs.forEach((doc) => {
             const { Key, Title, Text = "" } = doc;
