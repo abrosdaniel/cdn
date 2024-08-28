@@ -287,8 +287,8 @@ if (!window.abros) {
         },
 
         docs() {
-          console.table(docs);
           const sortedDocs = docs.sort((a, b) => a.Num - b.Num);
+          console.table(sortedDocs);
           let currentGroup = null;
 
           sortedDocs.forEach((doc) => {
