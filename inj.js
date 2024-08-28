@@ -10,37 +10,7 @@
  */
 
 if (!window.abros) {
-  window.abros = {};
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("https://cdn.abros.dev/copyright.json");
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  };
-
   const init = async () => {
-    const data = await fetchData();
-    if (!data) return;
-
-    const { info, sites } = data;
-    const userLang = (navigator.language || navigator.userLanguage).split(
-      "-"
-    )[0];
-    window.abros.info = info;
-    window.abros.userLang = userLang;
-    console.groupCollapsed(
-      `%c👨🏻‍💻 Development by ABROS`,
-      "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
-    );
-    console.log(`✨ ${info.title[userLang] || info.title.en}`);
-    console.log(`💻 Site: ${info.site}`);
-    console.groupEnd();
-    abros.initCanvas();
-
     const hostname = window.location.hostname;
     const site = sites.find((site) => site.domain.includes(hostname));
     if (!site) return;

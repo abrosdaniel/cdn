@@ -41,6 +41,10 @@ if (!window.abros) {
         fetchData(localesData),
         fetchData(blacklistData),
       ]);
+      const hostname = window.location.hostname;
+      const site = blacklist.find((site) => site.Hostname.includes(hostname));
+      if (!site) return;
+
       window.abros = {
         settings: settings,
         locales: locales,
