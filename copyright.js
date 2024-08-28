@@ -44,6 +44,7 @@ if (!window.abros) {
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
       if (!site) return;
+      console.log("Хост", site);
 
       window.abros = {
         settings: settings,
