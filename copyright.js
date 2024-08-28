@@ -43,6 +43,7 @@ if (!window.abros) {
       ]);
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
+      console.log(`✨ ${site}`);
       // if (!site) return;
       const copyright = site.Copyright;
       const script = site.Script;
