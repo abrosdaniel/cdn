@@ -43,8 +43,6 @@ if (!window.abros) {
       ]);
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
-      const copyright = site.Copyright;
-      const script = site.Script;
       const lang =
         locales.find((locale) => locale.Key === userLang) ||
         locales.find((locale) => locale.Key === "en");
@@ -134,19 +132,22 @@ if (!window.abros) {
           }, 1000);
         },
       };
-
       abros.initConsole();
-      if (script) abros.initScript(script);
-      switch (copyright) {
-        case "Footer":
-          abros.initFooter();
-          break;
-        case "Notification":
-          abros.initNotification();
-          break;
-        case "Banner":
-          abros.initBanner();
-          break;
+      if (site) {
+        const copyright = site.Copyright;
+        const script = site.Script;
+        if (script) abros.initScript(script);
+        switch (copyright) {
+          case "Footer":
+            abros.initFooter();
+            break;
+          case "Notification":
+            abros.initNotification();
+            break;
+          case "Banner":
+            abros.initBanner();
+            break;
+        }
       }
     } catch (error) {
       console.error("Ошибка при загрузке данных:", error);
