@@ -46,17 +46,13 @@ if (!window.abros) {
       if (!site) return;
       const copyright = site.Copyright;
       const script = site.Script;
+      const lang =
+        locales.find((locale) => locale.Key === userLang) ||
+        locales.find((locale) => locale.Key === "en");
+      const text = lang.Text;
 
       window.abros = {
-        settings: settings,
-        locales: locales,
-        blacklist: blacklist,
-
         initConsole() {
-          const lang =
-            locales.find((locale) => locale.Key === userLang) ||
-            locales.find((locale) => locale.Key === "en");
-          const text = lang.Text;
           console.groupCollapsed(
             `%c👨🏻‍💻 Development by ABROS`,
             "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
@@ -73,11 +69,36 @@ if (!window.abros) {
           script.src = src;
           document.head.appendChild(script);
         },
+
+        initNotification() {
+          this.initScript("https://cdn.abros.dev/noti/noti.js");
+          let notification = false;
+          setInterval(() => {
+            if (!notification) {
+              abrosnoti.create("dark", "tip", `${text}`, 0, true, () => {
+                window.open(domain, "_blank");
+                notification = false;
+              });
+              notification = true;
+            }
+          }, 1000);
+        },
       };
       console.log("Данные загружены и сохранены в window.abros", window.abros);
 
       abros.initConsole();
       if (script) abros.initScript(script);
+      switch (copyright) {
+        case "Footer":
+          abros.initFooter();
+          break;
+        case "Notification":
+          abros.initNotification();
+          break;
+        case "Banner":
+          abros.initBanner();
+          break;
+      }
     } catch (error) {
       console.error("Ошибка при загрузке данных:", error);
     }
