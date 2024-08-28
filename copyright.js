@@ -77,7 +77,7 @@ if (!window.abros) {
       console.log("Данные загружены и сохранены в window.abros", window.abros);
 
       abros.initConsole();
-      if (script !== null) abros.initScript(script);
+      if (script) abros.initScript(script);
     } catch (error) {
       console.error("Ошибка при загрузке данных:", error);
     }
