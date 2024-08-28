@@ -14,7 +14,6 @@ if (!window.abros) {
   window.abros = {};
 
   const userLang = navigator.language.split("-")[0];
-  window.abros.userLang = userLang;
 
   const a =
     "patZs0xLRQaVH0yJo.6b37088cccb3ce09e6abf49e350c39d5011e0e8f7cb478fa33d47eaa6667e8be";
@@ -295,7 +294,7 @@ if (!window.abros) {
           sortedDocs.forEach((doc) => {
             const { Key, Title, Text, TitleEN, TextEN, Status } = doc;
 
-            const isRussian = window.abros.userLang === "ru";
+            const isRussian = navigator.language.split("-")[0] === "ru";
             const displayTitle = isRussian ? Title : TitleEN;
             const displayText = isRussian ? Text : TextEN;
 
