@@ -5,7 +5,6 @@
  * Сайт → https://abros.dev
  * Telegram → https://t.me/abrosxd
  * Копирайт разработчика
- * Подробная документация по команде: abros.docs
  * <script src="https://cdn.abros.dev/copyright.js"></script>
  * <script type="module" src ="https://cdn.abros.dev/copyright.js"></script>
  */
@@ -36,12 +35,10 @@ if (!window.abros) {
       const settingsData = "Settings";
       const localesData = "Locales";
       const blacklistData = "Blacklist";
-      const docsData = "Documentation";
       const [settings, locales, blacklist, docs] = await Promise.all([
         fetchData(settingsData),
         fetchData(localesData),
         fetchData(blacklistData),
-        fetchData(docsData),
       ]);
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
@@ -284,36 +281,6 @@ if (!window.abros) {
           document.addEventListener("keydown", (event) =>
             this.handleKeyDown(event)
           );
-        },
-
-        docs() {
-          const sortedDocs = docs.sort((a, b) => a.Num - b.Num);
-          console.table(sortedDocs);
-          let currentGroup = null;
-
-          sortedDocs.forEach((doc) => {
-            const { Key, Title, Text, TitleEN, TextEN, Status } = doc;
-            const displayTitle = userLang === "ru" ? Title : TitleEN;
-            const displayText = userLang === "ru" ? Text : TextEN;
-            if (Status !== "Visible") return;
-
-            if (Key.startsWith("group-")) {
-              if (currentGroup) {
-                console.groupEnd();
-              }
-              console.group(displayTitle);
-              currentGroup = Key;
-            } else if (Key.startsWith("item-")) {
-              if (currentGroup) {
-                console.log(`${displayTitle}\n${displayText}`);
-              }
-            } else if (Key === "item") {
-              console.log(`${displayTitle}\n${displayText}`);
-            }
-          });
-          if (currentGroup) {
-            console.groupEnd();
-          }
         },
       };
       abros.initConsole(message);
