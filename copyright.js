@@ -296,7 +296,7 @@ if (!window.abros) {
               if (currentGroup) {
                 console.groupEnd();
               }
-              console.groupCollapsed(Title);
+              console.group(Title);
               currentGroup = Key;
             } else if (Key.startsWith("item-")) {
               if (currentGroup) {
