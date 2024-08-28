@@ -308,14 +308,10 @@ if (!window.abros) {
               currentGroup = Key;
             } else if (Key.startsWith("item-")) {
               if (currentGroup) {
-                console.log(`
-                ${displayTitle}
-                ${displayText}`);
+                console.log(`${displayTitle}/n${displayText}`);
               }
             } else if (Key === "item") {
-              console.log(`
-              ${displayTitle}
-              ${displayText}`);
+              console.log(`${displayTitle}/n${displayText}`);
             }
           });
           if (currentGroup) {
