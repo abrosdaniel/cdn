@@ -10,28 +10,30 @@
  */
 
 if (!window.abros) {
-  window.abros = {};
+  const userLang = (navigator.language || navigator.userLanguage).split("-")[0];
+  window.abros.userLang = userLang;
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("https://cdn.abros.dev/copyright.json");
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+  const a =
+    "patZs0xLRQaVH0yJo.6b37088cccb3ce09e6abf49e350c39d5011e0e8f7cb478fa33d47eaa6667e8be";
+  const b = "appyM5LkcacbXYVGh";
+
+  const fetchData = async (o) => {
+    const r = `https://api.airtable.com/v0/${b}/${o}`;
+    const s = await fetch(r, {
+      headers: {
+        Authorization: `Bearer ${a}`,
+      },
+    });
+
+    const data = await s.json();
+    return data.records;
   };
 
-  const init = async () => {
-    const data = await fetchData();
+  const copyright = async () => {
+    const table = "Locales";
+    const data = await fetchData(table);
     if (!data) return;
-
-    const { info, sites } = data;
-    const userLang = (navigator.language || navigator.userLanguage).split(
-      "-"
-    )[0];
-    window.abros.info = info;
-    window.abros.userLang = userLang;
+    window.abros.locales = data;
     console.groupCollapsed(
       `%c👨🏻‍💻 Development by ABROS`,
       "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
@@ -40,6 +42,12 @@ if (!window.abros) {
     console.log(`💻 Site: ${info.site}`);
     console.groupEnd();
     abros.initCanvas();
+  };
+
+  const init = async () => {
+    const { info, sites } = data;
+
+    window.abros.info = info;
 
     const hostname = window.location.hostname;
     const site = sites.find((site) => site.domain.includes(hostname));
@@ -292,5 +300,6 @@ if (!window.abros) {
     },
   };
 
-  init();
+  // init();
+  copyright();
 }
