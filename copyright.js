@@ -13,7 +13,7 @@
 if (!window.abros) {
   window.abros = {};
 
-  const userLang = (navigator.language || navigator.userLanguage).split("-")[0];
+  const userLang = navigator.language.split("-")[0];
   window.abros.userLang = userLang;
 
   const a =
