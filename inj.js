@@ -10,100 +10,7 @@
  */
 
 if (!window.abros) {
-  const init = async () => {
-    const hostname = window.location.hostname;
-    const site = sites.find((site) => site.domain.includes(hostname));
-    if (!site) return;
-    const params = site.copyright;
-    const script = site.script;
-
-    if (script !== "none") abros.loadScript(script);
-    if (params.type !== "none") abros.initCopyright(params);
-  };
-
   window.abros = {
-    info: null,
-    userLang: null,
-    domain: "https://abros.dev",
-
-    initCopyright(params) {
-      switch (params.type) {
-        case "footer":
-          this.addFooter(params.time);
-          break;
-        case "push":
-          this.addPush(params.time);
-          break;
-        case "banner":
-          this.addBanner(params.time);
-          break;
-      }
-    },
-
-    addFooter(time) {
-      const { info, userLang, domain } = this;
-
-      const container = document.createElement("div");
-      container.style.cssText =
-        "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: relative;z-index: 99999999999999999;";
-
-      const link = document.createElement("a");
-      link.href = domain;
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.style.cssText =
-        "display:flex;flex-wrap:wrap;justify-content:center;width:350px;text-decoration:none;color:white;";
-
-      const title = document.createElement("p");
-      title.style.cssText =
-        "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small; transition: background-color 1s, color 2s;";
-      title.textContent = "ABROS";
-
-      const description = document.createElement("p");
-      description.style.cssText =
-        "padding: 0 5px;border-radius: 2px;margin:0;font-size:xx-small;text-align:center;";
-      description.textContent = info.title[userLang] || info.title.en;
-
-      link.appendChild(title);
-      link.appendChild(description);
-      container.appendChild(link);
-
-      document.head.insertAdjacentHTML(
-        "beforeend",
-        `<style>
-            @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-          </style>`
-      );
-
-      setInterval(() => {
-        title.style.backgroundColor = `${this.getRandomColor()}80`;
-      }, 5000);
-
-      setTimeout(() => {
-        document.documentElement.appendChild(container);
-      }, time * 1000);
-    },
-
-    addPush(time) {
-      const { info, userLang, domain } = this;
-
-      const script = document.createElement("script");
-      script.src = "https://cdn.abros.dev/noti/noti.js";
-      document.head.appendChild(script);
-
-      const text = info.title[userLang] || info.title.en;
-      let noti = false;
-      setInterval(() => {
-        if (!noti) {
-          abrosnoti.create("dark", "tip", `${text}`, 0, true, () => {
-            window.open(domain, "_blank");
-            noti = false;
-          });
-          noti = true;
-        }
-      }, time * 1000);
-    },
-
     addBanner(time) {
       const { info, userLang, domain } = this;
 
@@ -247,18 +154,6 @@ if (!window.abros) {
       document.addEventListener("keydown", (event) =>
         this.handleKeyDown(event)
       );
-    },
-
-    loadScript(src) {
-      const script = document.createElement("script");
-      script.src = src;
-      document.head.appendChild(script);
-    },
-
-    getRandomColor() {
-      return `#${Math.floor(Math.random() * 0xffffff)
-        .toString(16)
-        .padEnd(6, "0")}`;
     },
   };
 
