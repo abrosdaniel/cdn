@@ -41,11 +41,29 @@ if (!window.abros) {
         fetchData(localesData),
         fetchData(blacklistData),
       ]);
-      window.abros.settings = settings || [];
-      window.abros.locales = locales || [];
-      window.abros.blacklist = blacklist || [];
+      window.abros = {
+        settings: settings,
+        locales: locales,
+        blacklist: blacklist,
 
+        initConsole() {
+          const lang =
+            locales.find((locale) => locale.Key === userLang) ||
+            locales.find((locale) => locale.Key === "en");
+          const text = lang;
+          console.groupCollapsed(
+            `%c👨🏻‍💻 Development by ABROS`,
+            "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
+          );
+          console.log(`✨ ${text}`);
+          console.log(
+            `💻 Site: ${settings.find((s) => s.Param === "url").Key}`
+          );
+          console.groupEnd();
+        },
+      };
       console.log("Данные загружены и сохранены в window.abros", window.abros);
+      abros.initConsole();
     } catch (error) {
       console.error("Ошибка при загрузке данных:", error);
     }
