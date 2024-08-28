@@ -50,7 +50,7 @@ if (!window.abros) {
           const lang =
             locales.find((locale) => locale.Key === userLang) ||
             locales.find((locale) => locale.Key === "en");
-          const text = lang;
+          const text = lang.Text;
           console.groupCollapsed(
             `%c👨🏻‍💻 Development by ABROS`,
             "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
