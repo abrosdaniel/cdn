@@ -1,10 +1,11 @@
 /*!
- * Copyright.js v1.0.9
+ * Copyright.js v2.0.6
  * (c) 2023-2024
  * by Daniel Abros
  * Сайт → https://abros.dev
  * Telegram → https://t.me/abrosxd
- * Копирайт использования на сайтах
+ * Копирайт разработчика
+ * Подробная документация по команде: abros.docs
  * <script src="https://cdn.abros.dev/copyright.js"></script>
  * <script type="module" src ="https://cdn.abros.dev/copyright.js"></script>
  */
@@ -36,10 +37,12 @@ if (!window.abros) {
       const settingsData = "Settings";
       const localesData = "Locales";
       const blacklistData = "Blacklist";
-      const [settings, locales, blacklist] = await Promise.all([
+      const docsData = "Documentation";
+      const [settings, locales, blacklist, docs] = await Promise.all([
         fetchData(settingsData),
         fetchData(localesData),
         fetchData(blacklistData),
+        fetchData(docsData),
       ]);
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
@@ -52,7 +55,7 @@ if (!window.abros) {
       const message = site ? site.Message : null;
 
       window.abros = {
-        initConsole(message = null) {
+        initConsole(message) {
           console.groupCollapsed(
             `%c👨🏻‍💻 Development by ABROS`,
             "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
@@ -72,9 +75,11 @@ if (!window.abros) {
         },
 
         initScript(src) {
-          const script = document.createElement("script");
-          script.src = src;
-          document.head.appendChild(script);
+          if (src) {
+            const script = document.createElement("script");
+            script.src = src;
+            document.head.appendChild(script);
+          }
         },
 
         initFooter() {
@@ -280,6 +285,19 @@ if (!window.abros) {
           document.addEventListener("keydown", (event) =>
             this.handleKeyDown(event)
           );
+        },
+
+        docs() {
+          console.groupCollapsed(
+            `%c🗃️ `,
+            "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
+          );
+          console.log(`✨ ${text}`);
+          console.log(
+            `💻 Site: ${settings.find((s) => s.Param === "url").Key}`
+          );
+          if (message) console.log(`${message}`);
+          console.groupEnd();
         },
       };
       abros.initConsole(message);
