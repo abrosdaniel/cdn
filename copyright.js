@@ -44,7 +44,8 @@ if (!window.abros) {
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
       if (!site) return;
-      console.log("Хост", site);
+      const copyright = site.Copyright;
+      const script = site.Script;
 
       window.abros = {
         settings: settings,
@@ -66,9 +67,17 @@ if (!window.abros) {
           );
           console.groupEnd();
         },
+
+        initScript(src) {
+          const script = document.createElement("script");
+          script.src = src;
+          document.head.appendChild(script);
+        },
       };
       console.log("Данные загружены и сохранены в window.abros", window.abros);
+
       abros.initConsole();
+      if (script !== null) abros.initScript(script);
     } catch (error) {
       console.error("Ошибка при загрузке данных:", error);
     }
