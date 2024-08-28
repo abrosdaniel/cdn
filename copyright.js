@@ -44,6 +44,7 @@ if (!window.abros) {
         fetchData(blacklistData),
         fetchData(docsData),
       ]);
+      console.log(`✨ ${docs}`);
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
       const lang =
