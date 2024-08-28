@@ -28,7 +28,7 @@ if (!window.abros) {
     });
 
     const data = await s.json();
-    return data.records;
+    return data.records.map((record) => record.fields);
   };
 
   const init = async () => {
