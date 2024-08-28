@@ -292,24 +292,16 @@ if (!window.abros) {
           docs.forEach((doc) => {
             const { Key, Title, Text = "" } = doc;
             if (Key.startsWith("group-")) {
-              if (currentGroup) {
-                console.groupEnd();
-              }
+              if (currentGroup) console.groupEnd();
               console.group(Title);
               currentGroup = Key;
-            } else if (Key.startsWith("item-")) {
+            } else {
               console.log(`
-        ${Title}
-        ${Text}`);
-            } else if (Key === "item") {
-              console.log(`
-        ${Title}
-        ${Text}`);
+${Title}
+${Text}`);
             }
           });
-          if (currentGroup) {
-            console.groupEnd();
-          }
+          if (currentGroup) console.groupEnd();
         },
       };
       abros.initConsole(message);
