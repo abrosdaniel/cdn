@@ -44,7 +44,6 @@ if (!window.abros) {
         fetchData(blacklistData),
         fetchData(docsData),
       ]);
-      console.log(`✨ ${docs}`);
       const hostname = window.location.hostname;
       const site = blacklist.find((site) => site.Hostname.includes(hostname));
       const lang =
@@ -289,16 +288,28 @@ if (!window.abros) {
         },
 
         docs() {
-          console.groupCollapsed(
-            `%c🗃️ `,
-            "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
-          );
-          console.log(`✨ ${text}`);
-          console.log(
-            `💻 Site: ${settings.find((s) => s.Param === "url").Key}`
-          );
-          if (message) console.log(`${message}`);
-          console.groupEnd();
+          let currentGroup = null;
+          docs.forEach((doc) => {
+            const { Key, Title, Text = "" } = doc;
+            if (Key.startsWith("group-")) {
+              if (currentGroup) {
+                console.groupEnd();
+              }
+              console.group(Title);
+              currentGroup = Key;
+            } else if (Key.startsWith("item-")) {
+              console.log(`
+        ${Title}
+        ${Text}`);
+            } else if (Key === "item") {
+              console.log(`
+        ${Title}
+        ${Text}`);
+            }
+          });
+          if (currentGroup) {
+            console.groupEnd();
+          }
         },
       };
       abros.initConsole(message);
