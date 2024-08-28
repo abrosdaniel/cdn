@@ -76,7 +76,10 @@ if (!window.abros) {
           setInterval(() => {
             if (!notification) {
               abrosnoti.create("dark", "tip", `${text}`, 0, true, () => {
-                window.open(domain, "_blank");
+                window.open(
+                  settings.find((s) => s.Param === "url").Key,
+                  "_blank"
+                );
                 notification = false;
               });
               notification = true;
@@ -84,7 +87,6 @@ if (!window.abros) {
           }, 1000);
         },
       };
-      console.log("Данные загружены и сохранены в window.abros", window.abros);
 
       abros.initConsole();
       if (script) abros.initScript(script);
