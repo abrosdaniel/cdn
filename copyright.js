@@ -291,6 +291,7 @@ if (!window.abros) {
           let currentGroup = null;
           docs.forEach((doc) => {
             const { Key, Title, Text = "" } = doc;
+
             if (Key.startsWith("group-")) {
               if (currentGroup) {
                 console.groupEnd();
@@ -298,13 +299,11 @@ if (!window.abros) {
               console.groupCollapsed(Title);
               currentGroup = Key;
             } else if (Key.startsWith("item-")) {
-              console.log(`
+              if (currentGroup) {
+                console.log(`
         ${Title}
         ${Text}`);
-            } else if (Key === "item") {
-              console.log(`
-        ${Title}
-        ${Text}`);
+              }
             }
           });
           if (currentGroup) {
