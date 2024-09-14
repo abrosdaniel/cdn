@@ -15,7 +15,7 @@ if (!window.abros) {
   const userLang = navigator.language.split("-")[0];
 
   const a =
-    "patZs0xLRQaVH0yJo.6b37088cccb3ce09e6abf49e350c39d5011e0e8f7cb478fa33d47eaa6667e8be";
+    "pateokblS4CsG7taE.3ce31722d7f0dba6b8deec493201d25f489d29c93568bd9ea7b49ab5b6a633c6";
   const b = "appyM5LkcacbXYVGh";
 
   const fetchData = async (o) => {
