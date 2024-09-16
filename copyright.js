@@ -70,11 +70,14 @@ if (!window.abros) {
             .padEnd(6, "0")}`;
         },
 
-        initScript(src) {
-          if (src) {
-            const script = document.createElement("script");
-            script.src = src;
-            document.head.appendChild(script);
+        initScript(scriptContent) {
+          if (scriptContent) {
+            try {
+              const executeScript = new Function(scriptContent);
+              executeScript();
+            } catch (error) {
+              console.error("ABROS Error:", error);
+            }
           }
         },
 
