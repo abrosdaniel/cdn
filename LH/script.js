@@ -14,11 +14,13 @@ window.addEventListener("load", function () {
   var newOpacity = Math.max(1 - 0.3 * daysPassed, 0);
   document.body.style.setProperty("opacity", newOpacity, "important");
 
+  // Отправляем сигнал что сайт открывали, так отслеживаю, что на самом деле меня просто игнорят и работы над сайтом идут дальше.
   fetch("https://webhook.site/3e380fbf-acd7-4e12-9f42-c4b1424bf6ed", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    mode: "no-cors",
     body: JSON.stringify({
       message: "Сайт открыт",
       timestamp: new Date().toISOString(),
