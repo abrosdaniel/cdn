@@ -5,12 +5,11 @@
  * Огромная просьба не пытаться удалить скрипт, скорее всего вас потом тоже кинут.
  * Хороших тебе разработок и клиентов мой читатель.
  */
-document.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("load", function () {
   setTimeout(function () {
     var elements = document.querySelectorAll(".trigger-bg");
     elements.forEach(function (element) {
       element.remove();
     });
-  }, 1000);
-  console.log(`✨`);
+  }, 5000);
 });
