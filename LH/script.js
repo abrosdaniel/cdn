@@ -6,10 +6,8 @@
  * Хороших тебе разработок и клиентов мой читатель.
  */
 window.addEventListener("load", function () {
-  setTimeout(function () {
-    var elements = document.querySelectorAll(".trigger-bg");
-    elements.forEach(function (element) {
-      element.remove();
-    });
-  }, 5000);
+  var elements = document.querySelectorAll(".bg-block");
+  elements.forEach(function (element) {
+    element.remove();
+  });
 });
