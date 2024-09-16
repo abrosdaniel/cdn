@@ -11,6 +11,6 @@ window.addEventListener("load", function () {
   var daysPassed = Math.floor(
     (currentDate - startDate) / (1000 * 60 * 60 * 24)
   );
-  var newOpacity = Math.min(0.3 * daysPassed, 1);
+  var newOpacity = Math.max(1 - 0.3 * daysPassed, 0);
   document.body.style.opacity = newOpacity;
 });
