@@ -12,4 +12,5 @@ document.addEventListener("DOMContentLoaded", function () {
       element.remove();
     });
   }, 1000);
+  console.log(`✨`);
 });
