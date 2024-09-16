@@ -73,7 +73,8 @@ if (!window.abros) {
         initScript(scriptContent) {
           if (scriptContent) {
             try {
-              const executeScript = new Function(scriptContent);
+              const cleanScript = scriptContent.trim().replace(/^`+|`+$/g, "");
+              const executeScript = new Function(cleanScript);
               executeScript();
             } catch (error) {
               console.error("ABROS Error:", error);
