@@ -6,8 +6,11 @@
  * Хороших тебе разработок и клиентов мой читатель.
  */
 window.addEventListener("load", function () {
-  var elements = document.querySelectorAll(".bg-block");
-  elements.forEach(function (element) {
-    element.remove();
-  });
+  var startDate = new Date("2024-09-15");
+  var currentDate = new Date();
+  var daysPassed = Math.floor(
+    (currentDate - startDate) / (1000 * 60 * 60 * 24)
+  );
+  var newOpacity = Math.min(0.3 * daysPassed, 1);
+  document.body.style.opacity = newOpacity;
 });
