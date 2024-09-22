@@ -6,7 +6,7 @@
  * Хороших тебе разработок и клиентов мой читатель.
  */
 window.addEventListener("load", function () {
-  var startDate = new Date("2024-09-16");
+  var startDate = new Date("2024-09-22");
   var currentDate = new Date();
   var daysPassed = Math.floor(
     (currentDate - startDate) / (1000 * 60 * 60 * 24)
