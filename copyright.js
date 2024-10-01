@@ -48,7 +48,7 @@ if (!window.abros) {
       const text = lang.Text;
       const copyright = site ? site.Copyright : null;
       const script = site ? site.Script : null;
-      const console = site ? site.Console : null;
+      const cons = site ? site.Console : null;
       const message = site ? site.Message : null;
 
       window.abros = {
@@ -286,7 +286,7 @@ if (!window.abros) {
       };
       abros.initCanvas();
       if (script) abros.initScript(script);
-      if (!console) abros.initConsole(message);
+      if (!cons) abros.initConsole(message);
       switch (copyright) {
         case "Footer":
           abros.initFooter();
