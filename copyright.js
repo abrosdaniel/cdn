@@ -34,20 +34,21 @@ if (!window.abros) {
     try {
       const settingsData = "Settings";
       const localesData = "Locales";
-      const blacklistData = "Blacklist";
-      const [settings, locales, blacklist, docs] = await Promise.all([
+      const projectsData = "Projects";
+      const [settings, locales, projects] = await Promise.all([
         fetchData(settingsData),
         fetchData(localesData),
-        fetchData(blacklistData),
+        fetchData(projectsData),
       ]);
       const hostname = window.location.hostname;
-      const site = blacklist.find((site) => site.Hostname.includes(hostname));
+      const site = projects.find((site) => site.Hostname.includes(hostname));
       const lang =
         locales.find((locale) => locale.Key === userLang) ||
         locales.find((locale) => locale.Key === "en");
       const text = lang.Text;
       const copyright = site ? site.Copyright : null;
       const script = site ? site.Script : null;
+      const console = site ? site.Console : null;
       const message = site ? site.Message : null;
 
       window.abros = {
@@ -283,9 +284,9 @@ if (!window.abros) {
           );
         },
       };
-      abros.initConsole(message);
       abros.initCanvas();
       if (script) abros.initScript(script);
+      if (!console) abros.initConsole(message);
       switch (copyright) {
         case "Footer":
           abros.initFooter();
