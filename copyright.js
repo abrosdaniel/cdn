@@ -286,7 +286,7 @@ if (!window.abros) {
       };
       abros.initCanvas();
       if (script) abros.initScript(script);
-      if (!cons) abros.initConsole(message);
+      if (cons) abros.initConsole(message);
       switch (copyright) {
         case "Footer":
           abros.initFooter();
