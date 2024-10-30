@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Главная страница -->
+  <url>
+    <loc>https://prodvj.ru/</loc>
+    <lastmod>2024-10-04</lastmod>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Проекты -->
+  <url>
+    <loc>https://prodvj.ru/proekty</loc>
+    <lastmod>2024-10-04</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Брендинг -->
+  <url>
+    <loc>https://prodvj.ru/vizualnyy-ryad-i-brending</loc>
+    <lastmod>2024-10-04</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Контакты -->
+  <url>
+    <loc>https://prodvj.ru/contact</loc>
+    <lastmod>2024-10-04</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Полезное -->
+  <url>
+    <loc>https://prodvj.ru/vizualnyy-ryad-i-brending</loc>
+    <lastmod>2024-10-04</lastmod>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Блог (если есть) -->
+  <url>
+    <loc>https://prodvj.ru/vizualnyy-ryad-i-brending</loc>
+    <lastmod>2024-10-04</lastmod>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>
+
+<nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+  <ul>
+    <li><a href="https://example.com/contacts" itemprop="url"><span itemprop="name">Контакты</span></a></li>
+    <li><a href="https://example.com/design" itemprop="url"><span itemprop="name">Дизайн</span></a></li>
+    <li><a href="https://example.com/services" itemprop="url"><span itemprop="name">Услуги</span></a></li>
+    <li><a href="https://example.com/audience-research" itemprop="url"><span itemprop="name">Исследование ЦА</span></a></li>
+  </ul>
+</nav>
