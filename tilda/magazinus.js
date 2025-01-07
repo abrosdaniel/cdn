@@ -91,13 +91,20 @@ window.cdnabros.magazinus = {
     tcart__showBubble(product.name + " " + tcart_dict("youAdd"));
   },
 
-  // Новая функция пересчёта корзины
+  // Функция пересчёта корзины
   recalculateCart() {
     if (window.tcart && Array.isArray(window.tcart.products)) {
       let prodamount = 0;
 
       window.tcart.products.forEach((product) => {
-        prodamount += product.price * product.quantity;
+        const price = parseFloat(product.price);
+        const quantity = parseInt(product.quantity, 10);
+
+        if (!isNaN(price) && !isNaN(quantity)) {
+          prodamount += price * quantity;
+        } else {
+          console.error("Ошибка в данных продукта:", product);
+        }
       });
 
       window.tcart.prodamount = prodamount;
