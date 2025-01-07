@@ -65,7 +65,7 @@ window.cdnabros.magazinus = {
   // Добавление товара
   addProduct(product) {
     if (!window.tcart) {
-      window.tcart = { products: [] };
+      window.tcart = { products: [], prodamount: 0, amount: 0 };
     }
 
     const existingProductIndex = window.tcart.products.findIndex(
@@ -81,12 +81,28 @@ window.cdnabros.magazinus = {
       window.tcart.products.push(product);
     }
 
+    this.recalculateCart();
+
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("tcart", JSON.stringify(window.tcart));
     }
 
-    this.redrawCartIcon();
+    tcart__reDrawCartIcon();
     tcart__showBubble(product.name + " " + tcart_dict("youAdd"));
+  },
+
+  // Новая функция пересчёта корзины
+  recalculateCart() {
+    if (window.tcart && Array.isArray(window.tcart.products)) {
+      let prodamount = 0;
+
+      window.tcart.products.forEach((product) => {
+        prodamount += product.price * product.quantity;
+      });
+
+      window.tcart.prodamount = prodamount;
+      window.tcart.amount = prodamount;
+    }
   },
 
   // Удаление товара
