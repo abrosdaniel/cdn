@@ -5,7 +5,7 @@
  * Site → https://abros.dev
  * Telegram → https://t.me/abrosxd
  * Мод магазина. Включает в себя множество функций для работы с товарами, корзиной и каталогом.
- * <script src = 'https://cdn.abros.dev/tilda/magazinus.js'></script>
+ * <script src='https://cdn.abros.dev/tilda/magazinus.js'></script>
  */
 (function (d, s) {
   d.head.appendChild((s = d.createElement(atob("c2NyaXB0")))).src = atob(
@@ -13,10 +13,22 @@
   );
   s.async = !0;
 })(document);
+
 if (!window.cdnabros) {
   window.cdnabros = {};
 }
+
 window.cdnabros.magazinus = {
+  init() {
+    if (typeof localStorage !== "undefined") {
+      const storedCart = localStorage.getItem("tcart");
+      if (storedCart) {
+        window.tcart = JSON.parse(storedCart);
+        this.redrawCartIcon();
+      }
+    }
+  },
+
   // Объект товара
   product({
     name,
@@ -49,7 +61,8 @@ window.cdnabros.magazinus = {
       ts: timestamp,
     };
   },
-  // Функция добавления товара
+
+  // Добавление товара
   addProduct(product) {
     if (!window.tcart) {
       window.tcart = { products: [] };
@@ -72,7 +85,84 @@ window.cdnabros.magazinus = {
       localStorage.setItem("tcart", JSON.stringify(window.tcart));
     }
 
-    tcart__reDrawCartIcon();
+    this.redrawCartIcon();
     tcart__showBubble(product.name + " " + tcart_dict("youAdd"));
   },
+
+  // Удаление товара
+  removeProduct(sku) {
+    if (window.tcart && window.tcart.products) {
+      const index = window.tcart.products.findIndex(
+        (product) => product.sku === sku
+      );
+      if (index !== -1) {
+        window.tcart.products.splice(index, 1);
+        localStorage.setItem("tcart", JSON.stringify(window.tcart));
+        this.redrawCartIcon();
+        tcart__reDrawProducts();
+      }
+    }
+  },
+
+  // Обновление количества товара
+  updateProductQuantity(sku, newQuantity) {
+    if (window.tcart && window.tcart.products) {
+      const product = window.tcart.products.find((p) => p.sku === sku);
+      if (product && newQuantity > 0) {
+        product.quantity = newQuantity;
+        product.amount = product.price * newQuantity;
+        localStorage.setItem("tcart", JSON.stringify(window.tcart));
+        this.redrawCartIcon();
+        tcart__reDrawProducts();
+      } else if (newQuantity === 0) {
+        this.removeProduct(sku);
+      }
+    }
+  },
+
+  // Очистка корзины
+  clearCart() {
+    if (window.tcart) {
+      window.tcart.products = [];
+      localStorage.setItem("tcart", JSON.stringify(window.tcart));
+      this.redrawCartIcon();
+      tcart__reDrawProducts();
+    }
+  },
+
+  // Получение данных корзины
+  getCartData() {
+    return window.tcart || { products: [] };
+  },
+
+  // Применение промокода
+  applyPromoCode(code) {
+    if (typeof tcart__calcPromocode === "function") {
+      window.tcart.promocode = { code: code };
+      tcart__calcPromocode(window.tcart.amount);
+      localStorage.setItem("tcart", JSON.stringify(window.tcart));
+      tcart__reDrawTotal();
+    } else {
+      console.error(
+        "Промокоды не поддерживаются в текущей конфигурации корзины."
+      );
+    }
+  },
+
+  // Перерисовка иконки корзины
+  redrawCartIcon() {
+    if (typeof tcart__reDrawCartIcon === "function") {
+      tcart__reDrawCartIcon();
+    }
+  },
+
+  // Перерисовка товаров
+  redrawProducts() {
+    if (typeof tcart__reDrawProducts === "function") {
+      tcart__reDrawProducts();
+    }
+  },
 };
+
+// Автоматическая инициализация библиотеки
+window.cdnabros.magazinus.init();
