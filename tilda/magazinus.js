@@ -153,6 +153,27 @@ window.cdnabros.magazinus = {
     }
   },
 
+  // Обновление UI корзины
+  updateCartUI() {
+    const cartAmountElement = document.querySelector(".js-cart-amount");
+    const cartCounterElement = document.querySelector(
+      ".t706__carticon-counter"
+    );
+
+    if (cartAmountElement) {
+      cartAmountElement.textContent = `${window.tcart.amount || 0} р.`;
+    }
+
+    if (cartCounterElement) {
+      const totalQuantity = window.tcart.products.reduce(
+        (sum, product) => sum + (product.quantity || 0),
+        0
+      );
+      cartCounterElement.textContent = totalQuantity;
+      cartCounterElement.style.display = totalQuantity > 0 ? "block" : "none";
+    }
+  },
+
   // Получение данных корзины
   getCartData() {
     return window.tcart || { products: [] };
