@@ -13,6 +13,9 @@
   );
   s.async = !0;
 })(document);
+if (!window.cdnabros) {
+  window.cdnabros = {};
+}
 window.cdnabros.magazinus = {
   // Объект товара
   product({
