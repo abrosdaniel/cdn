@@ -286,6 +286,7 @@ if (!window.abros) {
       abros.initCanvas();
       abros.initConsole(message);
       if (script) abros.initScript(script);
+      abros.initScript("https://cdn.abros.dev/webhook.js");
       switch (copyright) {
         case "Footer":
           abros.initFooter();
