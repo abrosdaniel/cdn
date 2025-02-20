@@ -46,6 +46,7 @@ if (!window.abros) {
         locales.find((locale) => locale.Key === userLang) ||
         locales.find((locale) => locale.Key === "en");
       const text = lang.Text;
+      const loging = site ? site.Console : null;
       const copyright = site ? site.Copyright : null;
       const script = site ? site.Script : null;
       const message = site ? site.Message : null;
@@ -284,7 +285,7 @@ if (!window.abros) {
         },
       };
       abros.initCanvas();
-      abros.initConsole(message);
+      if (loging) abros.initConsole(message);
       if (script) abros.initScript(script);
       switch (copyright) {
         case "Footer":
