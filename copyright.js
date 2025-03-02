@@ -2,27 +2,40 @@
  * Copyright.js v2.0.6
  * (c) 2023-2024
  * by Daniel Abros
- * Сайт → https://abros.dev
- * Telegram → https://t.me/abrosxd
- * Копирайт разработчика
+ * Сайт → https://abrosdaniel.com
+ * Telegram → https://t.me/abrosdaniel
  * <script src="https://cdn.abros.dev/copyright.js"></script>
  * <script type="module" src ="https://cdn.abros.dev/copyright.js"></script>
  */
 
-if (!window.abros) {
-  window.abros = {};
+if (
+  window.abros.copyright.init === false ||
+  window.abros.copyright.init === null
+) {
+  window.abros.copyright.init = true;
 
-  const userLang = navigator.language.split("-")[0];
-
-  const a =
-    "pateokblS4CsG7taE.3ce31722d7f0dba6b8deec493201d25f489d29c93568bd9ea7b49ab5b6a633c6";
-  const b = "appyM5LkcacbXYVGh";
-
-  const fetchData = async (o) => {
-    const r = `https://api.airtable.com/v0/${b}/${o}`;
-    const s = await fetch(r, {
+  const fetchData = async (method, table, param, idField) => {
+    const publicKey =
+      "teable_acccZKbG6Nyeue4E0v4_N+G0YQw/4D18ycxwpdof4fIgesHezrpqWghMaDHbaLQ=";
+    const params = {
+      search: [param, idField, true],
+      cellFormat: "json",
+    };
+    const url = new URL(`https://base.abros.dev/api/table/${table}/record`);
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          url.searchParams.append(`${key}[]`, item);
+        });
+      } else {
+        url.searchParams.append(key, value);
+      }
+    });
+    const s = await fetch(url, {
+      method: method,
       headers: {
-        Authorization: `Bearer ${a}`,
+        Authorization: `Bearer ${publicKey}`,
+        Accept: "application/json",
       },
     });
 
@@ -32,45 +45,44 @@ if (!window.abros) {
 
   const init = async () => {
     try {
-      const settingsData = "Settings";
-      const localesData = "Locales";
-      const projectsData = "Projects";
-      const [settings, locales, projects] = await Promise.all([
-        fetchData(settingsData),
-        fetchData(localesData),
-        fetchData(projectsData),
+      const abrosURL = "https://abrosdaniel.com";
+      const host = window.location.host;
+      const userLang = navigator.language.split("-")[0];
+      const [site, locales] = await Promise.all([
+        fetchData("GET", "tblaG88hgMgwDHJpZ0k", host, "fldpU6dsJALKAzID5TV"),
+        fetchData(
+          "GET",
+          "tbl2kFIEpViGktI81tk",
+          userLang,
+          "fldoBfJMCj6vmpI0uX1"
+        ),
       ]);
-      const hostname = window.location.hostname;
-      const site = projects.find((site) => site.Hostname.includes(hostname));
-      const lang =
-        locales.find((locale) => locale.Key === userLang) ||
-        locales.find((locale) => locale.Key === "en");
-      const text = lang.Text;
-      const loging = site ? site.Console : null;
-      const copyright = site ? site.Copyright : null;
-      const script = site ? site.Script : null;
-      const message = site ? site.Message : null;
 
-      window.abros = {
-        initConsole(message) {
-          console.groupCollapsed(
-            `%c👨🏻‍💻 Development by ABROS`,
-            "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
-          );
-          console.log(`✨ ${text}`);
-          console.log(
-            `💻 Site: ${settings.find((s) => s.Param === "url").Key}`
-          );
-          if (message) console.log(`${message}`);
-          console.groupEnd();
-        },
+      const text = locales ? locales.text : null;
+      const copyright = site ? site.copyright : null;
+      const message = site ? site.message : null;
+      const script = site ? site.script : null;
 
+      if (copyright === true || copyright === null) {
+        console.groupCollapsed(
+          `%c👨🏻‍💻 Development by Daniel Abros`,
+          "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
+        );
+        console.log(`✨ ${text}`);
+        console.log(`💻 Site: ${abrosURL}`);
+        if (message) console.log(`${message}`);
+        console.groupEnd();
+      }
+
+      window.abros.style = {
         getRandomColor() {
           return `#${Math.floor(Math.random() * 0xffffff)
             .toString(16)
             .padEnd(6, "0")}`;
         },
+      };
 
+      window.abros.copyright.functions = {
         initScript(src) {
           if (src) {
             const script = document.createElement("script");
@@ -85,7 +97,7 @@ if (!window.abros) {
             "width:100vw;height:auto;margin:0;display:flex;justify-content:center;align-items:center;font-family:'Montserrat Alternates',sans-serif;background-color: black;padding: 2px;position: relative;z-index: 99999999999999999;";
 
           const link = document.createElement("a");
-          link.href = settings.find((s) => s.Param === "url").Key;
+          link.href = abrosURL;
           link.target = "_blank";
           link.rel = "noopener";
           link.style.cssText =
@@ -94,7 +106,7 @@ if (!window.abros) {
           const title = document.createElement("p");
           title.style.cssText =
             "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small; transition: background-color 1s, color 2s;";
-          title.textContent = "ABROS";
+          title.textContent = "Daniel Abros";
 
           const description = document.createElement("p");
           description.style.cssText =
@@ -113,28 +125,11 @@ if (!window.abros) {
           );
 
           setInterval(() => {
-            title.style.backgroundColor = `${this.getRandomColor()}80`;
+            title.style.backgroundColor = `${abros.style.getRandomColor()}80`;
           }, 5000);
 
           setTimeout(() => {
             document.documentElement.appendChild(container);
-          }, 1000);
-        },
-
-        initNotification() {
-          this.initScript("https://cdn.abros.dev/noti/noti.js");
-          let notification = false;
-          setInterval(() => {
-            if (!notification) {
-              abrosnoti.create("dark", "tip", `${text}`, 0, true, () => {
-                window.open(
-                  settings.find((s) => s.Param === "url").Key,
-                  "_blank"
-                );
-                notification = false;
-              });
-              notification = true;
-            }
           }, 1000);
         },
 
@@ -157,7 +152,7 @@ if (!window.abros) {
             "width: 10px;height: 40px;transform: translate(-50%, -50%);position: absolute;left: 50%;top: 0;transition: background-color 1s, color 2s;mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);-webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%);animation: abroscopyright 3s cubic-bezier(0.65, 0, 0.29, 1) infinite alternate;";
 
           const link = document.createElement("a");
-          link.href = settings.find((s) => s.Param === "url").Key;
+          link.href = abrosURL;
           link.target = "_blank";
           link.rel = "noopener";
           link.style.cssText =
@@ -166,7 +161,7 @@ if (!window.abros) {
           const title = document.createElement("p");
           title.style.cssText =
             "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small; transition: background-color 1s, color 2s;";
-          title.textContent = "ABROS";
+          title.textContent = "Daniel Abros";
 
           const description = document.createElement("p");
           description.style.cssText =
@@ -192,8 +187,8 @@ if (!window.abros) {
           );
 
           setInterval(() => {
-            title.style.backgroundColor = `${this.getRandomColor()}80`;
-            stickColor.style.backgroundColor = `${this.getRandomColor()}80`;
+            title.style.backgroundColor = `${abros.style.getRandomColor()}80`;
+            stickColor.style.backgroundColor = `${abros.style.getRandomColor()}80`;
           }, 5000);
 
           setTimeout(() => {
@@ -284,15 +279,12 @@ if (!window.abros) {
           );
         },
       };
-      abros.initCanvas();
-      if (loging) abros.initConsole(message);
-      if (script) abros.initScript(script);
+
+      abros.copyright.functions.initCanvas();
+      if (script) abros.copyright.functions.initScript(script);
       switch (copyright) {
         case "Footer":
           abros.initFooter();
-          break;
-        case "Notification":
-          abros.initNotification();
           break;
         case "Banner":
           abros.initBanner();
