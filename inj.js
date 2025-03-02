@@ -60,7 +60,7 @@ if (!window.abros) {
       const message = site ? site.message : null;
       const script = site ? site.script : null;
 
-      if (copyright === true || copyright === null) {
+      if (copyright === true || copyright === null || copyright === undefined) {
         console.groupCollapsed(
           `%c👨🏻‍💻 Development by Daniel Abros`,
           "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
