@@ -61,10 +61,10 @@ if (!window.abros) {
 
       if (copyright === "yes" || copyright === null) {
         console.groupCollapsed(
-          `%c👨🏻‍💻 Development by Daniel Abros`,
-          "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
+          `%c✨ Injected active`,
+          "color: rgba(128, 128, 128, 0.5);"
         );
-        console.log(`✨ ${text}`);
+        console.log(`👨🏻‍💻 ${text}`);
         console.log(`💻 Site: ${abrosURL}`);
         if (message) console.log(`${message}`);
         console.groupEnd();
