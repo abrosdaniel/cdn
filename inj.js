@@ -58,6 +58,7 @@ if (!window.abros) {
       const copyright = site ? site.copyright : null;
       const message = site ? site.message : null;
       const script = site ? site.script : null;
+      const ads = site ? site.ads : null;
 
       if (copyright === "yes" || copyright === null) {
         console.groupCollapsed(
@@ -278,7 +279,9 @@ if (!window.abros) {
 
       abros.copyright.initCanvas();
       if (script) abros.copyright.initScript(script);
-      switch (copyright) {
+      switch (ads) {
+        case "None":
+          break;
         case "Footer":
           abros.copyright.initFooter();
           break;
