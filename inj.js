@@ -37,7 +37,7 @@ if (!window.abros) {
     });
 
     const data = await s.json();
-    return data;
+    return data.records.map((record) => record.fields);
   };
 
   const init = async () => {
@@ -45,7 +45,7 @@ if (!window.abros) {
       const abrosURL = "https://abrosdaniel.com";
       const host = window.location.host;
       const userLang = navigator.language.split("-")[0];
-      const [dataSite, dataLocales] = await Promise.all([
+      const [site, locales] = await Promise.all([
         fetchData("GET", "tblaG88hgMgwDHJpZ0k", host, "fldpU6dsJALKAzID5TV"),
         fetchData(
           "GET",
@@ -54,8 +54,6 @@ if (!window.abros) {
           "fldoBfJMCj6vmpI0uX1"
         ),
       ]);
-      const site = dataSite.records.map((record) => record.fields);
-      const locales = dataLocales.records.map((record) => record.fields);
 
       const text = locales ? locales.text : null;
       const copyright = site ? site.copyright : null;
