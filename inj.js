@@ -54,14 +54,12 @@ if (!window.abros) {
           "fldoBfJMCj6vmpI0uX1"
         ),
       ]);
-      console.log(site, locales);
       const text = locales ? locales.text : null;
       const copyright = site ? site.copyright : null;
       const message = site ? site.message : null;
       const script = site ? site.script : null;
-      console.log(text, copyright, message, script);
 
-      if (copyright === "yes" || copyright === undefined) {
+      if (copyright === "yes" || copyright === null) {
         console.groupCollapsed(
           `%c👨🏻‍💻 Development by Daniel Abros`,
           "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
