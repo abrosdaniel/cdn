@@ -54,6 +54,7 @@ if (!window.abros) {
           "fldoBfJMCj6vmpI0uX1"
         ),
       ]);
+      console.log(site, locales);
       const text = locales ? locales.text : null;
       const copyright = site ? site.copyright : null;
       const message = site ? site.message : null;
