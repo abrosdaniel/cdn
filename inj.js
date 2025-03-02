@@ -37,7 +37,7 @@ if (!window.abros) {
     });
 
     const data = await s.json();
-    return data.records.map((record) => record.fields);
+    return data.records.length > 0 ? data.records[0].fields : null;
   };
 
   const init = async () => {
@@ -54,11 +54,7 @@ if (!window.abros) {
           "fldoBfJMCj6vmpI0uX1"
         ),
       ]);
-      console.log("site", site);
-      console.log("locales", locales);
-
       const text = locales ? locales.text : null;
-      console.log("text", text);
       const copyright = site ? site.copyright : null;
       const message = site ? site.message : null;
       const script = site ? site.script : null;
