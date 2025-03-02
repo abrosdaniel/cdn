@@ -8,6 +8,14 @@
  * <script type="module" src ="https://cdn.abros.dev/copyright.js"></script>
  */
 
+if (!window.abros) {
+  window.abros = {};
+}
+
+if (!window.abros.copyright) {
+  window.abros.copyright = {};
+}
+
 if (
   window.abros.copyright.init === false ||
   window.abros.copyright.init === null
