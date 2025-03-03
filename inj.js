@@ -60,12 +60,12 @@ if (!window.abros) {
       const script = site ? site.script : null;
       const ads = site ? site.ads : null;
 
-      if (copyright === "yes" || copyright === null) {
+      if (copyright === "yes") {
         console.groupCollapsed(
-          `%c✨ Injected active`,
-          "color: rgba(128, 128, 128, 0.5);"
+          `%c👨🏻‍💻 Development by Daniel Abros`,
+          "border:1px solid; border-radius: 5px; padding: 4px;"
         );
-        console.log(`👨🏻‍💻 ${text}`);
+        console.log(`✨ ${text}`);
         console.log(`💻 Site: ${abrosURL}`);
         if (message) console.log(`${message}`);
         console.groupEnd();
@@ -157,7 +157,7 @@ if (!window.abros) {
 
           const title = document.createElement("p");
           title.style.cssText =
-            "font-weight: bold;padding: 0 12px;border-radius: 2px;margin:0;font-size:small; transition: background-color 1s, color 2s;";
+            "font-weight: bold;padding: 0 3px;border-radius: 2px;margin:0;font-size:small;text-align: center;transition: background-color 1s, color 2s;";
           title.textContent = "Daniel Abros";
 
           const description = document.createElement("p");
