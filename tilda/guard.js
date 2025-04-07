@@ -4,11 +4,10 @@
  * by Daniel Abros
  * Сайт → https://abrosdaniel.com
  * Telegram → https://t.me/abrosdaniel
- * <script src="https://cdn.abros.dev/lib/guard.js"></script>
- * <script type="module" src ="https://cdn.abros.dev/lib/guard.js"></script>
+ * <script src="https://cdn.abros.dev/tilda/guard.js"></script>
  */
 
-class AbrosGuard {
+class TiGuard {
   constructor(options = {}) {
     this.host = options.host || null;
     this.notClick = options.notClick || null;
@@ -141,5 +140,5 @@ class AbrosGuard {
 }
 
 if (typeof window !== "undefined") {
-  window.AbrosGuard = AbrosGuard;
+  window.TiGuard = TiGuard;
 }
