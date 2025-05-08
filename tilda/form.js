@@ -43,13 +43,16 @@ class AbrosTiForm {
           const observer = new MutationObserver((mutationsList, observer) => {
             mutationsList.forEach((mutation) => {
               if (mutation.type === "childList") {
-                const stepTarget = document.querySelector(step.target);
-                if (stepTarget) {
-                  console.log(
-                    `Перемещаем ${step.target} в родителя ${this.scheme.step_1.target}`
-                  );
-                  step1Parent.appendChild(stepTarget);
-                }
+                document.addEventListener("DOMContentLoaded", () => {
+                  const stepTarget = document.querySelector(step.target);
+                  if (stepTarget) {
+                    console.log(
+                      `Перемещаем ${step.target} в родителя ${this.scheme.step_1.target}`
+                    );
+                    step1Parent.appendChild(stepTarget);
+                    observer.disconnect();
+                  }
+                });
               }
             });
           });
