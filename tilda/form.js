@@ -33,11 +33,28 @@ class AbrosTiForm {
       const step = this.scheme[stepName];
 
       if (this.settings.type && this.settings.type.window === "popup") {
-        const step1Container = document.querySelector(this.scheme.step1.target);
-        const stepTarget = document.querySelector(step.target);
+        const step1Container = document.querySelector(
+          this.scheme.step_1.target
+        );
 
-        if (step1Container && stepTarget && stepName !== "step1") {
-          step1Container.appendChild(stepTarget);
+        if (step1Container && stepName !== "step_1") {
+          const step1Parent = step1Container.parentNode;
+
+          const observer = new MutationObserver((mutationsList, observer) => {
+            mutationsList.forEach((mutation) => {
+              if (mutation.type === "childList") {
+                const stepTarget = document.querySelector(step.target);
+                if (stepTarget) {
+                  console.log(
+                    `Перемещаем ${step.target} в родителя ${this.scheme.step1.target}`
+                  );
+                  step1Parent.appendChild(stepTarget);
+                  observer.disconnect();
+                }
+              }
+            });
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
         }
       }
 
