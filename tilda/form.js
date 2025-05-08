@@ -92,47 +92,42 @@ class AbrosTiForm {
         console.warn(`Блок с классом или ID: ${selector} - не найден.`);
         return;
       }
+
       t_onFuncLoad("Form", () => {
         const formElement = container.querySelector("form");
         if (formElement) {
-          observer.disconnect();
-          this.trackFormInputs(formElement);
+          const formId = formElement.id || formElement.getAttribute("name");
+          if (!formId) {
+            console.warn("ID формы не найден. Проверьте атрибуты формы.");
+            return;
+          }
+          this.trackFormInputs(formElement, formId);
         }
       });
     });
   }
 
-  trackFormInputs(formElement) {
-    const formDataObject = {};
-    const formData = new FormData(formElement);
-    formData.forEach((value, key) => {
-      formDataObject[key] = value;
-    });
-
-    const inputs = formElement.querySelectorAll("input, select, textarea");
-    inputs.forEach((input) => {
-      input.addEventListener("input", (event) => {
-        const { name, value } = event.target;
-        if (name) {
-          this.proxyFormData[name] = value;
-        }
+  trackFormInputs(formElement, formId) {
+    t_onFuncLoad("t_forms__getFormDataJSON", () => {
+      const formDataObject = t_forms__getFormDataJSON(formElement) || {};
+      this.proxyFormData = new Proxy(formDataObject, {
+        set: (target, key, value) => {
+          target[key] = value;
+          if (!window.AbrosTiForm) {
+            window.AbrosTiForm = {};
+          }
+          window.AbrosTiForm[formId] = { ...target };
+          console.log(`Данные формы обновлены: ${key} = ${value}`);
+          return true;
+        },
       });
+      const formDataJSON = t_forms__getFormDataJSON(formElement);
+      if (formDataJSON) {
+        Object.entries(formDataJSON).forEach(([key, value]) => {
+          this.proxyFormData[key] = value; // Обновляем Proxy
+        });
+      }
     });
-
-    this.proxyFormData = new Proxy(formDataObject, {
-      set: (target, key, value) => {
-        target[key] = value;
-        this.formData[key] = value;
-        return true;
-      },
-    });
-
-    this.formData = formDataObject;
-
-    if (!window.AbrosTiForm) {
-      window.AbrosTiForm = {};
-    }
-    window.AbrosTiForm[this.settings.name] = this.formData;
   }
 
   setStep(stepName) {
