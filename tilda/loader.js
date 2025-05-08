@@ -11,6 +11,7 @@ class TiLoader {
   constructor(options = {}) {
     this.type = options.type || null;
     this.start = options.start || null;
+    this.idBlock = options.idBlock || null;
     this.triggers = options.triggers || null;
     this.click = options.click || null;
     this.opacity = options.opacity || null;
@@ -26,7 +27,13 @@ class TiLoader {
       });
     }
     if (this.type === "click") {
-      this.initClick(this.triggers, this.click, this.opacity, this.transition);
+      this.initClick(
+        this.idBlock,
+        this.triggers,
+        this.click,
+        this.opacity,
+        this.transition
+      );
     }
     if (this.keylogger) {
       this.initKeylogger(this.keylogger);
