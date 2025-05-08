@@ -69,7 +69,7 @@ class AbrosTiForm {
         console.warn(`Блок с классом ${selector} не найден.`);
         return null;
       }
-      window.addEventListener("load", () => {
+      document.addEventListener("DOMContentLoaded", () => {
         const formElement = container.querySelector("form");
         if (!formElement) {
           console.warn(`Форма внутри блока с классом ${selector} не найдена.`);
