@@ -49,7 +49,6 @@ class AbrosTiForm {
                     `Перемещаем ${step.target} в родителя ${this.scheme.step_1.target}`
                   );
                   step1Parent.appendChild(stepTarget);
-                  observer.disconnect();
                 }
               }
             });
