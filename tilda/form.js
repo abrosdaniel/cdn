@@ -63,12 +63,20 @@ class AbrosTiForm {
 
   initFormTracking() {
     const formSelectors = Object.values(this.scheme).map((step) => step.target);
-    console.log("Селекторы форм:", formSelectors);
+    const forms = formSelectors.map((selector) => {
+      const container = document.querySelector(selector);
+      if (!container) {
+        console.warn(`Контейнер по селектору ${selector} не найден.`);
+        return null;
+      }
+      const formElement = container.querySelector("form");
+      if (!formElement) {
+        console.warn(`Форма внутри контейнера ${selector} не найдена.`);
+        return null;
+      }
+      return formElement;
+    });
 
-    // Ищем все формы по селекторам
-    const forms = formSelectors.map((selector) =>
-      document.querySelector(selector)?.querySelector("form")
-    );
     console.log("Обнаруженные формы:", forms);
 
     const formDataObject = {};
