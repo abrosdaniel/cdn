@@ -130,7 +130,7 @@ class AbrosTiForm {
   submitForm(submitConfig) {
     if (!submitConfig) return;
 
-    console.log("Отправка формы:", formData);
+    console.log("Отправка формы:", this.formData);
 
     if (submitConfig.form) {
       const resultForm = document.querySelector(submitConfig.form);
