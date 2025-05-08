@@ -66,78 +66,57 @@ class AbrosTiForm {
     const forms = formSelectors.map((selector) => {
       const container = document.querySelector(selector);
       if (!container) {
-        console.warn(`Контейнер по селектору ${selector} не найден.`);
+        console.warn(`Блок с классом ${selector} не найден.`);
         return null;
       }
-      container.querySelector("form").addEventListener("render", () => {
+      window.addEventListener("load", () => {
         const formElement = container.querySelector("form");
         if (!formElement) {
-          console.warn(`Форма внутри контейнера ${selector} не найдена.`);
+          console.warn(`Форма внутри блока с классом ${selector} не найдена.`);
           return null;
         }
       });
       return formElement;
     });
 
-    console.log("Обнаруженные формы:", forms);
-
     const formDataObject = {};
 
-    // Перебираем формы и инициализируем данные
     forms.forEach((formElement, index) => {
       if (!formElement) {
         console.warn(`Форма по селектору ${formSelectors[index]} не найдена.`);
         return;
       }
 
-      console.log(`Обработка формы: ${formSelectors[index]}`);
-
-      // Собираем начальные данные формы
       const formData = new FormData(formElement);
       formData.forEach((value, key) => {
         formDataObject[key] = value;
-        console.log(`Инициализировано поле "${key}": ${value}`);
       });
 
-      // Навешиваем обработчики на все поля формы
       const inputs = formElement.querySelectorAll("input, select, textarea");
-      console.log(`Найдено ${inputs.length} полей в форме:`, inputs);
-
       inputs.forEach((input) => {
         input.addEventListener("input", (event) => {
           const { name, value } = event.target;
           if (name) {
             this.proxyFormData[name] = value;
-            console.log(`Изменено поле "${name}": ${value}`);
           }
         });
       });
     });
 
-    // Создаем Proxy для отслеживания изменений
     this.proxyFormData = new Proxy(formDataObject, {
       set: (target, key, value) => {
-        console.log(`Proxy: обновление поля "${key}" с значением: ${value}`);
         target[key] = value;
         this.formData[key] = value;
         return true;
       },
     });
 
-    // Инициализируем formData
     this.formData = formDataObject;
-    console.log("Инициализированные данные формы:", this.formData);
 
-    // Делаем данные формы глобально доступными
     if (!window.AbrosTiForm) {
       window.AbrosTiForm = {};
     }
     window.AbrosTiForm[this.settings.name] = this.formData;
-
-    console.log(
-      `Глобальные данные формы (${this.settings.name}):`,
-      window.AbrosTiForm[this.settings.name]
-    );
   }
 
   setStep(stepName) {
