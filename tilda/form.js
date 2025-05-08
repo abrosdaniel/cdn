@@ -13,21 +13,33 @@ class AbrosTiForm {
     this.currentStep = null;
     this.formData = {};
     this.init();
+    console.log(`Создание формы ${this.settings.name} завершена.`);
   }
 
   init() {
+    if (this.settings.type && this.settings.type.window === "popup") {
+      this.settings.type.form = "quiz";
+    }
     const firstStep = Object.keys(this.scheme)[0];
     if (firstStep) {
       this.setStep(firstStep);
     }
     this.initSteps();
     this.initFormTracking();
-    console.log(`Создание формы ${this.settings.name} завершена.`);
   }
 
   initSteps() {
     Object.keys(this.scheme).forEach((stepName) => {
       const step = this.scheme[stepName];
+
+      if (this.settings.type && this.settings.type.window === "popup") {
+        const step1Container = document.querySelector(this.scheme.step1.target);
+        const stepTarget = document.querySelector(step.target);
+
+        if (step1Container && stepTarget && stepName !== "step1") {
+          step1Container.appendChild(stepTarget);
+        }
+      }
 
       if (step.next && step.next.target) {
         const stepTarget = document.querySelector(step.target);
@@ -74,10 +86,6 @@ class AbrosTiForm {
           if (mutation.type === "childList") {
             const formElement = container.querySelector("form");
             if (formElement) {
-              console.log(
-                `Форма внутри блока с классом или ID: ${selector} - не найдена.`,
-                formElement
-              );
               observer.disconnect();
               this.trackFormInputs(formElement);
             }
@@ -124,6 +132,19 @@ class AbrosTiForm {
   setStep(stepName) {
     if (!this.scheme[stepName]) {
       console.error(`Шаг ${stepName} не найден в схеме`);
+      return;
+    }
+
+    if (this.settings.type && this.settings.type.form === "default") {
+      Object.keys(this.scheme).forEach((step) => {
+        const target = this.scheme[step].target;
+        if (target) {
+          const element = document.querySelector(target);
+          if (element) {
+            element.style.display = "block";
+          }
+        }
+      });
       return;
     }
 
