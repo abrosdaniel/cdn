@@ -91,7 +91,7 @@ class AbrosTiForm {
       },
     });
 
-    Object.assign(this.formData, formDataObject);
+    this.formData = formDataObject;
 
     if (!window.AbrosTiForm) {
       window.AbrosTiForm = {};
@@ -100,7 +100,10 @@ class AbrosTiForm {
   }
 
   setStep(stepName) {
-    if (!this.scheme[stepName]) return;
+    if (!this.scheme[stepName]) {
+      console.error(`Шаг ${stepName} не найден в схеме`);
+      return;
+    }
 
     Object.keys(this.scheme).forEach((step) => {
       const target = this.scheme[step].target;
