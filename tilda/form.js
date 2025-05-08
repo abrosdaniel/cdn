@@ -63,43 +63,45 @@ class AbrosTiForm {
 
   initFormTracking() {
     const formSelectors = Object.values(this.scheme).map((step) => step.target);
-    const forms = formSelectors.map((selector) => {
+    formSelectors.forEach((selector) => {
       const container = document.querySelector(selector);
       if (!container) {
-        console.warn(`Блок с классом ${selector} не найден.`);
-        return null;
-      }
-      document.addEventListener("DOMContentLoaded", () => {
-        const formElement = container.querySelector("form");
-        if (!formElement) {
-          console.warn(`Форма внутри блока с классом ${selector} не найдена.`);
-          return null;
-        }
-      });
-      return formElement;
-    });
-
-    const formDataObject = {};
-
-    forms.forEach((formElement, index) => {
-      if (!formElement) {
-        console.warn(`Форма по селектору ${formSelectors[index]} не найдена.`);
+        console.warn(`Блок с классом или ID: ${selector} - не найден.`);
         return;
       }
-
-      const formData = new FormData(formElement);
-      formData.forEach((value, key) => {
-        formDataObject[key] = value;
-      });
-
-      const inputs = formElement.querySelectorAll("input, select, textarea");
-      inputs.forEach((input) => {
-        input.addEventListener("input", (event) => {
-          const { name, value } = event.target;
-          if (name) {
-            this.proxyFormData[name] = value;
+      const observer = new MutationObserver((mutationsList, observer) => {
+        mutationsList.forEach((mutation) => {
+          if (mutation.type === "childList") {
+            const formElement = container.querySelector("form");
+            if (formElement) {
+              console.log(
+                `Форма внутри блока с классом или ID: ${selector} - не найдена.`,
+                formElement
+              );
+              observer.disconnect();
+              this.trackFormInputs(formElement);
+            }
           }
         });
+      });
+      observer.observe(container, { childList: true, subtree: true });
+    });
+  }
+
+  trackFormInputs(formElement) {
+    const formDataObject = {};
+    const formData = new FormData(formElement);
+    formData.forEach((value, key) => {
+      formDataObject[key] = value;
+    });
+
+    const inputs = formElement.querySelectorAll("input, select, textarea");
+    inputs.forEach((input) => {
+      input.addEventListener("input", (event) => {
+        const { name, value } = event.target;
+        if (name) {
+          this.proxyFormData[name] = value;
+        }
       });
     });
 
