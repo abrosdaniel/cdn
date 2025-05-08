@@ -40,23 +40,15 @@ class AbrosTiForm {
         if (step1Container && stepName !== "step_1") {
           const step1Parent = step1Container.parentNode;
 
-          const observer = new MutationObserver((mutationsList, observer) => {
-            mutationsList.forEach((mutation) => {
-              if (mutation.type === "childList") {
-                document.addEventListener("DOMContentLoaded", () => {
-                  const stepTarget = document.querySelector(step.target);
-                  if (stepTarget) {
-                    console.log(
-                      `Перемещаем ${step.target} в родителя ${this.scheme.step_1.target}`
-                    );
-                    step1Parent.appendChild(stepTarget);
-                    observer.disconnect();
-                  }
-                });
-              }
-            });
+          t_onReady(() => {
+            const stepTarget = document.querySelector(step.target);
+            if (stepTarget) {
+              console.log(
+                `Перемещаем ${step.target} в родителя ${this.scheme.step_1.target}`
+              );
+              step1Parent.appendChild(stepTarget);
+            }
           });
-          observer.observe(document.body, { childList: true, subtree: true });
         }
       }
 
@@ -100,18 +92,13 @@ class AbrosTiForm {
         console.warn(`Блок с классом или ID: ${selector} - не найден.`);
         return;
       }
-      const observer = new MutationObserver((mutationsList, observer) => {
-        mutationsList.forEach((mutation) => {
-          if (mutation.type === "childList") {
-            const formElement = container.querySelector("form");
-            if (formElement) {
-              observer.disconnect();
-              this.trackFormInputs(formElement);
-            }
-          }
-        });
+      t_onFuncLoad("Form", () => {
+        const formElement = container.querySelector("form");
+        if (formElement) {
+          observer.disconnect();
+          this.trackFormInputs(formElement);
+        }
       });
-      observer.observe(container, { childList: true, subtree: true });
     });
   }
 
