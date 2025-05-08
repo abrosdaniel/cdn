@@ -1,5 +1,5 @@
 /*!
- * Form.js v1.0
+ * Tilda Custom Form.js v1.0
  * (c) 2025
  * by Daniel Abros
  * Сайт → https://abrosdaniel.com
@@ -109,23 +109,23 @@ class AbrosTiForm {
 
   trackForm(formElement, formId) {
     t_onFuncLoad("t_forms__getFormDataJSON", () => {
-      const formDataObject = t_forms__getFormDataJSON(formElement) || {};
+      const formDataObject = t_forms__getFormDataJSON(formId) || {};
       this.proxyFormData = new Proxy(formDataObject, {
         set: (target, key, value) => {
           target[key] = value;
-          if (!window.AbrosTiForm) {
-            window.AbrosTiForm = {};
+          if (!window.AbrosTCF) {
+            window.AbrosTCF = {};
           }
-          if (!window.AbrosTiForm[this.settings.name]) {
-            window.AbrosTiForm[this.settings.name] = {};
+          if (!window.AbrosTCF[this.settings.name]) {
+            window.AbrosTCF[this.settings.name] = {};
           }
           if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
-            window.AbrosTiForm[this.settings.name][key] = value;
+            window.AbrosTCF[this.settings.name][key] = value;
           }
           return true;
         },
       });
-      const formDataJSON = t_forms__getFormDataJSON(formElement);
+      const formDataJSON = t_forms__getFormDataJSON(formId);
       if (formDataJSON) {
         Object.entries(formDataJSON).forEach(([key, value]) => {
           if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
