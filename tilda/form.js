@@ -93,7 +93,7 @@ class AbrosTiForm {
         return;
       }
 
-      t_onFuncLoad("Form", () => {
+      t_onFuncLoad("initForms", () => {
         const formElement = container.querySelector("form");
         if (formElement) {
           const formId = formElement.id || formElement.getAttribute("name");
