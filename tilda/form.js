@@ -22,6 +22,7 @@ class AbrosTiForm {
     }
     this.initSteps();
     this.initFormTracking();
+    console.log(`Создание формы ${this.settings.name} завершена.`);
   }
 
   initSteps() {
@@ -61,15 +62,12 @@ class AbrosTiForm {
   }
 
   initFormTracking() {
-    console.log("Инициализация отслеживания данных формы...");
-
-    // Получаем все селекторы форм из схемы
     const formSelectors = Object.values(this.scheme).map((step) => step.target);
     console.log("Селекторы форм:", formSelectors);
 
     // Ищем все формы по селекторам
     const forms = formSelectors.map((selector) =>
-      document.querySelector(`${selector} form`)
+      document.querySelector(selector)?.querySelector("form")
     );
     console.log("Обнаруженные формы:", forms);
 
