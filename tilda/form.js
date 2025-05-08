@@ -16,7 +16,6 @@ class AbrosTiForm {
   }
 
   init() {
-    console.log(`Инициализация формы ${this.settings.name}...`);
     const firstStep = Object.keys(this.scheme)[0];
     if (firstStep) {
       this.setStep(firstStep);
@@ -26,10 +25,8 @@ class AbrosTiForm {
   }
 
   initSteps() {
-    console.log("Инициализация шагов...");
     Object.keys(this.scheme).forEach((stepName) => {
       const step = this.scheme[stepName];
-      console.log(`Обработка шага: ${stepName}`);
 
       if (step.next && step.next.target) {
         const stepTarget = document.querySelector(step.target);
@@ -64,48 +61,75 @@ class AbrosTiForm {
   }
 
   initFormTracking() {
+    console.log("Инициализация отслеживания данных формы...");
+
+    // Получаем все селекторы форм из схемы
     const formSelectors = Object.values(this.scheme).map((step) => step.target);
+    console.log("Селекторы форм:", formSelectors);
+
+    // Ищем все формы по селекторам
     const forms = formSelectors.map((selector) =>
       document.querySelector(`${selector} form`)
     );
+    console.log("Обнаруженные формы:", forms);
 
     const formDataObject = {};
 
-    forms.forEach((formElement) => {
-      if (!formElement) return;
+    // Перебираем формы и инициализируем данные
+    forms.forEach((formElement, index) => {
+      if (!formElement) {
+        console.warn(`Форма по селектору ${formSelectors[index]} не найдена.`);
+        return;
+      }
 
+      console.log(`Обработка формы: ${formSelectors[index]}`);
+
+      // Собираем начальные данные формы
       const formData = new FormData(formElement);
       formData.forEach((value, key) => {
         formDataObject[key] = value;
+        console.log(`Инициализировано поле "${key}": ${value}`);
       });
 
+      // Навешиваем обработчики на все поля формы
       const inputs = formElement.querySelectorAll("input, select, textarea");
+      console.log(`Найдено ${inputs.length} полей в форме:`, inputs);
+
       inputs.forEach((input) => {
         input.addEventListener("input", (event) => {
           const { name, value } = event.target;
           if (name) {
             this.proxyFormData[name] = value;
+            console.log(`Изменено поле "${name}": ${value}`);
           }
         });
       });
     });
 
+    // Создаем Proxy для отслеживания изменений
     this.proxyFormData = new Proxy(formDataObject, {
       set: (target, key, value) => {
+        console.log(`Proxy: обновление поля "${key}" с значением: ${value}`);
         target[key] = value;
         this.formData[key] = value;
-        console.log(`Обновлено поле "${key}": ${value}`);
         return true;
       },
     });
 
+    // Инициализируем formData
     this.formData = formDataObject;
+    console.log("Инициализированные данные формы:", this.formData);
 
     // Делаем данные формы глобально доступными
     if (!window.AbrosTiForm) {
       window.AbrosTiForm = {};
     }
     window.AbrosTiForm[this.settings.name] = this.formData;
+
+    console.log(
+      `Глобальные данные формы (${this.settings.name}):`,
+      window.AbrosTiForm[this.settings.name]
+    );
   }
 
   setStep(stepName) {
