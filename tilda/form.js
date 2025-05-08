@@ -69,11 +69,13 @@ class AbrosTiForm {
         console.warn(`Контейнер по селектору ${selector} не найден.`);
         return null;
       }
-      const formElement = container.querySelector("form");
-      if (!formElement) {
-        console.warn(`Форма внутри контейнера ${selector} не найдена.`);
-        return null;
-      }
+      container.querySelector("form").addEventListener("render", () => {
+        const formElement = container.querySelector("form");
+        if (!formElement) {
+          console.warn(`Форма внутри контейнера ${selector} не найдена.`);
+          return null;
+        }
+      });
       return formElement;
     });
 
