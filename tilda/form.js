@@ -40,7 +40,7 @@ class AbrosTiForm {
         if (step1Container && stepName !== "step_1") {
           const step1Parent = step1Container.parentNode;
 
-          t_onReady(() => {
+          t_onFuncLoad("initForms", () => {
             const stepTarget = document.querySelector(step.target);
             if (stepTarget) {
               console.log(
@@ -101,13 +101,13 @@ class AbrosTiForm {
             console.warn("ID формы не найден. Проверьте атрибуты формы.");
             return;
           }
-          this.trackFormInputs(formElement, formId);
+          this.trackForm(formElement, formId);
         }
       });
     });
   }
 
-  trackFormInputs(formElement, formId) {
+  trackForm(formElement, formId) {
     t_onFuncLoad("t_forms__getFormDataJSON", () => {
       const formDataObject = t_forms__getFormDataJSON(formElement) || {};
       this.proxyFormData = new Proxy(formDataObject, {
@@ -116,15 +116,21 @@ class AbrosTiForm {
           if (!window.AbrosTiForm) {
             window.AbrosTiForm = {};
           }
-          window.AbrosTiForm[formId] = { ...target };
-          console.log(`Данные формы обновлены: ${key} = ${value}`);
+          if (!window.AbrosTiForm[this.settings.name]) {
+            window.AbrosTiForm[this.settings.name] = {};
+          }
+          if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
+            window.AbrosTiForm[this.settings.name][key] = value;
+          }
           return true;
         },
       });
       const formDataJSON = t_forms__getFormDataJSON(formElement);
       if (formDataJSON) {
         Object.entries(formDataJSON).forEach(([key, value]) => {
-          this.proxyFormData[key] = value; // Обновляем Proxy
+          if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
+            this.proxyFormData[key] = value;
+          }
         });
       }
     });
