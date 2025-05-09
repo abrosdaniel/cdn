@@ -68,14 +68,11 @@ class AbrosTiForm {
     div.id = this.settings.name;
     div.innerHTML = `
   <!-- ATF001 -->
-  <script src="https://static.tildacdn.com/js/tilda-popup-1.0.min.js"></script>
   <div class="atf001">
     <div
       class="t-popup t-popup-anim-fadein t-popup-transition"
       data-anim="fadein"
       data-anim-timeout="0.3"
-      data-tooltip-hook="#zeropopup"
-      data-popup-rec-ids="1013733926"
       role="dialog"
       aria-modal="true"
       tabindex="-1"
