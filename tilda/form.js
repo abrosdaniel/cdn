@@ -22,7 +22,8 @@ class AbrosTiForm {
     console.log(`Создание формы ${this.settings.name} завершено.`);
     console.groupCollapsed(
       `%c📋 AbrosTiForm %cБиблиотека для создания кастомных форм в Tilda`,
-      "background: #5292c9; color: white; border-radius: 5px; padding: 4px;"
+      "background: #5292c9; color: white; border-radius: 5px; padding: 4px;",
+      ""
     );
     console.groupCollapsed(`📖 Инструкция`);
     console.log(
