@@ -1,8 +1,8 @@
-/*!
+/*
  * Tilda Custom Form.js v1.0
  * (c) 2025
  * by Daniel Abros
- * Сайт → https://abrosdaniel.com
+ * Site → https://abrosdaniel.com
  * Telegram → https://t.me/abrosdaniel
  */
 
@@ -20,6 +20,85 @@ class AbrosTiForm {
     this.formData = window.AbrosTiForm[this.settings.name];
     this.init();
     console.log(`Создание формы ${this.settings.name} завершено.`);
+    console.groupCollapsed(
+      `%c📋 AbrosTiForm %cБиблиотека для создания кастомных форм в Tilda`,
+      "background: #5292c9; color: white; border-radius: 5px; padding: 4px;"
+    );
+    console.groupCollapsed(`📖 Инструкция`);
+    console.log(
+      `1. Добавляете формы в Tilda (Поддерживаются как стандартные так и в ZeroBlock).\n
+      2. Добавляете кнопки "Вперед", "Назад" и "Отправить" если требуются (Кнопки для каждой формы свои).\n
+      3. У всех полей формы указываете уникальные Variable name/Имя переменной.\n
+      4. Добавляете блок BF204N. В настройках блока подключить сервис куда будут отправляться данные. Поля можно удалить\n
+      5. После всех форм ниже добавляете T123 и вставляете код:\n\n
+        <script>\n
+        const form = new AbrosTiForm({\n
+          settings: {\n
+            name: "Name",\n
+            type: {\n
+              window: "popup", // popup или default\n
+              form: "quiz", // quiz или default\n
+            },\n
+          },\n
+          scheme: {\n
+            form_1: {\n
+              target: ".uc_form_1",\n
+              next: {\n
+                target: ".uc_form_1 .t-next",\n
+                select: "form_2",\n
+              },\n
+            },\n
+            form_2: {\n
+              target: ".uc_form_2",\n
+              prev: {\n
+                target: ".uc_form_2 .t-prev",\n
+                select: "form_1",\n
+              },\n
+              submit: {\n
+                target: ".uc_form_2 .t-submit",\n
+                select: ".t123__result_form",\n
+              },\n
+            },\n
+          },\n
+        });\n
+        </script>\n\n
+        6. В коде нужно настроить settings.\n
+           name - Название создаваемой формы.\n
+           window - Тип отображения (popup - открытие формы в popup или default - блоком на странице).\n
+           form - Тип формы (quiz - каждая форма это каждый шаг или default - распологаются так как в макете).\n
+        7. В коде нужно настроить scheme. Каждый form_№ это каждая ваша форма. Добавляются через запятую. Макет формы:\n\n
+        form_1: { - Имя формы формируется из form_ и порядка формы.\n
+              target: ".uc_form_1", - Класс/ID блока с формой.\n
+              function: () => {}, - Функция которая будет выполнена при активности формы.\n
+              next: { - Кнопка "Вперед". Если требуется.\n
+                target: ".uc_form_1 .t-next", - Класс/ID кнопки.\n
+                select: "form_2", - Имя формы на которую будет переход.\n
+              },\n
+              prev: { - Кнопка "Назад". Если требуется.\n
+                target: ".uc_form_1 .t-prev", - Класс/ID кнопки.\n
+                select: "form_1", - Имя формы на которую будет переход.\n
+              },\n
+              submit: { - Кнопка "Отправить". Если требуется.\n
+                target: ".uc_form_2 .t-submit", - Класс/ID кнопки.\n
+                select: ".uc_BF204N", - Класс/ID блока BF204N.\n
+              },\n
+            },\n\n
+        `
+    );
+    console.groupEnd();
+    console.groupCollapsed(`📚 Документация`);
+    console.groupEnd();
+    console.log(`📦 Версия библиотеки: 1.0`);
+    console.log(
+      `✨ Данная библиотека является полностью бесплатной. Указание автора не обязательно.`
+    );
+    console.groupCollapsed(
+      `%c👨🏻‍💻 Development by Daniel Abros`,
+      "border: 1px solid; border-radius: 5px; padding: 4px;"
+    );
+    console.log(`💻 Site → https://abrosdaniel.com`);
+    console.groupEnd();
+    console.groupEnd();
   }
 
   init() {
@@ -65,7 +144,7 @@ class AbrosTiForm {
     if (!formTarget) return;
 
     const bindButton = (buttonSelector, callback) => {
-      const button = formTarget.querySelector(buttonSelector);
+      const button = document.querySelector(buttonSelector);
       if (button) {
         button.addEventListener("click", callback);
       }
@@ -117,6 +196,10 @@ class AbrosTiForm {
         if (formElement) {
           formElement.updateFormData = () =>
             this.updateFormData(formElement, formName);
+          const stateBtnSubmit = formElement.querySelector(".t-submit");
+          if (stateBtnSubmit) {
+            stateBtnSubmit.style.display = "none !important";
+          }
         }
       });
     });
