@@ -111,11 +111,11 @@ class AbrosTiForm {
           if (!window.AbrosTiForm) {
             window.AbrosTiForm = {};
           }
-          if (!window.AbrosTCF[this.settings.name]) {
-            window.AbrosTCF[this.settings.name] = {};
+          if (!window.AbrosTiForm[this.settings.name]) {
+            window.AbrosTiForm[this.settings.name] = {};
           }
           if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
-            window.AbrosTCF[this.settings.name][key] = value;
+            window.AbrosTiForm[this.settings.name][key] = value;
           }
           return true;
         },
