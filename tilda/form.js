@@ -22,7 +22,7 @@ class AbrosTiForm {
     console.log(`Создание формы ${this.settings.name} завершено.`);
     console.groupCollapsed(
       `%c📋 AbrosTiForm%c Библиотека для создания кастомных форм в Tilda`,
-      "background: #5292c9; color: white; border-radius: 5px; padding: 4px;",
+      "background:rgb(164, 114, 94); color: white; border-radius: 5px; padding: 4px;",
       ""
     );
     console.groupCollapsed(`📚 Документация`);
@@ -54,20 +54,20 @@ class AbrosTiForm {
   }
 
   initForms() {
+    if (this.settings.type?.window === "popup") {
+      this.moveFormsToPopup();
+    }
     Object.entries(this.scheme).forEach(([formName, form]) => {
-      if (this.settings.type?.window === "popup") {
-        this.moveFormsToPopup(formName, form);
-      }
       this.bindFormButtons(formName, form);
     });
   }
 
-  moveFormsToPopup(formName, form) {
-    const allrecords = document.querySelector("#allrecords");
-    const popup = document.createElement("div");
-    popup.id = this.settings.name;
-    popup.innerHTML = `
+  moveFormsToPopup() {
+    const div = document.createElement("div");
+    div.id = this.settings.name;
+    div.innerHTML = `
   <!-- ATF001 -->
+  <script src="https://static.tildacdn.com/js/tilda-popup-1.0.min.js"></script>
   <div class="atf001">
     <div
       class="t-popup t-popup-anim-fadein t-popup-transition"
@@ -138,19 +138,44 @@ class AbrosTiForm {
     }
   </style>
   <script>
-    t_onReady(function () {
-      t_onFuncLoad("t1093__init", function () {
-        t1093__init("${this.settings.name}");
-      });
-      t_onFuncLoad("t1093__initPopup", function () {
-        t1093__initPopup("${this.settings.name}");
+  t_onReady(function () {
+    t_onFuncLoad("t_popup__trapFocus", function () {
+      t_onFuncLoad("t_popup__closePopup", function () {
+        t_onFuncLoad("t_popup__showPopup", function () {
+          const popupElement = popup.querySelector(".t-popup");
+          const closeButton = popup.querySelector(".t-popup__close");
+          const bgElement = popup.querySelector(".t-popup__bg");
+
+          if (popupElement) {
+            // Инициализация доступа для клавиатуры
+            t_popup__trapFocus(popupElement);
+
+            // Добавляем обработчики событий
+            if (closeButton) {
+              closeButton.addEventListener("click", () =>
+                t_popup__closePopup(popupElement)
+              );
+            }
+            if (bgElement) {
+              bgElement.addEventListener("click", () =>
+                t_popup__closePopup(popupElement)
+              );
+            }
+
+            // Показываем попап при необходимости
+            t_popup__showPopup(popupElement);
+          }
+        });
       });
     });
-  </script>
+  });
+</script>
 </div>
     `;
+    const allrecords = document.querySelector("#allrecords");
+    const popup = document.querySelector(`#${this.settings.name}`);
     const container = popup.querySelector(".t-popup__container");
-    Object.entries(this.scheme).forEach(([formName, form]) => {
+    Object.entries(this.scheme).forEach(([form]) => {
       const formElement = document.querySelector(form.target);
       if (formElement) {
         container.appendChild(formElement);
