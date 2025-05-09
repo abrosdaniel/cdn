@@ -240,7 +240,7 @@ class AbrosTiForm {
             this.updateFormData(formElement, formName);
           const stateBtnSubmit = formElement.querySelector(".t-submit");
           if (stateBtnSubmit) {
-            stateBtnSubmit.style.display = "none !important";
+            stateBtnSubmit.style.display = "none";
           }
         } else {
           console.warn(`Форма внутри блока ${selector} - не найдена.`);
