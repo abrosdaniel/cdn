@@ -129,23 +129,22 @@ class AbrosTiForm {
           }
         });
       }
-      const fields = formElement.querySelectorAll(
-        "input, textarea, select, fieldset"
-      );
-      fields.forEach((field) => {
-        field.addEventListener("input", (event) => {
-          const { name, value } = event.target;
-          if (name) {
-            this.proxyFormData[name] = value;
+      const observer = new MutationObserver(() => {
+        const updatedFormData = t_forms__getFormDataJSON(formElement) || {};
+        Object.entries(updatedFormData).forEach(([key, value]) => {
+          if (
+            key !== "tildaspec-elemid" &&
+            key !== "form-spec-comments" &&
+            this.proxyFormData[key] !== value
+          ) {
+            this.proxyFormData[key] = value;
           }
         });
-
-        field.addEventListener("change", (event) => {
-          const { name, value } = event.target;
-          if (name) {
-            this.proxyFormData[name] = value;
-          }
-        });
+      });
+      observer.observe(formElement, {
+        childList: true, // Отслеживание добавления/удаления элементов
+        attributes: true, // Отслеживание изменений атрибутов
+        subtree: true, // Отслеживание изменений во всех дочерних элементах
       });
     });
   }
