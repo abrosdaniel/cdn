@@ -133,7 +133,7 @@ class AbrosTiForm {
     }
   }
 
-  handleFormNext(formTarget, formName, targetForm) {
+  handleFormNext(formTarget, formName, selectConfig) {
     const formElement = formTarget.querySelector("form");
     if (formElement) {
       const validationErrors = window.tildaForm.validate(formElement);
@@ -143,10 +143,26 @@ class AbrosTiForm {
         return;
       }
       this.updateFormData(formElement, formName);
-    }
-
-    if (targetForm) {
-      this.setForm(targetForm);
+      if (Array.isArray(selectConfig)) {
+        const formData = this.formData[formName];
+        if (!formData) {
+          console.warn(`Данные формы ${formName} отсутствуют.`);
+          return;
+        }
+        const nextForm = selectConfig.find(
+          (config) => formData[config.key] === config.value
+        );
+        if (nextForm) {
+          this.setForm(nextForm.form);
+        } else {
+          console.warn(
+            `Не удалось найти подходящий шаг для формы ${formName} по данным:`,
+            formData
+          );
+        }
+      } else if (typeof selectConfig === "string") {
+        this.setForm(selectConfig);
+      }
     }
   }
 
