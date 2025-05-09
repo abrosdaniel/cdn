@@ -114,16 +114,26 @@ class AbrosTiForm {
       }
     }
 
-    bindButton(form.next?.target, () =>
-      this.handleFormChange(formTarget, formName, form.next?.select)
-    );
     bindButton(form.prev?.target, () =>
-      this.handleFormChange(formTarget, formName, form.prev?.select)
+      this.handleFormPrev(formTarget, formName, form.prev?.select)
+    );
+    bindButton(form.next?.target, () =>
+      this.handleFormNext(formTarget, formName, form.next?.select)
     );
     bindButton(form.submit?.target, () => this.handleSubmit());
   }
 
-  handleFormChange(formTarget, formName, targetForm) {
+  handleFormPrev(formTarget, formName, targetForm) {
+    const formElement = formTarget.querySelector("form");
+    if (formElement) {
+      this.updateFormData(formElement, formName);
+    }
+    if (targetForm) {
+      this.setForm(targetForm);
+    }
+  }
+
+  handleFormNext(formTarget, formName, targetForm) {
     const formElement = formTarget.querySelector("form");
     if (formElement) {
       const validationErrors = window.tildaForm.validate(formElement);
