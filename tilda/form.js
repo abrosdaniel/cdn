@@ -196,13 +196,10 @@ class AbrosTiForm {
       }
     };
 
-    if (
-      this.settings.type?.window === "popup" &&
-      this.settings.type.url_popup
-    ) {
-      const popupButton = document.querySelector([
-        (href = this.settings.type.url_popup),
-      ]);
+    if (this.settings.type?.window === "popup" && this.settings.url_popup) {
+      const popupButton = document.querySelector(
+        `[href="${this.settings.url_popup}"]`
+      );
       if (popupButton) {
         popupButton.addEventListener("click", () => {
           const popup = document.querySelector(`#${this.settings.name}`);
