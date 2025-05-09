@@ -57,6 +57,10 @@ class AbrosTiForm {
         const nextButton = stepTarget.querySelector(step.next.target);
         if (nextButton) {
           nextButton.addEventListener("click", () => {
+            const formElement = stepTarget.querySelector("form");
+            if (formElement && formElement.updateFormData) {
+              formElement.updateFormData();
+            }
             this.setStep(step.next.form);
           });
         }
@@ -67,6 +71,10 @@ class AbrosTiForm {
         const prevButton = stepTarget.querySelector(step.prev.target);
         if (prevButton) {
           prevButton.addEventListener("click", () => {
+            const formElement = stepTarget.querySelector("form");
+            if (formElement && formElement.updateFormData) {
+              formElement.updateFormData();
+            }
             this.setStep(step.prev.form);
           });
         }
@@ -77,6 +85,10 @@ class AbrosTiForm {
         const submitButton = stepTarget.querySelector(step.submit.target);
         if (submitButton) {
           submitButton.addEventListener("click", () => {
+            const formElement = stepTarget.querySelector("form");
+            if (formElement && formElement.updateFormData) {
+              formElement.updateFormData();
+            }
             this.submitForm(step.submit);
           });
         }
@@ -111,16 +123,14 @@ class AbrosTiForm {
       if (!window.AbrosTiForm[formName]) {
         window.AbrosTiForm[formName] = {};
       }
-      this.proxyFormData = new Proxy(window.AbrosTiForm[formName], {
-        set: (target, key, value) => {
-          target[key] = value;
-          console.log(`Обновлено поле ${key}: ${value}`);
-          return true;
-        },
-      });
-
       const updateFormData = () => {
         const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
+        const currentFormData = window.AbrosTiForm[formName];
+        Object.keys(currentFormData).forEach((key) => {
+          if (!(key in formDataJSON)) {
+            delete currentFormData[key];
+          }
+        });
         Object.entries(formDataJSON).forEach(([key, value]) => {
           if (
             key !== "tildaspec-elemid" &&
@@ -128,20 +138,12 @@ class AbrosTiForm {
             key !== "tildaspec-phone-part" &&
             key !== "tildaspec-phone-part-iso"
           ) {
-            this.proxyFormData[key] = value;
+            currentFormData[key] = value;
           }
         });
       };
       updateFormData();
-
-      const observer = new MutationObserver(() => {
-        updateFormData();
-      });
-      observer.observe(formElement, {
-        childList: true,
-        attributes: true,
-        subtree: true,
-      });
+      formElement.updateFormData = updateFormData;
     });
   }
 
@@ -192,7 +194,10 @@ class AbrosTiForm {
   submitForm(submitConfig) {
     if (!submitConfig) return;
 
-    console.log("Отправка формы с данными:", this.formData);
+    console.log(
+      "Отправка формы с данными:",
+      window.AbrosTiForm[this.settings.name]
+    );
 
     if (submitConfig.form) {
       const resultForm = document.querySelector(submitConfig.form);
