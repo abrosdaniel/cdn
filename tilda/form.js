@@ -161,7 +161,6 @@ class AbrosTiForm {
                 t_popup__closePopup(popupElement)
               );
             }
-            t_popup__showPopup(popupElement);
           }
         });
       });
