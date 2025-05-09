@@ -186,30 +186,20 @@ class AbrosTiForm {
         console.warn(`Блок с классом или ID: ${selector} - не найден.`);
         return;
       }
+      const observer = new MutationObserver(() => {
+        const formElement = container.querySelector("form");
+        if (formElement) {
+          observer.disconnect();
+          formElement.updateFormData = () =>
+            this.updateFormData(formElement, formName);
+          const stateBtnSubmit = formElement.querySelector(".t-submit");
+          if (stateBtnSubmit) {
+            stateBtnSubmit.style.display = "none";
+          }
+        }
+      });
 
-      const formElement = container.querySelector("form");
-      if (formElement) {
-        const inputGroups = formElement.querySelectorAll(".t-input-group");
-        const initPromises = Array.from(inputGroups).map((inputGroup) =>
-          t_formsApi__initTildaField(inputGroup)
-        );
-
-        Promise.all(initPromises)
-          .then(() => {
-            formElement.updateFormData = () =>
-              this.updateFormData(formElement, formName);
-
-            const stateBtnSubmit = formElement.querySelector(".t-submit");
-            if (stateBtnSubmit) {
-              stateBtnSubmit.style.display = "none";
-            }
-          })
-          .catch((error) => {
-            console.error(`Ошибка при инициализации формы ${formName}:`, error);
-          });
-      } else {
-        console.warn(`Форма внутри блока ${selector} - не найдена.`);
-      }
+      observer.observe(document.body, { childList: true, subtree: true });
     });
   }
 
