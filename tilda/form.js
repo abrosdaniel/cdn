@@ -134,21 +134,23 @@ class AbrosTiForm {
       transition-timing-function: ease-in-out;
     }
   </style>
-  <script>
-  t_loadJsFile(
-    "https://static.tildacdn.com/js/tilda-popup-1.0.min.js",
+</div>
+    `;
+    allrecords.appendChild(div);
+    const popup = allrecords.querySelector(`#${this.settings.name}`);
+    const container = popup.querySelector(".t-popup__container");
+    Object.entries(this.scheme).forEach(([formName, formConfig]) => {
+      const formElement = document.querySelector(formConfig.target);
+      container.appendChild(formElement);
+    });
     t_onFuncLoad("t_popup__trapFocus", function () {
       t_onFuncLoad("t_popup__closePopup", function () {
         t_onFuncLoad("t_popup__showPopup", function () {
           const popupElement = popup.querySelector(".t-popup");
           const closeButton = popup.querySelector(".t-popup__close");
           const bgElement = popup.querySelector(".t-popup__bg");
-
           if (popupElement) {
-            // Инициализация доступа для клавиатуры
             t_popup__trapFocus(popupElement);
-
-            // Добавляем обработчики событий
             if (closeButton) {
               closeButton.addEventListener("click", () =>
                 t_popup__closePopup(popupElement)
@@ -159,26 +161,10 @@ class AbrosTiForm {
                 t_popup__closePopup(popupElement)
               );
             }
-
-            // Показываем попап при необходимости
             t_popup__showPopup(popupElement);
           }
         });
       });
-    }),
-    5
-  );
-</script>
-</div>
-    `;
-    allrecords.appendChild(div);
-    const popup = allrecords.querySelector(`#${this.settings.name}`);
-    const container = popup.querySelector(".t-popup__container");
-    Object.entries(this.scheme).forEach(([form]) => {
-      const formElement = document.querySelector(form.target);
-      if (formElement) {
-        container.appendChild(formElement);
-      }
     });
   }
 
