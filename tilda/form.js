@@ -243,6 +243,8 @@ class AbrosTiForm {
           if (stateBtnSubmit) {
             stateBtnSubmit.style.display = "none !important";
           }
+        } else {
+          console.warn(`Форма внутри блока ${selector} - не найдена.`);
         }
       });
     });
