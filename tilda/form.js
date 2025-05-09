@@ -104,47 +104,43 @@ class AbrosTiForm {
 
   trackForm(formElement) {
     t_onFuncLoad("t_forms__getFormDataJSON", () => {
-      const formDataObject = t_forms__getFormDataJSON(formElement) || {};
-      this.proxyFormData = new Proxy(formDataObject, {
+      const formName = this.settings.name;
+      if (!window.AbrosTiForm) {
+        window.AbrosTiForm = {};
+      }
+      if (!window.AbrosTiForm[formName]) {
+        window.AbrosTiForm[formName] = {};
+      }
+      this.proxyFormData = new Proxy(window.AbrosTiForm[formName], {
         set: (target, key, value) => {
           target[key] = value;
-          if (!window.AbrosTiForm) {
-            window.AbrosTiForm = {};
-          }
-          if (!window.AbrosTiForm[this.settings.name]) {
-            window.AbrosTiForm[this.settings.name] = {};
-          }
-          if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
-            window.AbrosTiForm[this.settings.name][key] = value;
-          }
           console.log(`Обновлено поле ${key}: ${value}`);
           return true;
         },
       });
-      const formDataJSON = t_forms__getFormDataJSON(formElement);
-      if (formDataJSON) {
+
+      const updateFormData = () => {
+        const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
         Object.entries(formDataJSON).forEach(([key, value]) => {
-          if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
-            this.proxyFormData[key] = value;
-          }
-        });
-      }
-      const observer = new MutationObserver(() => {
-        const updatedFormData = t_forms__getFormDataJSON(formElement) || {};
-        Object.entries(updatedFormData).forEach(([key, value]) => {
           if (
             key !== "tildaspec-elemid" &&
             key !== "form-spec-comments" &&
-            this.proxyFormData[key] !== value
+            key !== "tildaspec-phone-part" &&
+            key !== "tildaspec-phone-part-iso"
           ) {
             this.proxyFormData[key] = value;
           }
         });
+      };
+      updateFormData();
+
+      const observer = new MutationObserver(() => {
+        updateFormData();
       });
       observer.observe(formElement, {
-        childList: true, // Отслеживание добавления/удаления элементов
-        attributes: true, // Отслеживание изменений атрибутов
-        subtree: true, // Отслеживание изменений во всех дочерних элементах
+        childList: true,
+        attributes: true,
+        subtree: true,
       });
     });
   }
