@@ -17,6 +17,7 @@ class AbrosTiForm {
     if (!window.AbrosTiForm[this.settings.name]) {
       window.AbrosTiForm[this.settings.name] = {};
     }
+    this.formData = window.AbrosTiForm[this.settings.name];
     this.init();
     console.log(`Создание формы ${this.settings.name} завершено.`);
   }
