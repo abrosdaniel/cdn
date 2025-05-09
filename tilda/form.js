@@ -139,6 +139,9 @@ class AbrosTiForm {
       const validationErrors = window.tildaForm.validate(formElement);
       if (validationErrors.length > 0) {
         window.tildaForm.showErrors(formElement, validationErrors);
+        setTimeout(() => {
+          window.tildaForm.hideErrors(formElement);
+        }, 5000);
         console.warn(`Ошибки валидации в форме ${formName}:`, validationErrors);
         return;
       }
