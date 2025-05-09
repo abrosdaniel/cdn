@@ -66,104 +66,26 @@ class AbrosTiForm {
     const allrecords = document.querySelector("#allrecords");
     const div = document.createElement("div");
     div.id = this.settings.name;
+    div.className = "atf-popup";
     div.innerHTML = `
-  <!-- ATF001 -->
-  <div class="atf001 t1093">
-    <div
-      class="t-popup t-popup-anim-fadein t-popup-transition"
-      data-anim="fadein"
-      data-anim-timeout="0.3"
-      role="dialog"
-      aria-modal="true"
-      tabindex="-1"
-      style="display: none"
-    >
-      <div
-        class="t-popup__container t-width t-valign_middle t-popup__container-animated"
-      >
-      </div>
-      <div class="t-popup__close t-popup__block-close">
-        <button
-          type="button"
-          class="t-popup__close-wrapper t-popup__block-close-button"
-          aria-label="Закрыть диалоговое окно"
-        >
-          <svg
-            role="presentation"
-            class="t-popup__close-icon"
-            width="23px"
-            height="23px"
-            viewBox="0 0 23 23"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-          >
-            <g
-              stroke="none"
-              stroke-width="1"
-              fill="#1d1d1d"
-              fill-rule="evenodd"
-            >
-              <rect
-                transform="translate(11.313708, 11.313708) rotate(-45.000000) translate(-11.313708, -11.313708) "
-                x="10.3137085"
-                y="-3.6862915"
-                width="2"
-                height="30"
-              ></rect>
-              <rect
-                transform="translate(11.313708, 11.313708) rotate(-315.000000) translate(-11.313708, -11.313708) "
-                x="10.3137085"
-                y="-3.6862915"
-                width="2"
-                height="30"
-              ></rect>
-            </g>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div class="t-popup__bg t-popup__bg-active"></div>
+<!-- ATF001 -->
+<div class="atf001">
+  <div class="popup">
+    <div class="popup_container"></div>
+    <div class="popup_close"></div>
   </div>
-  <style>
-    .atf001 .t-popup__bg {
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
-    }
-    .atf001 .t-popup.t-popup-anim-fadein .t-popup__container {
-      transition-timing-function: ease-in-out;
-    }
-  </style>
+  <div class="popup_bg"></div>
 </div>
+<style>
+    ${this.settings.popup.style}
+</style>
     `;
     allrecords.appendChild(div);
     const popup = allrecords.querySelector(`#${this.settings.name}`);
-    const container = popup.querySelector(".t-popup__container");
+    const container = popup.querySelector(".popup_container");
     Object.entries(this.scheme).forEach(([formName, formConfig]) => {
       const formElement = document.querySelector(formConfig.target);
       container.appendChild(formElement);
-    });
-    t_onFuncLoad("t_popup__trapFocus", function () {
-      t_onFuncLoad("t_popup__closePopup", function () {
-        t_onFuncLoad("t_popup__showPopup", function () {
-          const popupElement = popup.querySelector(".t-popup");
-          const closeButton = popup.querySelector(".t-popup__close");
-          const bgElement = popup.querySelector(".t-popup__bg");
-          if (popupElement) {
-            t_popup__trapFocus(popupElement);
-            if (closeButton) {
-              closeButton.addEventListener("click", () =>
-                t_popup__closePopup(popupElement)
-              );
-            }
-            if (bgElement) {
-              bgElement.addEventListener("click", () =>
-                t_popup__closePopup(popupElement)
-              );
-            }
-          }
-        });
-      });
     });
   }
 
@@ -178,15 +100,15 @@ class AbrosTiForm {
       }
     };
 
-    if (this.settings.type?.window === "popup" && this.settings.url_popup) {
+    if (this.settings.type?.window === "popup" && this.settings.popup.url) {
       const popupButton = document.querySelector(
-        `[href="${this.settings.url_popup}"]`
+        `[href="${this.settings.popup.url}"]`
       );
       if (popupButton) {
         popupButton.addEventListener("click", () => {
           const popup = document.querySelector(`#${this.settings.name}`);
           if (popup) {
-            t_popup__showPopup(popup.querySelector(".t-popup"));
+            showPopup(popup.querySelector(".atf001"));
           }
         });
       }
@@ -198,27 +120,49 @@ class AbrosTiForm {
     bindButton(form.prev?.target, () =>
       this.handleFormChange(formTarget, formName, form.prev?.select)
     );
-    bindButton(form.submit?.target, () =>
-      this.handleSubmit(formTarget, formName, form.submit)
-    );
+    bindButton(form.submit?.target, () => this.handleSubmit());
   }
 
   handleFormChange(formTarget, formName, targetForm) {
     const formElement = formTarget.querySelector("form");
     if (formElement) {
+      const validationErrors = window.tildaForm.validate(formElement);
+      if (validationErrors.length > 0) {
+        window.tildaForm.showErrors(formElement, validationErrors);
+        console.warn(`Ошибки валидации в форме ${formName}:`, validationErrors);
+        return;
+      }
       this.updateFormData(formElement, formName);
     }
+
     if (targetForm) {
       this.setForm(targetForm);
     }
   }
 
-  handleSubmit(formTarget, formName, submitConfig) {
-    const formElement = formTarget.querySelector("form");
-    if (formElement) {
-      this.updateFormData(formElement, formName);
+  handleSubmit() {
+    let isValid = true;
+    Object.entries(this.scheme).forEach(([name, form]) => {
+      const formElement = document
+        .querySelector(form.target)
+        ?.querySelector("form");
+      if (formElement) {
+        const validationErrors = window.tildaForm.validate(formElement);
+        if (validationErrors.length > 0) {
+          window.tildaForm.showErrors(formElement, validationErrors);
+          console.warn(`Ошибки валидации в форме ${name}:`, validationErrors);
+          isValid = false;
+        } else {
+          this.updateFormData(formElement, name);
+        }
+      }
+    });
+
+    if (isValid) {
+      console.log("Все формы валидны. Данные для отправки:", this.formData);
+    } else {
+      console.warn("Отправка формы прервана из-за ошибок валидации.");
     }
-    this.submitForm(submitConfig);
   }
 
   initFormTracking() {
