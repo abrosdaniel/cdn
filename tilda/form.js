@@ -21,73 +21,12 @@ class AbrosTiForm {
     this.init();
     console.log(`Создание формы ${this.settings.name} завершено.`);
     console.groupCollapsed(
-      `%c📋 AbrosTiForm %cБиблиотека для создания кастомных форм в Tilda`,
+      `%c📋 AbrosTiForm%c Библиотека для создания кастомных форм в Tilda`,
       "background: #5292c9; color: white; border-radius: 5px; padding: 4px;",
       ""
     );
-    console.groupCollapsed(`📖 Инструкция`);
-    console.log(
-      `1. Добавляете формы в Tilda (Поддерживаются как стандартные так и в ZeroBlock).\n
-      2. Добавляете кнопки "Вперед", "Назад" и "Отправить" если требуются (Кнопки для каждой формы свои).\n
-      3. У всех полей формы указываете уникальные Variable name/Имя переменной.\n
-      4. Добавляете блок BF204N. В настройках блока подключить сервис куда будут отправляться данные. Поля можно удалить\n
-      5. После всех форм ниже добавляете T123 и вставляете код:\n\n
-        <script>\n
-        const form = new AbrosTiForm({\n
-          settings: {\n
-            name: "Name",\n
-            type: {\n
-              window: "popup", // popup или default\n
-              form: "quiz", // quiz или default\n
-            },\n
-          },\n
-          scheme: {\n
-            form_1: {\n
-              target: ".uc_form_1",\n
-              next: {\n
-                target: ".uc_form_1 .t-next",\n
-                select: "form_2",\n
-              },\n
-            },\n
-            form_2: {\n
-              target: ".uc_form_2",\n
-              prev: {\n
-                target: ".uc_form_2 .t-prev",\n
-                select: "form_1",\n
-              },\n
-              submit: {\n
-                target: ".uc_form_2 .t-submit",\n
-                select: ".t123__result_form",\n
-              },\n
-            },\n
-          },\n
-        });\n
-        </script>\n\n
-        6. В коде нужно настроить settings.\n
-           name - Название создаваемой формы.\n
-           window - Тип отображения (popup - открытие формы в popup или default - блоком на странице).\n
-           form - Тип формы (quiz - каждая форма это каждый шаг или default - распологаются так как в макете).\n
-        7. В коде нужно настроить scheme. Каждый form_№ это каждая ваша форма. Добавляются через запятую. Макет формы:\n\n
-        form_1: { - Имя формы формируется из form_ и порядка формы.\n
-              target: ".uc_form_1", - Класс/ID блока с формой.\n
-              function: () => {}, - Функция которая будет выполнена при активности формы.\n
-              next: { - Кнопка "Вперед". Если требуется.\n
-                target: ".uc_form_1 .t-next", - Класс/ID кнопки.\n
-                select: "form_2", - Имя формы на которую будет переход.\n
-              },\n
-              prev: { - Кнопка "Назад". Если требуется.\n
-                target: ".uc_form_1 .t-prev", - Класс/ID кнопки.\n
-                select: "form_1", - Имя формы на которую будет переход.\n
-              },\n
-              submit: { - Кнопка "Отправить". Если требуется.\n
-                target: ".uc_form_2 .t-submit", - Класс/ID кнопки.\n
-                select: ".uc_BF204N", - Класс/ID блока BF204N.\n
-              },\n
-            },\n\n
-        `
-    );
-    console.groupEnd();
     console.groupCollapsed(`📚 Документация`);
+    console.log(`Скоро появится документация по использованию библиотеки.`);
     console.groupEnd();
     console.log(`📦 Версия библиотеки: 1.0`);
     console.log(
@@ -117,27 +56,107 @@ class AbrosTiForm {
   initForms() {
     Object.entries(this.scheme).forEach(([formName, form]) => {
       if (this.settings.type?.window === "popup") {
-        this.moveFormsToParent(formName, form);
+        this.moveFormsToPopup(formName, form);
       }
       this.bindFormButtons(formName, form);
     });
   }
 
-  moveFormsToParent(formName, form) {
-    const form1Container = document.querySelector(this.scheme.form_1.target);
-    if (form1Container && formName !== "form_1") {
-      const form1Parent = form1Container.parentNode;
-
-      t_onFuncLoad("initForms", () => {
-        const formTarget = document.querySelector(form.target);
-        if (formTarget) {
-          console.log(
-            `Перемещаем ${form.target} в родителя ${this.scheme.form_1.target}`
-          );
-          form1Parent.appendChild(formTarget);
-        }
-      });
+  moveFormsToPopup(formName, form) {
+    const allrecords = document.querySelector("#allrecords");
+    const popup = document.createElement("div");
+    popup.id = this.settings.name;
+    popup.innerHTML = `
+  <!-- ATF001 -->
+  <div class="atf001">
+    <div
+      class="t-popup t-popup-anim-fadein t-popup-transition"
+      data-anim="fadein"
+      data-anim-timeout="0.3"
+      data-tooltip-hook="#zeropopup"
+      data-popup-rec-ids="1013733926"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      style="display: none"
+    >
+      <div
+        class="t-popup__container t-width t-valign_middle t-popup__container-animated"
+      >
+        <!-- Тут помещаем формы -->
+      </div>
+      <div class="t-popup__close t-popup__block-close">
+        <button
+          type="button"
+          class="t-popup__close-wrapper t-popup__block-close-button"
+          aria-label="Закрыть диалоговое окно"
+        >
+          <svg
+            role="presentation"
+            class="t-popup__close-icon"
+            width="23px"
+            height="23px"
+            viewBox="0 0 23 23"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+          >
+            <g
+              stroke="none"
+              stroke-width="1"
+              fill="#1d1d1d"
+              fill-rule="evenodd"
+            >
+              <rect
+                transform="translate(11.313708, 11.313708) rotate(-45.000000) translate(-11.313708, -11.313708) "
+                x="10.3137085"
+                y="-3.6862915"
+                width="2"
+                height="30"
+              ></rect>
+              <rect
+                transform="translate(11.313708, 11.313708) rotate(-315.000000) translate(-11.313708, -11.313708) "
+                x="10.3137085"
+                y="-3.6862915"
+                width="2"
+                height="30"
+              ></rect>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="t-popup__bg t-popup__bg-active"></div>
+  </div>
+  <style>
+    .atf001 .t-popup__bg {
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
     }
+    .atf001 .t-popup.t-popup-anim-fadein .t-popup__container {
+      transition-timing-function: ease-in-out;
+    }
+  </style>
+  <script>
+    t_onReady(function () {
+      t_onFuncLoad("t1093__init", function () {
+        t1093__init("${this.settings.name}");
+      });
+      t_onFuncLoad("t1093__initPopup", function () {
+        t1093__initPopup("${this.settings.name}");
+      });
+    });
+  </script>
+</div>
+    `;
+    const container = popup.querySelector(".t-popup__container");
+    Object.entries(this.scheme).forEach(([formName, form]) => {
+      const formElement = document.querySelector(form.target);
+      if (formElement) {
+        container.appendChild(formElement);
+      }
+    });
+    allrecords.appendChild(popup);
   }
 
   bindFormButtons(formName, form) {
