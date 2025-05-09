@@ -1,5 +1,5 @@
 /*
- * Tilda Custom Form.js v1.0
+ * Abros Tilda Form v1.0
  * (c) 2025
  * by Daniel Abros
  * Site → https://abrosdaniel.com
