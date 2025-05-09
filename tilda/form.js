@@ -138,7 +138,8 @@ class AbrosTiForm {
     }
   </style>
   <script>
-  t_onReady(function () {
+  t_loadJsFile(
+    "https://static.tildacdn.com/js/tilda-popup-1.0.min.js",
     t_onFuncLoad("t_popup__trapFocus", function () {
       t_onFuncLoad("t_popup__closePopup", function () {
         t_onFuncLoad("t_popup__showPopup", function () {
@@ -167,8 +168,9 @@ class AbrosTiForm {
           }
         });
       });
-    });
-  });
+    }),
+    5
+  );
 </script>
 </div>
     `;
@@ -193,6 +195,23 @@ class AbrosTiForm {
         button.addEventListener("click", callback);
       }
     };
+
+    if (
+      this.settings.type?.window === "popup" &&
+      this.settings.type.url_popup
+    ) {
+      const popupButton = document.querySelector([
+        (href = this.settings.type.url_popup),
+      ]);
+      if (popupButton) {
+        popupButton.addEventListener("click", () => {
+          const popup = document.querySelector(`#${this.settings.name}`);
+          if (popup) {
+            t_popup__showPopup(popup.querySelector(".t-popup"));
+          }
+        });
+      }
+    }
 
     bindButton(form.next?.target, () =>
       this.handleFormChange(formTarget, formName, form.next?.select)
