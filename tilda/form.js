@@ -101,26 +101,26 @@ class AbrosTiForm {
             console.warn("ID формы не найден. Проверьте атрибуты формы.");
             return;
           }
-          this.trackForm(formElement, formId);
+          this.trackForm(formId);
         }
       });
     });
   }
 
-  trackForm(formElement, formId) {
+  trackForm(formId) {
     t_onFuncLoad("t_forms__getFormDataJSON", () => {
       const formDataObject = t_forms__getFormDataJSON(formId) || {};
       this.proxyFormData = new Proxy(formDataObject, {
         set: (target, key, value) => {
           target[key] = value;
-          if (!window.AbrosTCF) {
-            window.AbrosTCF = {};
+          if (!window.AbrosTiForm) {
+            window.AbrosTiForm = {};
           }
-          if (!window.AbrosTCF[this.settings.name]) {
-            window.AbrosTCF[this.settings.name] = {};
+          if (!window.AbrosTiForm[this.settings.name]) {
+            window.AbrosTiForm[this.settings.name] = {};
           }
           if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
-            window.AbrosTCF[this.settings.name][key] = value;
+            window.AbrosTiForm[this.settings.name][key] = value;
           }
           return true;
         },
