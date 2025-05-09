@@ -117,6 +117,7 @@ class AbrosTiForm {
           if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
             window.AbrosTiForm[this.settings.name][key] = value;
           }
+          console.log(`Обновлено поле ${key}: ${value}`);
           return true;
         },
       });
@@ -128,6 +129,24 @@ class AbrosTiForm {
           }
         });
       }
+      const fields = formElement.querySelectorAll(
+        "input, textarea, select, fieldset"
+      );
+      fields.forEach((field) => {
+        field.addEventListener("input", (event) => {
+          const { name, value } = event.target;
+          if (name) {
+            this.proxyFormData[name] = value;
+          }
+        });
+
+        field.addEventListener("change", (event) => {
+          const { name, value } = event.target;
+          if (name) {
+            this.proxyFormData[name] = value;
+          }
+        });
+      });
     });
   }
 
