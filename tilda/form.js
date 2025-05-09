@@ -96,36 +96,31 @@ class AbrosTiForm {
       t_onFuncLoad("initForms", () => {
         const formElement = container.querySelector("form");
         if (formElement) {
-          const formId = formElement.id || formElement.getAttribute("name");
-          if (!formId) {
-            console.warn("ID формы не найден. Проверьте атрибуты формы.");
-            return;
-          }
-          this.trackForm(formId);
+          this.trackForm(formElement);
         }
       });
     });
   }
 
-  trackForm(formId) {
+  trackForm(formElement) {
     t_onFuncLoad("t_forms__getFormDataJSON", () => {
-      const formDataObject = t_forms__getFormDataJSON(formId) || {};
+      const formDataObject = t_forms__getFormDataJSON(formElement) || {};
       this.proxyFormData = new Proxy(formDataObject, {
         set: (target, key, value) => {
           target[key] = value;
           if (!window.AbrosTiForm) {
             window.AbrosTiForm = {};
           }
-          if (!window.AbrosTiForm[this.settings.name]) {
-            window.AbrosTiForm[this.settings.name] = {};
+          if (!window.AbrosTCF[this.settings.name]) {
+            window.AbrosTCF[this.settings.name] = {};
           }
           if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
-            window.AbrosTiForm[this.settings.name][key] = value;
+            window.AbrosTCF[this.settings.name][key] = value;
           }
           return true;
         },
       });
-      const formDataJSON = t_forms__getFormDataJSON(formId);
+      const formDataJSON = t_forms__getFormDataJSON(formElement);
       if (formDataJSON) {
         Object.entries(formDataJSON).forEach(([key, value]) => {
           if (key !== "tildaspec-elemid" && key !== "form-spec-comments") {
