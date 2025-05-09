@@ -63,6 +63,7 @@ class AbrosTiForm {
   }
 
   moveFormsToPopup() {
+    const allrecords = document.querySelector("#allrecords");
     const div = document.createElement("div");
     div.id = this.settings.name;
     div.innerHTML = `
@@ -83,7 +84,6 @@ class AbrosTiForm {
       <div
         class="t-popup__container t-width t-valign_middle t-popup__container-animated"
       >
-        <!-- Тут помещаем формы -->
       </div>
       <div class="t-popup__close t-popup__block-close">
         <button
@@ -172,8 +172,8 @@ class AbrosTiForm {
 </script>
 </div>
     `;
-    const allrecords = document.querySelector("#allrecords");
-    const popup = document.querySelector(`#${this.settings.name}`);
+    allrecords.appendChild(div);
+    const popup = allrecords.querySelector(`#${this.settings.name}`);
     const container = popup.querySelector(".t-popup__container");
     Object.entries(this.scheme).forEach(([form]) => {
       const formElement = document.querySelector(form.target);
@@ -181,7 +181,6 @@ class AbrosTiForm {
         container.appendChild(formElement);
       }
     });
-    allrecords.appendChild(popup);
   }
 
   bindFormButtons(formName, form) {
