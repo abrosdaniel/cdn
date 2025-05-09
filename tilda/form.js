@@ -11,13 +11,19 @@ class AbrosTiForm {
     this.settings = options.settings || {};
     this.scheme = options.scheme || {};
     this.currentStep = null;
-    this.formData = {};
+    if (!window.AbrosTiForm) {
+      window.AbrosTiForm = {};
+    }
+    if (!window.AbrosTiForm[this.settings.name]) {
+      window.AbrosTiForm[this.settings.name] = {};
+    }
+    this.formData = window.AbrosTiForm[this.settings.name];
     this.init();
-    console.log(`Создание формы ${this.settings.name} завершена.`);
+    console.log(`Создание формы ${this.settings.name} завершено.`);
   }
 
   init() {
-    if (this.settings.type && this.settings.type.window === "popup") {
+    if (this.settings.type?.window === "popup") {
       this.settings.type.form = "quiz";
     }
     const firstStep = Object.keys(this.scheme)[0];
@@ -29,71 +35,69 @@ class AbrosTiForm {
   }
 
   initSteps() {
-    Object.keys(this.scheme).forEach((stepName) => {
-      const step = this.scheme[stepName];
-
-      if (this.settings.type && this.settings.type.window === "popup") {
-        const step1Container = document.querySelector(
-          this.scheme.step_1.target
-        );
-
-        if (step1Container && stepName !== "step_1") {
-          const step1Parent = step1Container.parentNode;
-
-          t_onFuncLoad("initForms", () => {
-            const stepTarget = document.querySelector(step.target);
-            if (stepTarget) {
-              console.log(
-                `Перемещаем ${step.target} в родителя ${this.scheme.step_1.target}`
-              );
-              step1Parent.appendChild(stepTarget);
-            }
-          });
-        }
+    Object.entries(this.scheme).forEach(([stepName, step]) => {
+      if (this.settings.type?.window === "popup") {
+        this.moveStepsToParent(stepName, step);
       }
-
-      if (step.next && step.next.target) {
-        const stepTarget = document.querySelector(step.target);
-        const nextButton = stepTarget.querySelector(step.next.target);
-        if (nextButton) {
-          nextButton.addEventListener("click", () => {
-            const formElement = stepTarget.querySelector("form");
-            if (formElement && formElement.updateFormData) {
-              formElement.updateFormData();
-            }
-            this.setStep(step.next.form);
-          });
-        }
-      }
-
-      if (step.prev && step.prev.target) {
-        const stepTarget = document.querySelector(step.target);
-        const prevButton = stepTarget.querySelector(step.prev.target);
-        if (prevButton) {
-          prevButton.addEventListener("click", () => {
-            const formElement = stepTarget.querySelector("form");
-            if (formElement && formElement.updateFormData) {
-              formElement.updateFormData();
-            }
-            this.setStep(step.prev.form);
-          });
-        }
-      }
-
-      if (step.submit && step.submit.target) {
-        const stepTarget = document.querySelector(step.target);
-        const submitButton = stepTarget.querySelector(step.submit.target);
-        if (submitButton) {
-          submitButton.addEventListener("click", () => {
-            const formElement = stepTarget.querySelector("form");
-            if (formElement && formElement.updateFormData) {
-              formElement.updateFormData();
-            }
-            this.submitForm(step.submit);
-          });
-        }
-      }
+      this.bindStepButtons(stepName, step);
     });
+  }
+
+  moveStepsToParent(stepName, step) {
+    const step1Container = document.querySelector(this.scheme.step_1.target);
+    if (step1Container && stepName !== "step_1") {
+      const step1Parent = step1Container.parentNode;
+
+      t_onFuncLoad("initForms", () => {
+        const stepTarget = document.querySelector(step.target);
+        if (stepTarget) {
+          console.log(
+            `Перемещаем ${step.target} в родителя ${this.scheme.step_1.target}`
+          );
+          step1Parent.appendChild(stepTarget);
+        }
+      });
+    }
+  }
+
+  bindStepButtons(stepName, step) {
+    const stepTarget = document.querySelector(step.target);
+    if (!stepTarget) return;
+
+    const bindButton = (buttonSelector, callback) => {
+      const button = stepTarget.querySelector(buttonSelector);
+      if (button) {
+        button.addEventListener("click", callback);
+      }
+    };
+
+    bindButton(step.next?.target, () =>
+      this.handleStepChange(stepTarget, step.next?.form)
+    );
+    bindButton(step.prev?.target, () =>
+      this.handleStepChange(stepTarget, step.prev?.form)
+    );
+    bindButton(step.submit?.target, () =>
+      this.handleSubmit(stepTarget, step.submit)
+    );
+  }
+
+  handleStepChange(stepTarget, targetStep) {
+    const formElement = stepTarget.querySelector("form");
+    if (formElement) {
+      this.updateFormData(formElement);
+    }
+    if (targetStep) {
+      this.setStep(targetStep);
+    }
+  }
+
+  handleSubmit(stepTarget, submitConfig) {
+    const formElement = stepTarget.querySelector("form");
+    if (formElement) {
+      this.updateFormData(formElement);
+    }
+    this.submitForm(submitConfig);
   }
 
   initFormTracking() {
@@ -108,42 +112,32 @@ class AbrosTiForm {
       t_onFuncLoad("initForms", () => {
         const formElement = container.querySelector("form");
         if (formElement) {
-          this.trackForm(formElement);
+          formElement.updateFormData = () => this.updateFormData(formElement);
         }
       });
     });
   }
 
-  trackForm(formElement) {
+  updateFormData(formElement) {
     t_onFuncLoad("t_forms__getFormDataJSON", () => {
-      const formName = this.settings.name;
-      if (!window.AbrosTiForm) {
-        window.AbrosTiForm = {};
-      }
-      if (!window.AbrosTiForm[formName]) {
-        window.AbrosTiForm[formName] = {};
-      }
-      const updateFormData = () => {
-        const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
-        const currentFormData = window.AbrosTiForm[formName];
-        Object.keys(currentFormData).forEach((key) => {
-          if (!(key in formDataJSON)) {
-            delete currentFormData[key];
-          }
-        });
-        Object.entries(formDataJSON).forEach(([key, value]) => {
-          if (
-            key !== "tildaspec-elemid" &&
-            key !== "form-spec-comments" &&
-            key !== "tildaspec-phone-part" &&
-            key !== "tildaspec-phone-part-iso"
-          ) {
-            currentFormData[key] = value;
-          }
-        });
-      };
-      updateFormData();
-      formElement.updateFormData = updateFormData;
+      const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
+      Object.keys(this.formData).forEach((key) => {
+        if (!(key in formDataJSON)) {
+          delete this.formData[key];
+        }
+      });
+      Object.entries(formDataJSON).forEach(([key, value]) => {
+        if (
+          key !== "tildaspec-elemid" &&
+          key !== "form-spec-comments" &&
+          key !== "tildaspec-phone-part" &&
+          key !== "tildaspec-phone-part-iso"
+        ) {
+          this.formData[key] = value;
+        }
+      });
+
+      console.log("Обновлённые данные формы:", this.formData);
     });
   }
 
@@ -153,38 +147,17 @@ class AbrosTiForm {
       return;
     }
 
-    if (this.settings.type && this.settings.type.form === "default") {
-      Object.keys(this.scheme).forEach((step) => {
-        const target = this.scheme[step].target;
-        if (target) {
-          const element = document.querySelector(target);
-          if (element) {
-            element.style.display = "block";
-          }
-        }
-      });
-      return;
-    }
+    const isDefaultForm = this.settings.type?.form === "default";
 
-    Object.keys(this.scheme).forEach((step) => {
-      const target = this.scheme[step].target;
-      if (target) {
-        const element = document.querySelector(target);
-        if (element) {
-          element.style.display = "none";
-        }
+    Object.entries(this.scheme).forEach(([name, step]) => {
+      const element = document.querySelector(step.target);
+      if (element) {
+        element.style.display =
+          isDefaultForm || name === stepName ? "block" : "none";
       }
     });
 
-    const currentTarget = this.scheme[stepName].target;
-    if (currentTarget) {
-      const currentElement = document.querySelector(currentTarget);
-      if (currentElement) {
-        currentElement.style.display = "block";
-      }
-    }
-
-    if (this.scheme[stepName].function) {
+    if (this.scheme[stepName]?.function) {
       this.scheme[stepName].function();
     }
 
@@ -194,10 +167,7 @@ class AbrosTiForm {
   submitForm(submitConfig) {
     if (!submitConfig) return;
 
-    console.log(
-      "Отправка формы с данными:",
-      window.AbrosTiForm[this.settings.name]
-    );
+    console.log("Отправка формы с данными:", this.formData);
 
     if (submitConfig.form) {
       const resultForm = document.querySelector(submitConfig.form);
