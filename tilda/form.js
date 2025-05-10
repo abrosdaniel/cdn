@@ -159,9 +159,14 @@ class AbrosTiForm {
           const invalidValue =
             formData[selectConfig[0].key] || "неизвестное значение";
           const errorMessage = `Значение "${invalidValue}" не верно.`;
-          window.tildaForm.showErrorInPopup(formElement, [
-            { obj: formElement, type: ["custom"], message: errorMessage },
-          ]);
+          const customError = [
+            {
+              obj: formElement.querySelector(`[name="${selectConfig[0].key}"]`),
+              type: ["custom"],
+              message: errorMessage,
+            },
+          ];
+          window.tildaForm.showErrors(formElement, customError);
           console.warn(
             `Не удалось найти подходящий шаг для формы ${formName} по данным:`,
             formData
