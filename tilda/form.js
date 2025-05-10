@@ -288,9 +288,13 @@ class AbrosTiForm {
       const dataContainer = document.querySelector(this.settings.data);
       if (dataContainer) {
         const formElement = dataContainer.querySelector("form");
+        const formBtnSubmit = formElement.querySelector(".t-submit");
         if (formElement) {
           t_onFuncLoad("t_forms__getFormDataJSON", () => {
-            const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
+            let formDataJSON = t_forms__getFormDataJSON(formElement) || {};
+            Object.keys(formDataJSON).forEach((key) => {
+              delete formDataJSON[key];
+            });
             Object.entries(this.formData).forEach(([formName, formData]) => {
               Object.entries(formData).forEach(([key, value]) => {
                 formDataJSON[key] = value;
@@ -298,9 +302,7 @@ class AbrosTiForm {
             });
             console.log("Обновлённые данные формы для отправки:", formDataJSON);
             t_onFuncLoad("tildaForm", () => {
-              const stateBtnSubmit = formElement.querySelector(".t-submit");
-              stateBtnSubmit.classList.add("t-submit_loading");
-              window.tildaForm.send(formElement, formDataJSON, () => {
+              window.tildaForm.send(formElement, formBtnSubmit, () => {
                 console.log("Данные успешно отправлены!");
               });
             });
