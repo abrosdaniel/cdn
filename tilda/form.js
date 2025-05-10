@@ -165,7 +165,7 @@ class AbrosTiForm {
           const errorMessage = `Значение "${invalidValue}" не верно.`;
           var errorElement = fieldContainer.querySelector(".atf-input-error");
           if (!errorElement) {
-            var errorElement = fieldContainer.createElement("div");
+            var errorElement = document.createElement("div");
             errorElement.className = "atf-input-error";
             errorElement.innerHTML = `
             <p class="atf-input-error-text"></p>
@@ -175,6 +175,7 @@ class AbrosTiForm {
                 }
             </style>
             `;
+            fieldContainer.appendChild(errorElement);
           }
           const errorText = errorElement.querySelector(".atf-input-error-text");
           errorText.innerHTML = errorMessage;
