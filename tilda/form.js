@@ -285,6 +285,30 @@ class AbrosTiForm {
 
     if (isValid) {
       console.log("Все формы валидны. Данные для отправки:", this.formData);
+      const dataContainer = document.querySelector(this.settings.data);
+      if (dataContainer) {
+        const formElement = dataContainer.closest("form");
+        if (formElement) {
+          t_onFuncLoad("t_forms__getFormDataJSON", () => {
+            const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
+            Object.entries(this.formData).forEach(([formName, formData]) => {
+              Object.entries(formData).forEach(([key, value]) => {
+                formDataJSON[key] = value;
+              });
+            });
+            console.log("Обновлённые данные формы для отправки:", formDataJSON);
+            t_onFuncLoad("tildaForm", () => {
+              window.tildaForm.send(formElement, formDataJSON, () => {
+                console.log("Данные успешно отправлены!");
+              });
+            });
+          });
+        } else {
+          console.warn("Форма для отправки не найдена.");
+        }
+      } else {
+        console.warn("Контейнер данных не найден.");
+      }
     } else {
       console.warn("Отправка формы прервана из-за ошибок валидации.");
     }
@@ -393,18 +417,5 @@ class AbrosTiForm {
     setTimeout(() => {
       popup.style.display = "none";
     }, 300);
-  }
-
-  submitForm(submitConfig) {
-    if (!submitConfig) return;
-
-    console.log("Отправка формы с данными:", this.formData);
-
-    if (submitConfig.form) {
-      const resultForm = document.querySelector(submitConfig.select);
-      if (resultForm) {
-        resultForm.style.display = "block";
-      }
-    }
   }
 }
