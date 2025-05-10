@@ -158,15 +158,30 @@ class AbrosTiForm {
         } else {
           const invalidValue =
             formData[selectConfig[0].key] || "неизвестное значение";
+          const field = formElement?.querySelector(
+            `[name="${selectConfig[0].key}"]`
+          );
+          const fieldContainer = field.closest(".t-input-block");
           const errorMessage = `Значение "${invalidValue}" не верно.`;
-          const customError = [
-            {
-              obj: formElement.querySelector(`[name="${selectConfig[0].key}"]`),
-              type: ["invalid"],
-              message: errorMessage,
-            },
-          ];
-          window.tildaForm.showErrors(formElement, customError);
+          var errorElement = fieldContainer.querySelector(".atf-input-error");
+          if (!errorElement) {
+            var errorElement = fieldContainer.createElement("div");
+            errorElement.className = "atf-input-error";
+            errorElement.innerHTML = `
+            <p class="atf-input-error-text"></p>
+            <style>
+                .atf-input-error {}
+                .atf-input-error-text {
+                }
+            </style>
+            `;
+          }
+          const errorText = errorElement.querySelector(".atf-input-error-text");
+          errorText.innerHTML = errorMessage;
+          errorElement.style.opacity = "1";
+          setTimeout(() => {
+            errorElement.style.opacity = "0";
+          }, 3000);
         }
       } else if (typeof selectConfig === "string") {
         window.tildaForm.hideErrors(formElement);
