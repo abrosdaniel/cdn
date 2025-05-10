@@ -161,7 +161,7 @@ class AbrosTiForm {
           const errorMessage = `Значение "${invalidValue}" не верно.`;
           const customError = [
             {
-              obj: formElement.querySelector(`[name="${selectConfig[0].key}"]`),
+              obj: formElement,
               type: ["custom"],
               message: errorMessage,
             },
