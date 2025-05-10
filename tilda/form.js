@@ -87,6 +87,18 @@ class AbrosTiForm {
       const formElement = document.querySelector(formConfig.target);
       container.appendChild(formElement);
     });
+    const popupClose = popup.querySelector(".popup_close");
+    const popupBg = popup.querySelector(".popup_bg");
+    if (popupClose) {
+      popupClose.addEventListener("click", () =>
+        this.hidePopup(popup.querySelector(".atf001"))
+      );
+    }
+    if (popupBg) {
+      popupBg.addEventListener("click", () =>
+        this.hidePopup(popup.querySelector(".atf001"))
+      );
+    }
   }
 
   bindFormButtons(formName, form) {
