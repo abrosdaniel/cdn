@@ -297,7 +297,11 @@ class AbrosTiForm {
               });
             });
             console.log("Обновлённые данные формы для отправки:", formDataJSON);
-            this.sendForm(formElement);
+            t_onFuncLoad("tildaForm", () => {
+              window.tildaForm.send(formElement, formDataJSON, () => {
+                console.log("Данные успешно отправлены!");
+              });
+            });
           });
         } else {
           console.warn("Форма для отправки не найдена.");
@@ -413,50 +417,5 @@ class AbrosTiForm {
     setTimeout(() => {
       popup.style.display = "none";
     }, 300);
-  }
-
-  sendForm(formElement) {
-    const formData = new FormData(formElement);
-    const allRecords = document.getElementById("allrecords");
-    formData.append(
-      "tildaspec-pageid",
-      allRecords.getAttribute("data-tilda-page-id")
-    );
-    formData.append(
-      "tildaspec-projectid",
-      allRecords.getAttribute("data-tilda-project-id")
-    );
-    formData.append("tildaspec-lang", window.t_forms__lang || "en");
-    const formUrl = `https://${
-      window.tildaForm.endpoint || "forms.tildaapi.com"
-    }/procces/`;
-
-    fetch(formUrl, {
-      method: "POST",
-      body: formData,
-      headers: {
-        Accept: "application/json, text/javascript, */*; q=0.01",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`[${response.status}] ${response.statusText}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data && data.error) {
-          console.error("Ошибка сервера:", data.error);
-        } else {
-          console.log("Форма успешно отправлена:", data);
-
-          if (data.redirectto) {
-            window.location.href = data.redirectto;
-          }
-        }
-      })
-      .catch((error) => {
-        console.error("Ошибка при отправке формы:", error.message);
-      });
   }
 }
