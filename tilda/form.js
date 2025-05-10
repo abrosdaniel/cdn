@@ -182,6 +182,7 @@ class AbrosTiForm {
   }
   .atf-input-error-text {
     color: red;
+    font-size: 13px;
   }
   .atf-input-error:after {
     border: 6px solid transparent;
