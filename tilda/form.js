@@ -287,7 +287,7 @@ class AbrosTiForm {
       console.log("Все формы валидны. Данные для отправки:", this.formData);
       const dataContainer = document.querySelector(this.settings.data);
       if (dataContainer) {
-        const formElement = dataContainer.closest("form");
+        const formElement = dataContainer.querySelector("form");
         if (formElement) {
           t_onFuncLoad("t_forms__getFormDataJSON", () => {
             const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
