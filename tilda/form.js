@@ -298,6 +298,8 @@ class AbrosTiForm {
             });
             console.log("Обновлённые данные формы для отправки:", formDataJSON);
             t_onFuncLoad("tildaForm", () => {
+              const stateBtnSubmit = formElement.querySelector(".t-submit");
+              stateBtnSubmit.classList.add("t-submit_loading");
               window.tildaForm.send(formElement, formDataJSON, () => {
                 console.log("Данные успешно отправлены!");
               });
