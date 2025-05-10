@@ -77,6 +77,11 @@ class AbrosTiForm {
   </div>
 </div>
 <style>
+  .atf001 .popup {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+  }
   .atf001 .popup_container {
     -webkit-transition: opacity ease-in-out 0.3s;
     -moz-transition: opacity ease-in-out 0.3s;
@@ -114,22 +119,22 @@ class AbrosTiForm {
 </style>
     `;
     allrecords.appendChild(div);
-    const popup = allrecords.querySelector(`#${this.settings.name}`);
-    const container = popup.querySelector(".popup_container");
+    const block = allrecords.querySelector(`#${this.settings.name}`);
+    const container = block.querySelector(".popup_container");
     Object.entries(this.scheme).forEach(([formName, formConfig]) => {
       const formElement = document.querySelector(formConfig.target);
       container.appendChild(formElement);
     });
-    const popupClose = popup.querySelector(".popup_close");
-    const popupBg = popup.querySelector(".popup_bg");
+    const popupClose = block.querySelector(".popup_close");
+    const popupBg = block.querySelector(".popup_bg");
     if (popupClose) {
       popupClose.addEventListener("click", () =>
-        this.hidePopup(popup.querySelector(".atf001"))
+        this.hidePopup(block.querySelector(".popup"))
       );
     }
     if (popupBg) {
       popupBg.addEventListener("click", () =>
-        this.hidePopup(popup.querySelector(".atf001"))
+        this.hidePopup(block.querySelector(".popup"))
       );
     }
   }
@@ -151,9 +156,9 @@ class AbrosTiForm {
       );
       if (popupButton) {
         popupButton.addEventListener("click", () => {
-          const popup = document.querySelector(`#${this.settings.name}`);
-          if (popup) {
-            this.showPopup(popup.querySelector(".atf001"));
+          const block = document.querySelector(`#${this.settings.name}`);
+          if (block) {
+            this.showPopup(block.querySelector(".popup"));
           }
         });
       }
@@ -365,12 +370,14 @@ class AbrosTiForm {
   showPopup(popup) {
     window.tildaForm.lockBodyScroll();
     popup.style.display = "block";
-    const popupContainer = popup.querySelector(".popup_container");
-    const popupBg = popup.querySelector(".popup_bg");
-    const popupClose = popup.querySelector(".popup_close");
-    popupContainer.style.opacity = "1";
-    popupBg.style.opacity = "1";
-    popupClose.style.opacity = "1";
+    setTimeout(() => {
+      const popupContainer = popup.querySelector(".popup_container");
+      const popupBg = popup.querySelector(".popup_bg");
+      const popupClose = popup.querySelector(".popup_close");
+      popupContainer.style.opacity = "1";
+      popupBg.style.opacity = "1";
+      popupClose.style.opacity = "1";
+    }, 100);
   }
 
   hidePopup(popup) {
