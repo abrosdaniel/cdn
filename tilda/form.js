@@ -70,14 +70,47 @@ class AbrosTiForm {
     div.innerHTML = `
 <!-- ATF001 -->
 <div class="atf001">
-  <div class="popup">
-    <div class="popup_container" style="opacity: 0;"></div>
-    <div class="popup_close" style="opacity: 0;"></div>
-    <div class="popup_bg" style="opacity: 0;"></div>
+  <div class="popup" style="display: none">
+    <div class="popup_container" style="opacity: 0"></div>
+    <div class="popup_close" style="opacity: 0"></div>
+    <div class="popup_bg" style="opacity: 0"></div>
   </div>
 </div>
 <style>
-    
+  .atf001 .popup_container {
+    -webkit-transition: opacity ease-in-out 0.3s;
+    -moz-transition: opacity ease-in-out 0.3s;
+    -o-transition: opacity ease-in-out 0.3s;
+    transition: opacity ease-in-out 0.3s;
+    transform: translateY(50%);
+    z-index: 6;
+    position: relative;
+  }
+  .atf001 .popup_close {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    width: 23px;
+    height: 23px;
+    cursor: pointer;
+    -webkit-transition: opacity ease-in-out 0.3s;
+    -moz-transition: opacity ease-in-out 0.3s;
+    -o-transition: opacity ease-in-out 0.3s;
+    transition: opacity ease-in-out 0.3s;
+    z-index: 9;
+  }
+  .atf001 .popup_bg {
+    -webkit-transition: opacity ease-in-out 0.3s;
+    -moz-transition: opacity ease-in-out 0.3s;
+    -o-transition: opacity ease-in-out 0.3s;
+    transition: opacity ease-in-out 0.3s;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+  }
 </style>
     `;
     allrecords.appendChild(div);
