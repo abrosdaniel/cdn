@@ -168,12 +168,32 @@ class AbrosTiForm {
             var errorElement = document.createElement("div");
             errorElement.className = "atf-input-error";
             errorElement.innerHTML = `
-            <p class="atf-input-error-text"></p>
-            <style>
-                .atf-input-error {}
-                .atf-input-error-text {
-                }
-            </style>
+<p class="atf-input-error-text"></p>
+<style>
+  .atf-input-error {
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.2);
+    left: 0;
+    margin-top: 5px;
+    padding: 8px 10px;
+    position: absolute;
+    z-index: 2;
+  }
+  .atf-input-error-text {
+    color: red;
+  }
+  .atf-input-error:after {
+    border: 6px solid transparent;
+    border-bottom-color: #fff;
+    content: "";
+    height: 0;
+    left: 15%;
+    position: absolute;
+    top: -12px;
+    width: 0;
+  }
+</style>
             `;
             fieldContainer.appendChild(errorElement);
           }
