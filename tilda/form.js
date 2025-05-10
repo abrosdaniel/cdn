@@ -159,30 +159,17 @@ class AbrosTiForm {
           const invalidValue =
             formData[selectConfig[0].key] || "неизвестное значение";
           const errorMessage = `Значение "${invalidValue}" не верно.`;
-          const field = formElement.querySelector(
-            `[name="${selectConfig[0].key}"]`
-          );
-
-          console.log("Поле для ошибки:", field);
-          console.log("Сообщение об ошибке:", errorMessage);
-
-          if (!field) {
-            console.error(`Поле с именем "${selectConfig[0].key}" не найдено.`);
-            return;
-          }
-
           const customError = [
             {
-              obj: field,
+              obj: formElement.querySelector(`[name="${selectConfig[0].key}"]`),
               type: ["custom"],
               message: errorMessage,
             },
           ];
-
-          console.log("Объект ошибки:", customError);
-
-          const result = window.tildaForm.showErrors(formElement, customError);
-          console.log("Результат вызова showErrors:", result);
+          const options = {
+            inputBoxSelector: ".t-input-block",
+          };
+          window.tildaForm.showErrors(formElement, customError, options);
         }
       } else if (typeof selectConfig === "string") {
         window.tildaForm.hideErrors(formElement);
