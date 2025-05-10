@@ -73,11 +73,11 @@ class AbrosTiForm {
   <div class="popup">
     <div class="popup_container"></div>
     <div class="popup_close"></div>
+    <div class="popup_bg"></div>
   </div>
-  <div class="popup_bg"></div>
 </div>
 <style>
-    ${this.settings.popup.style}
+    
 </style>
     `;
     allrecords.appendChild(div);
@@ -179,6 +179,7 @@ class AbrosTiForm {
     padding: 8px 10px;
     position: absolute;
     z-index: 2;
+    transition: opacity 0.3s ease-in-out;
   }
   .atf-input-error-text {
     color: red;
@@ -314,6 +315,30 @@ class AbrosTiForm {
     }
 
     this.currentForm = formName;
+  }
+
+  showPopup(popup) {
+    window.tildaForm.lockBodyScroll();
+    popup.style.display = "block";
+    const popupContainer = popup.querySelector(".popup_container");
+    const popupBg = popup.querySelector(".popup_bg");
+    const popupClose = popup.querySelector(".popup_close");
+    popupContainer.style.opacity = "1";
+    popupBg.style.opacity = "1";
+    popupClose.style.opacity = "1";
+  }
+
+  hidePopup(popup) {
+    window.tildaForm.unlockBodyScroll();
+    const popupContainer = popup.querySelector(".popup_container");
+    const popupBg = popup.querySelector(".popup_bg");
+    const popupClose = popup.querySelector(".popup_close");
+    popupContainer.style.opacity = "0";
+    popupBg.style.opacity = "0";
+    popupClose.style.opacity = "0";
+    setTimeout(() => {
+      popup.style.display = "none";
+    }, 300);
   }
 
   submitForm(submitConfig) {
