@@ -71,9 +71,9 @@ class AbrosTiForm {
 <!-- ATF001 -->
 <div class="atf001">
   <div class="popup">
-    <div class="popup_container"></div>
-    <div class="popup_close"></div>
-    <div class="popup_bg"></div>
+    <div class="popup_container" style="opacity: 0;"></div>
+    <div class="popup_close" style="opacity: 0;"></div>
+    <div class="popup_bg" style="opacity: 0;"></div>
   </div>
 </div>
 <style>
