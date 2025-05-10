@@ -108,7 +108,7 @@ class AbrosTiForm {
         popupButton.addEventListener("click", () => {
           const popup = document.querySelector(`#${this.settings.name}`);
           if (popup) {
-            showPopup(popup.querySelector(".atf001"));
+            this.showPopup(popup.querySelector(".atf001"));
           }
         });
       }
@@ -256,7 +256,7 @@ class AbrosTiForm {
             this.updateFormData(formElement, formName);
           const stateBtnSubmit = formElement.querySelector(".t-submit");
           if (stateBtnSubmit) {
-            stateBtnSubmit.style.display = "none";
+            stateBtnSubmit.remove();
           }
         }
       });
