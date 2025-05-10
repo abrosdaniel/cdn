@@ -162,14 +162,11 @@ class AbrosTiForm {
           const customError = [
             {
               obj: formElement.querySelector(`[name="${selectConfig[0].key}"]`),
-              type: ["custom"],
+              type: ["invalid"],
               message: errorMessage,
             },
           ];
-          const options = {
-            inputBoxSelector: ".t-input-block",
-          };
-          window.tildaForm.showErrors(formElement, customError, options);
+          window.tildaForm.showErrors(formElement, customError);
         }
       } else if (typeof selectConfig === "string") {
         window.tildaForm.hideErrors(formElement);
