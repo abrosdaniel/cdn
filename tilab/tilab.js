@@ -87,7 +87,7 @@
         return Promise.resolve();
       }
 
-      const libPath = `${CDN}/libs/${libName}`;
+      const libPath = `${CDN}/libs/${libName}.js`;
 
       return loadScript(libPath, isAsync)
         .then(() => {
@@ -138,7 +138,7 @@
           return;
         }
 
-        const libPath = `${CDN}/libs/${libName}`;
+        const libPath = `${CDN}/libs/${libName}.js`;
 
         const loadPromise = loadScript(libPath, isAsync)
           .then(() => {
