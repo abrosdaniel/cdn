@@ -64,15 +64,13 @@
   }
 
   if (window.TiLab && window.TiLab.libs) {
+    window.TiLab.libs["trackhunter"] = window.TiLab.libs["trackhunter"] || {};
     window.TiLab.libs["trackhunter"].version = "0.1";
     window.TiLab.libs["trackhunter"].description =
       "Утилита для отслеживания появления элементов в DOM";
-    window.track = track;
-
     window.TiLab.libs["trackhunter"].exports = {
       track: track,
     };
-
     if (window.TiLab.debug) {
       console.log("TrackHunter: API успешно инициализирован");
     }
