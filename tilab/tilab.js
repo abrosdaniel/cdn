@@ -62,7 +62,7 @@
    * @param {...*} args - Аргументы для передачи методу библиотеки
    * @returns {Promise} - Промис, который разрешается после загрузки всех библиотек
    */
-  window.TiLab.lib = function (libs, options = {}, ...args) {
+  window.TiLab.init = function (libs, options = {}, ...args) {
     const libsArray = Array.isArray(libs) ? libs : [libs];
     const loadPromises = [];
     const isAsync = options.async !== undefined ? options.async : true;
