@@ -4,6 +4,7 @@
     .tilab {
     display: block;
       position: fixed;
+      z-index: 99999999;
       left: 0;
       bottom: 0;
       margin: 0 !important;
