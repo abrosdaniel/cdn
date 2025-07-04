@@ -1,1 +1,2 @@
-(function (window) {})(window);
+const Console = `
+<div><div>`;

@@ -30,9 +30,9 @@
       });
 
       if (data !== undefined) {
-        console[type](`[ ${name}.js ]\n${message}`, data);
+        console[type](`[ ${name} ]\n${message}`, data);
       } else {
-        console[type](`[ ${name}.js ]\n${message}`);
+        console[type](`[ ${name} ]\n${message}`);
       }
     };
   });
