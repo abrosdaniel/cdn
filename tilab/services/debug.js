@@ -164,11 +164,129 @@
             </div>
             <div class="tilab-status"></div>
           </div>
+          <div class="tilab-content"></div>
         </div>
         <div class="tilab-section"></div>
       </aside>
       <button class="tilab-open tilab-state"></button>
     </div>`;
+
+  function updateDebugContent(data, container) {
+    if (!container) return;
+
+    const contentElement = container.querySelector(".tilab-content");
+    if (!contentElement) return;
+
+    // Очищаем текущее содержимое
+    contentElement.innerHTML = "";
+
+    // Если данных нет, выводим сообщение
+    if (!data || Object.keys(data).length === 0) {
+      contentElement.innerHTML =
+        '<div style="padding: 16px; color: #98a2b3;">Нет данных для отображения</div>';
+      return;
+    }
+
+    // Создаем HTML для отображения данных
+    const dataHtml = createDataHtml(data);
+    contentElement.innerHTML = dataHtml;
+  }
+
+  // Функция для создания HTML из данных
+  function createDataHtml(data, level = 0) {
+    if (data === null) return '<span style="color: #98a2b3;">null</span>';
+    if (data === undefined)
+      return '<span style="color: #98a2b3;">undefined</span>';
+
+    const indent = "  ".repeat(level);
+    const padding = level * 16;
+
+    if (typeof data === "string") {
+      return `<span style="color: #a5d6ff;">"${escapeHtml(data)}"</span>`;
+    }
+
+    if (typeof data === "number" || typeof data === "boolean") {
+      return `<span style="color: #f97583;">${data}</span>`;
+    }
+
+    if (typeof data === "function") {
+      return `<span style="color: #b392f0;">function() {...}</span>`;
+    }
+
+    if (Array.isArray(data)) {
+      if (data.length === 0) return "[]";
+
+      let result = `<details open><summary style="cursor: pointer; padding-left: ${padding}px;">Array(${data.length})</summary>`;
+      result += '<div style="padding-left: 16px;">';
+
+      data.forEach((item, index) => {
+        result += `<div>[${index}]: ${createDataHtml(item, level + 1)}</div>`;
+      });
+
+      result += "</div></details>";
+      return result;
+    }
+
+    if (typeof data === "object") {
+      const keys = Object.keys(data);
+      if (keys.length === 0) return "{}";
+
+      let result = `<details open><summary style="cursor: pointer; padding-left: ${padding}px;">Object</summary>`;
+      result += '<div style="padding-left: 16px;">';
+
+      keys.forEach((key) => {
+        result += `<div>${escapeHtml(key)}: ${createDataHtml(
+          data[key],
+          level + 1
+        )}</div>`;
+      });
+
+      result += "</div></details>";
+      return result;
+    }
+
+    return String(data);
+  }
+
+  // Функция для экранирования HTML
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Функция для создания прокси для отслеживания изменений
+  function createTiLabProxy(container) {
+    function createNestedProxy(obj, path = "") {
+      return new Proxy(obj, {
+        get(target, prop) {
+          const value = target[prop];
+          if (value && typeof value === "object" && !Array.isArray(value)) {
+            return createNestedProxy(value, path ? `${path}.${prop}` : prop);
+          }
+          return value;
+        },
+        set(target, prop, value) {
+          target[prop] = value;
+          updateDebugContent(window.TiLab, container);
+          return true;
+        },
+        deleteProperty(target, prop) {
+          if (prop in target) {
+            delete target[prop];
+            updateDebugContent(window.TiLab, container);
+          }
+          return true;
+        },
+      });
+    }
+
+    window.TiLab = createNestedProxy(window.TiLab);
+    updateDebugContent(window.TiLab, container);
+  }
 
   function initializeDebugPanel() {
     const container = document.createElement("div");
@@ -176,7 +294,6 @@
     container.innerHTML = html;
     document.body.appendChild(container);
 
-    // Получаем элементы после добавления в DOM
     const frame = container.querySelector(".tilab-frame");
     const stateButtons = container.querySelectorAll(".tilab-state");
     const dragHandle = container.querySelector(".tilab-drag-handle");
@@ -191,6 +308,8 @@
     if (dragHandle) {
       setupDragHandling(dragHandle, container, frame);
     }
+
+    createTiLabProxy(container);
   }
 
   function setupDragHandling(dragHandle, container, frame) {
