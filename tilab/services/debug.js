@@ -170,67 +170,59 @@
       <button class="tilab-open tilab-state"></button>
     </div>`;
 
-  function switchState() {
-    const frame = document.querySelector(".tilab-frame");
-    if (frame) {
-      const currentState = frame.getAttribute("data-state") === "true";
-      frame.setAttribute("data-state", (!currentState).toString());
-    }
-  }
-
-  function initializeDragHandle() {
-    const dragHandle = document.querySelector(".tilab-drag-handle");
-    const tilabContainer = document.querySelector(".tilab");
-
-    if (!dragHandle || !tilabContainer) return;
-
-    let startY;
-    let startHeight;
-    const minHeight = 200;
-    const maxHeight = window.innerHeight * 0.9;
-
-    function onDragStart(e) {
-      startY = e.clientY;
-      const computedStyle = window.getComputedStyle(
-        document.querySelector(".tilab-frame")
-      );
-      startHeight = parseInt(computedStyle.height);
-      frame.classList.add("dragging");
-      document.addEventListener("mousemove", onDragMove);
-      document.addEventListener("mouseup", onDragEnd);
-      e.preventDefault();
-    }
-
-    function onDragMove(e) {
-      const deltaY = startY - e.clientY;
-      let newHeight = startHeight + deltaY;
-      newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
-      tilabContainer.style.setProperty("--tsqd-panel-height", `${newHeight}px`);
-    }
-
-    function onDragEnd() {
-      frame.classList.remove("dragging");
-      document.removeEventListener("mousemove", onDragMove);
-      document.removeEventListener("mouseup", onDragEnd);
-    }
-
-    dragHandle.addEventListener("mousedown", onDragStart);
-  }
-
   function initializeDebugPanel() {
     const container = document.createElement("div");
     container.classList.add("tilab");
     container.innerHTML = html;
     document.body.appendChild(container);
 
-    const stateButtons = document.querySelectorAll(".tilab-state");
-    stateButtons.forEach((button) => {
-      if (button) {
-        button.addEventListener("click", switchState);
-      }
-    });
+    // Получаем элементы после добавления в DOM
+    const frame = container.querySelector(".tilab-frame");
+    const stateButtons = container.querySelectorAll(".tilab-state");
+    const dragHandle = container.querySelector(".tilab-drag-handle");
 
-    initializeDragHandle();
+    stateButtons.forEach((button) =>
+      button.addEventListener("click", () => {
+        const currentState = frame.getAttribute("data-state") === "true";
+        frame.setAttribute("data-state", (!currentState).toString());
+      })
+    );
+
+    if (dragHandle) {
+      setupDragHandling(dragHandle, container, frame);
+    }
+  }
+
+  function setupDragHandling(dragHandle, container, frame) {
+    const minHeight = 200;
+    const maxHeight = window.innerHeight * 0.9;
+    let startY, startHeight;
+
+    function startDrag(e) {
+      startY = e.clientY;
+      startHeight = parseInt(window.getComputedStyle(frame).height);
+      frame.classList.add("dragging");
+      document.addEventListener("mousemove", drag);
+      document.addEventListener("mouseup", endDrag);
+      e.preventDefault();
+    }
+
+    function drag(e) {
+      const deltaY = startY - e.clientY;
+      const newHeight = Math.max(
+        minHeight,
+        Math.min(startHeight + deltaY, maxHeight)
+      );
+      container.style.setProperty("--tsqd-panel-height", `${newHeight}px`);
+    }
+
+    function endDrag() {
+      frame.classList.remove("dragging");
+      document.removeEventListener("mousemove", drag);
+      document.removeEventListener("mouseup", endDrag);
+    }
+
+    dragHandle.addEventListener("mousedown", startDrag);
   }
 
   if (document.readyState === "loading") {
