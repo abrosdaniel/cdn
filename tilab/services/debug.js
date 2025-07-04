@@ -135,6 +135,56 @@
         -webkit-text-fill-color: transparent;
         white-space: nowrap;
       }
+      .tilab-console {
+        flex: 1;
+        overflow-y: auto;
+        padding: calc(var(--tsqd-font-size) * 0.5);
+        font-family: monospace;
+        font-size: calc(var(--tsqd-font-size) * 0.875);
+      }
+      .tilab-log {
+        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
+        padding: calc(var(--tsqd-font-size) * 0.25);
+        border-left: 3px solid;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .tilab-log-info {
+        border-color: #3b82f6;
+      }
+      .tilab-log-warn {
+        border-color: #f59e0b;
+      }
+      .tilab-log-error {
+        border-color: #ef4444;
+      }
+      .tilab-log-trace {
+        border-color: #8b5cf6;
+      }
+      .tilab-log-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: calc(var(--tsqd-font-size) * 0.125);
+        font-weight: bold;
+      }
+      .tilab-log-name {
+        color: #e5e7eb;
+      }
+      .tilab-log-time {
+        color: #9ca3af;
+        font-size: calc(var(--tsqd-font-size) * 0.75);
+      }
+      .tilab-log-message {
+        color: #d1d5db;
+        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
+      }
+      .tilab-log-data {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: calc(var(--tsqd-font-size) * 0.25);
+        border-radius: 4px;
+        overflow-x: auto;
+        font-family: monospace;
+        color: #a3a3a3;
+      }
     </style>
     <div class="tilab-frame" data-state="true">
       <aside aria-label="TiLab debug">
@@ -164,130 +214,214 @@
             </div>
             <div class="tilab-status"></div>
           </div>
-          <div class="tilab-content"></div>
+          <div class="tilab-console"></div>
         </div>
-        <div class="tilab-section"></div>
+        <div class="tilab-section">
+        </div>
       </aside>
       <button class="tilab-open tilab-state"></button>
     </div>`;
 
-  function updateDebugContent(data, container) {
-    if (!container) return;
-
-    const contentElement = container.querySelector(".tilab-content");
-    if (!contentElement) return;
-
-    // Очищаем текущее содержимое
-    contentElement.innerHTML = "";
-
-    // Если данных нет, выводим сообщение
-    if (!data || Object.keys(data).length === 0) {
-      contentElement.innerHTML =
-        '<div style="padding: 16px; color: #98a2b3;">Нет данных для отображения</div>';
-      return;
+  // Класс для управления UI компонентами
+  class UIManager {
+    constructor(container) {
+      this.container = container;
+      this.renderers = new Map();
+      this.registerDefaultRenderers();
     }
 
-    // Создаем HTML для отображения данных
-    const dataHtml = createDataHtml(data);
-    contentElement.innerHTML = dataHtml;
-  }
-
-  // Функция для создания HTML из данных
-  function createDataHtml(data, level = 0) {
-    if (data === null) return '<span style="color: #98a2b3;">null</span>';
-    if (data === undefined)
-      return '<span style="color: #98a2b3;">undefined</span>';
-
-    const indent = "  ".repeat(level);
-    const padding = level * 16;
-
-    if (typeof data === "string") {
-      return `<span style="color: #a5d6ff;">"${escapeHtml(data)}"</span>`;
+    // Регистрация рендереров для разных типов данных
+    registerRenderer(key, renderFn) {
+      this.renderers.set(key, renderFn);
+      return this;
     }
 
-    if (typeof data === "number" || typeof data === "boolean") {
-      return `<span style="color: #f97583;">${data}</span>`;
-    }
-
-    if (typeof data === "function") {
-      return `<span style="color: #b392f0;">function() {...}</span>`;
-    }
-
-    if (Array.isArray(data)) {
-      if (data.length === 0) return "[]";
-
-      let result = `<details open><summary style="cursor: pointer; padding-left: ${padding}px;">Array(${data.length})</summary>`;
-      result += '<div style="padding-left: 16px;">';
-
-      data.forEach((item, index) => {
-        result += `<div>[${index}]: ${createDataHtml(item, level + 1)}</div>`;
+    // Регистрация стандартных рендереров
+    registerDefaultRenderers() {
+      // Рендерер для версии
+      this.registerRenderer("version", (container, value) => {
+        const versionElement = container.querySelector(".tilab-logo-desc");
+        if (versionElement) {
+          versionElement.textContent = `Версия: ${value}`;
+        }
       });
 
-      result += "</div></details>";
-      return result;
-    }
+      // Рендерер для логов
+      this.registerRenderer("debug.storage", (container, logs) => {
+        const consoleElement = container.querySelector(".tilab-console");
+        if (!consoleElement) return;
 
-    if (typeof data === "object") {
-      const keys = Object.keys(data);
-      if (keys.length === 0) return "{}";
+        consoleElement.innerHTML = "";
 
-      let result = `<details open><summary style="cursor: pointer; padding-left: ${padding}px;">Object</summary>`;
-      result += '<div style="padding-left: 16px;">';
+        if (!logs || logs.length === 0) {
+          consoleElement.innerHTML =
+            '<div style="padding: 16px; color: #98a2b3;">Нет логов для отображения</div>';
+          return;
+        }
 
-      keys.forEach((key) => {
-        result += `<div>${escapeHtml(key)}: ${createDataHtml(
-          data[key],
-          level + 1
-        )}</div>`;
-      });
+        const fragment = document.createDocumentFragment();
 
-      result += "</div></details>";
-      return result;
-    }
+        logs
+          .slice()
+          .reverse()
+          .forEach((log) => {
+            fragment.appendChild(this.createLogElement(log));
+          });
 
-    return String(data);
-  }
-
-  // Функция для экранирования HTML
-  function escapeHtml(str) {
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  // Функция для создания прокси для отслеживания изменений
-  function createTiLabProxy(container) {
-    function createNestedProxy(obj, path = "") {
-      return new Proxy(obj, {
-        get(target, prop) {
-          const value = target[prop];
-          if (value && typeof value === "object" && !Array.isArray(value)) {
-            return createNestedProxy(value, path ? `${path}.${prop}` : prop);
-          }
-          return value;
-        },
-        set(target, prop, value) {
-          target[prop] = value;
-          updateDebugContent(window.TiLab, container);
-          return true;
-        },
-        deleteProperty(target, prop) {
-          if (prop in target) {
-            delete target[prop];
-            updateDebugContent(window.TiLab, container);
-          }
-          return true;
-        },
+        consoleElement.appendChild(fragment);
       });
     }
 
-    window.TiLab = createNestedProxy(window.TiLab);
-    updateDebugContent(window.TiLab, container);
+    // Создание элемента лога
+    createLogElement(log) {
+      const logElement = document.createElement("div");
+      logElement.className = `tilab-log tilab-log-${log.type || "info"}`;
+
+      // Заголовок
+      const header = document.createElement("div");
+      header.className = "tilab-log-header";
+
+      const name = document.createElement("span");
+      name.className = "tilab-log-name";
+      name.textContent = log.name || "Unknown";
+      header.appendChild(name);
+
+      const time = document.createElement("span");
+      time.className = "tilab-log-time";
+      time.textContent = this.formatTime(log.time || Date.now());
+      header.appendChild(time);
+
+      logElement.appendChild(header);
+
+      // Сообщение
+      if (log.message) {
+        const message = document.createElement("div");
+        message.className = "tilab-log-message";
+        message.textContent = log.message;
+        logElement.appendChild(message);
+      }
+
+      // Данные
+      if (log.data !== undefined) {
+        const dataElement = document.createElement("div");
+        dataElement.className = "tilab-log-data";
+
+        try {
+          dataElement.textContent = JSON.stringify(log.data, null, 2);
+        } catch (e) {
+          dataElement.textContent = String(log.data);
+        }
+
+        logElement.appendChild(dataElement);
+      }
+
+      return logElement;
+    }
+
+    // Форматирование времени
+    formatTime(timestamp) {
+      const date = new Date(timestamp);
+      return (
+        [
+          date.getHours().toString().padStart(2, "0"),
+          date.getMinutes().toString().padStart(2, "0"),
+          date.getSeconds().toString().padStart(2, "0"),
+        ].join(":") +
+        "." +
+        date.getMilliseconds().toString().padStart(3, "0")
+      );
+    }
+
+    // Обновление UI на основе пути и значения
+    update(path, value) {
+      if (this.renderers.has(path)) {
+        this.renderers.get(path)(this.container, value);
+      }
+    }
   }
 
+  // Класс для наблюдения за изменениями в объекте
+  class ObjectObserver {
+    constructor(uiManager) {
+      this.uiManager = uiManager;
+      this.observedPaths = new Set(["version", "debug.storage"]);
+    }
+
+    // Добавить наблюдение за путем
+    observe(path) {
+      this.observedPaths.add(path);
+      return this;
+    }
+
+    // Установить обработчики для наблюдения за объектом
+    setupObservers(originalObj) {
+      // Сохраняем оригинальные методы для массива debug.storage
+      if (originalObj.debug && Array.isArray(originalObj.debug.storage)) {
+        const originalPush = originalObj.debug.storage.push;
+        const originalSplice = originalObj.debug.storage.splice;
+        const self = this;
+
+        // Переопределяем метод push для отслеживания добавления логов
+        originalObj.debug.storage.push = function (...items) {
+          const result = originalPush.apply(this, items);
+          self.uiManager.update("debug.storage", originalObj.debug.storage);
+          return result;
+        };
+
+        // Переопределяем метод splice для отслеживания удаления логов
+        originalObj.debug.storage.splice = function (...args) {
+          const result = originalSplice.apply(this, args);
+          self.uiManager.update("debug.storage", originalObj.debug.storage);
+          return result;
+        };
+      }
+
+      // Наблюдаем за изменениями в объекте
+      this.setupMutationObserver(originalObj);
+
+      // Первоначальное обновление UI
+      this.updateAllObservedPaths(originalObj);
+    }
+
+    // Настройка MutationObserver для отслеживания изменений в DOM
+    setupMutationObserver(obj) {
+      // Это простая имитация наблюдения за объектом
+      // В реальном приложении можно использовать более сложную логику
+      const self = this;
+
+      // Проверяем изменения каждые 500мс
+      setInterval(() => {
+        self.updateAllObservedPaths(obj);
+      }, 500);
+    }
+
+    // Обновление всех наблюдаемых путей
+    updateAllObservedPaths(obj) {
+      for (const path of this.observedPaths) {
+        const value = this.getValueByPath(obj, path);
+        this.uiManager.update(path, value);
+      }
+    }
+
+    // Получение значения по пути
+    getValueByPath(obj, path) {
+      if (!path) return obj;
+
+      const parts = path.split(".");
+      let current = obj;
+
+      for (const part of parts) {
+        if (current === null || current === undefined) {
+          return undefined;
+        }
+        current = current[part];
+      }
+
+      return current;
+    }
+  }
+
+  // Инициализация панели отладки
   function initializeDebugPanel() {
     const container = document.createElement("div");
     container.classList.add("tilab");
@@ -298,6 +432,7 @@
     const stateButtons = container.querySelectorAll(".tilab-state");
     const dragHandle = container.querySelector(".tilab-drag-handle");
 
+    // Настройка переключения состояния
     stateButtons.forEach((button) =>
       button.addEventListener("click", () => {
         const currentState = frame.getAttribute("data-state") === "true";
@@ -305,13 +440,22 @@
       })
     );
 
+    // Настройка перетаскивания
     if (dragHandle) {
       setupDragHandling(dragHandle, container, frame);
     }
 
-    createTiLabProxy(container);
+    // Создаем менеджер UI
+    const uiManager = new UIManager(container);
+
+    // Создаем наблюдатель за объектом
+    const observer = new ObjectObserver(uiManager);
+
+    // Настраиваем наблюдение за существующим объектом TiLab
+    observer.setupObservers(window.TiLab);
   }
 
+  // Настройка перетаскивания
   function setupDragHandling(dragHandle, container, frame) {
     const minHeight = 200;
     const maxHeight = window.innerHeight * 0.9;
@@ -344,6 +488,7 @@
     dragHandle.addEventListener("mousedown", startDrag);
   }
 
+  // Запуск инициализации
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeDebugPanel);
   } else {
