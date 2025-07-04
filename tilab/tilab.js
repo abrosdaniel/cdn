@@ -78,7 +78,7 @@
           };
 
           if (window.TiLab.debug) {
-            TiLab.debug.push(log, tilab, `загружена библиотека ${libName}`);
+            TiLab.debug.push("!Tilab", `загружена библиотека ${libName}`);
           }
 
           if (window.TiLab.libs[libName].exports) {
