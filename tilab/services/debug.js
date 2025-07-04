@@ -1,4 +1,7 @@
 (function (window) {
+  // ============================
+  // ЧАСТЬ 1: HTML И СТИЛИ ПАНЕЛИ
+  // ============================
   const html = `
     <style>
     .tilab {
@@ -222,370 +225,522 @@
       <button class="tilab-open tilab-state"></button>
     </div>`;
 
-  // Класс для управления UI компонентами
-  class UIManager {
-    constructor(container) {
-      this.container = container;
-      this.renderers = new Map();
-      this.registerDefaultRenderers();
-    }
+  // =============================
+  // ЧАСТЬ 2: БИЗНЕС-ЛОГИКА ПАНЕЛИ
+  // =============================
 
-    // Регистрация рендереров для разных типов данных
-    registerRenderer(key, renderFn) {
-      this.renderers.set(key, renderFn);
-      return this;
-    }
+  /**
+   * Основной объект, содержащий функциональность панели
+   */
+  const TiLabPanel = {
+    // Ссылки на DOM элементы
+    elements: {
+      container: null,
+      frame: null,
+      console: null,
+      versionElement: null,
+    },
 
-    // Регистрация стандартных рендереров
-    registerDefaultRenderers() {
-      // Рендерер для версии
-      this.registerRenderer("version", (container, value) => {
-        const versionElement = container.querySelector(".tilab-logo-desc");
-        if (versionElement) {
-          versionElement.textContent = `Версия: ${value}`;
-        }
-      });
+    // Менеджеры для UI и состояния
+    ui: null,
+    state: null,
 
-      // Рендерер для логов
-      this.registerRenderer("debug.storage", (container, logs) => {
-        const consoleElement = container.querySelector(".tilab-console");
-        if (!consoleElement) return;
+    /**
+     * Создает и настраивает менеджер UI
+     * @returns {Object} Менеджер UI
+     */
+    createUIManager() {
+      const uiManager = {
+        container: this.elements.container,
+        renderers: new Map(),
 
-        consoleElement.innerHTML = "";
+        /**
+         * Регистрирует рендерер для определенного пути данных
+         * @param {string} key - Путь к данным
+         * @param {Function} renderFn - Функция рендеринга
+         * @returns {Object} Менеджер UI для цепочки вызовов
+         */
+        registerRenderer(key, renderFn) {
+          this.renderers.set(key, renderFn);
+          return this;
+        },
 
-        if (!logs || logs.length === 0) {
-          consoleElement.innerHTML =
-            '<div style="padding: 16px; color: #98a2b3;">Нет логов для отображения</div>';
-          return;
-        }
+        /**
+         * Обновляет UI на основе пути и значения
+         * @param {string} path - Путь к данным
+         * @param {*} value - Значение для отображения
+         */
+        update(path, value) {
+          if (this.renderers.has(path)) {
+            this.renderers.get(path)(this.container, value);
+          }
+        },
 
-        const fragment = document.createDocumentFragment();
+        /**
+         * Форматирует временную метку в удобный для чтения формат
+         * @param {number} timestamp - Временная метка
+         * @returns {string} Отформатированное время
+         */
+        formatTime(timestamp) {
+          const date = new Date(timestamp);
+          return (
+            [
+              date.getHours().toString().padStart(2, "0"),
+              date.getMinutes().toString().padStart(2, "0"),
+              date.getSeconds().toString().padStart(2, "0"),
+            ].join(":") +
+            "." +
+            date.getMilliseconds().toString().padStart(3, "0")
+          );
+        },
 
-        logs
-          .slice()
-          .reverse()
-          .forEach((log) => {
-            fragment.appendChild(this.createLogElement(log));
+        /**
+         * Создает элемент лога для отображения
+         * @param {Object} log - Объект лога
+         * @returns {HTMLElement} Элемент лога
+         */
+        createLogElement(log) {
+          const logElement = document.createElement("div");
+          logElement.className = `tilab-log tilab-log-${log.type || "info"}`;
+
+          // Заголовок
+          const header = document.createElement("div");
+          header.className = "tilab-log-header";
+
+          const name = document.createElement("span");
+          name.className = "tilab-log-name";
+          name.textContent = log.name || "Unknown";
+          header.appendChild(name);
+
+          const time = document.createElement("span");
+          time.className = "tilab-log-time";
+          time.textContent = this.formatTime(log.time || Date.now());
+          header.appendChild(time);
+
+          logElement.appendChild(header);
+
+          // Сообщение
+          if (log.message) {
+            const message = document.createElement("div");
+            message.className = "tilab-log-message";
+            message.textContent = log.message;
+            logElement.appendChild(message);
+          }
+
+          // Данные
+          if (log.data !== undefined) {
+            const dataElement = document.createElement("div");
+            dataElement.className = "tilab-log-data";
+
+            try {
+              dataElement.textContent = JSON.stringify(log.data, null, 2);
+            } catch (e) {
+              dataElement.textContent = String(log.data);
+            }
+
+            logElement.appendChild(dataElement);
+          }
+
+          return logElement;
+        },
+
+        /**
+         * Регистрирует стандартные рендереры
+         */
+        registerDefaultRenderers() {
+          // Рендерер для версии
+          this.registerRenderer("version", (container, value) => {
+            const versionElement = container.querySelector(".tilab-logo-desc");
+            if (versionElement) {
+              versionElement.textContent = `Версия: ${value}`;
+            }
           });
 
-        consoleElement.appendChild(fragment);
-      });
-    }
+          // Рендерер для логов
+          this.registerRenderer("debug.storage", (container, logs) => {
+            const consoleElement = container.querySelector(".tilab-console");
+            if (!consoleElement) return;
 
-    // Создание элемента лога
-    createLogElement(log) {
-      const logElement = document.createElement("div");
-      logElement.className = `tilab-log tilab-log-${log.type || "info"}`;
+            consoleElement.innerHTML = "";
 
-      // Заголовок
-      const header = document.createElement("div");
-      header.className = "tilab-log-header";
+            if (!logs || logs.length === 0) {
+              consoleElement.innerHTML =
+                '<div style="padding: 16px; color: #98a2b3;">Нет логов для отображения</div>';
+              return;
+            }
 
-      const name = document.createElement("span");
-      name.className = "tilab-log-name";
-      name.textContent = log.name || "Unknown";
-      header.appendChild(name);
+            const fragment = document.createDocumentFragment();
 
-      const time = document.createElement("span");
-      time.className = "tilab-log-time";
-      time.textContent = this.formatTime(log.time || Date.now());
-      header.appendChild(time);
+            logs
+              .slice()
+              .reverse()
+              .forEach((log) => {
+                fragment.appendChild(this.createLogElement(log));
+              });
 
-      logElement.appendChild(header);
+            consoleElement.appendChild(fragment);
+          });
+        },
+      };
 
-      // Сообщение
-      if (log.message) {
-        const message = document.createElement("div");
-        message.className = "tilab-log-message";
-        message.textContent = log.message;
-        logElement.appendChild(message);
-      }
+      // Регистрируем стандартные рендереры
+      uiManager.registerDefaultRenderers();
 
-      // Данные
-      if (log.data !== undefined) {
-        const dataElement = document.createElement("div");
-        dataElement.className = "tilab-log-data";
+      return uiManager;
+    },
 
-        try {
-          dataElement.textContent = JSON.stringify(log.data, null, 2);
-        } catch (e) {
-          dataElement.textContent = String(log.data);
-        }
+    /**
+     * Создает и настраивает менеджер состояния
+     * @param {Object} uiManager - Менеджер UI
+     * @returns {Object} Менеджер состояния
+     */
+    createStateManager(uiManager) {
+      const stateManager = {
+        uiManager,
+        pathHandlers: new Map(),
 
-        logElement.appendChild(dataElement);
-      }
+        /**
+         * Регистрирует обработчик для определенного пути данных
+         * @param {string} path - Путь к данным
+         * @param {Function} handler - Функция обработчик
+         * @returns {Object} Менеджер состояния для цепочки вызовов
+         */
+        registerPathHandler(path, handler) {
+          this.pathHandlers.set(path, handler);
+          return this;
+        },
 
-      return logElement;
-    }
+        /**
+         * Регистрирует стандартные обработчики
+         */
+        registerDefaultHandlers() {
+          this.registerPathHandler("version", (value) => {
+            this.uiManager.update("version", value);
+          });
 
-    // Форматирование времени
-    formatTime(timestamp) {
-      const date = new Date(timestamp);
-      return (
-        [
-          date.getHours().toString().padStart(2, "0"),
-          date.getMinutes().toString().padStart(2, "0"),
-          date.getSeconds().toString().padStart(2, "0"),
-        ].join(":") +
-        "." +
-        date.getMilliseconds().toString().padStart(3, "0")
-      );
-    }
+          this.registerPathHandler("debug.storage", (value) => {
+            this.uiManager.update("debug.storage", value);
+          });
+        },
 
-    // Обновление UI на основе пути и значения
-    update(path, value) {
-      if (this.renderers.has(path)) {
-        this.renderers.get(path)(this.container, value);
-      }
-    }
-  }
+        /**
+         * Создает прокси для существующего объекта без его замены
+         * @param {Object} obj - Исходный объект
+         * @returns {Object} Исходный объект с внутренними прокси
+         */
+        wrapExistingObject(obj) {
+          // Сохраняем ссылку на оригинальный объект
+          const originalObj = obj;
 
-  // Класс для управления состоянием данных через Proxy
-  class StateManager {
-    constructor(uiManager) {
-      this.uiManager = uiManager;
-      this.pathHandlers = new Map();
-      this.registerDefaultHandlers();
-    }
+          // Создаем прокси для всех вложенных объектов
+          this.deepProxyify(originalObj);
 
-    // Регистрация обработчиков для путей
-    registerPathHandler(path, handler) {
-      this.pathHandlers.set(path, handler);
-      return this;
-    }
+          // Возвращаем оригинальный объект, который теперь содержит прокси внутри
+          return originalObj;
+        },
 
-    // Регистрация стандартных обработчиков
-    registerDefaultHandlers() {
-      this.registerPathHandler("version", (value) => {
-        this.uiManager.update("version", value);
-      });
-
-      this.registerPathHandler("debug.storage", (value) => {
-        this.uiManager.update("debug.storage", value);
-      });
-    }
-
-    // Создание прокси для существующего объекта без его замены
-    wrapExistingObject(obj) {
-      // Сохраняем ссылку на оригинальный объект
-      const originalObj = obj;
-
-      // Создаем прокси для всех вложенных объектов
-      this.deepProxyify(originalObj);
-
-      // Возвращаем оригинальный объект, который теперь содержит прокси внутри
-      return originalObj;
-    }
-
-    // Рекурсивно создаем прокси для всех вложенных объектов
-    deepProxyify(obj, path = "") {
-      if (obj === null || typeof obj !== "object") {
-        return;
-      }
-
-      // Обрабатываем каждое свойство объекта
-      for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          const value = obj[key];
-          const currentPath = path ? `${path}.${key}` : key;
-
-          // Если это объект или массив, создаем для него прокси
-          if (value !== null && typeof value === "object") {
-            // Создаем прокси для текущего свойства
-            obj[key] = this.createProxy(value, currentPath);
-
-            // Рекурсивно обрабатываем вложенные свойства
-            this.deepProxyify(obj[key], currentPath);
+        /**
+         * Рекурсивно создает прокси для всех вложенных объектов
+         * @param {Object} obj - Объект для обработки
+         * @param {string} path - Текущий путь в объекте
+         */
+        deepProxyify(obj, path = "") {
+          if (obj === null || typeof obj !== "object") {
+            return;
           }
-        }
-      }
-    }
 
-    // Создание прокси для объекта
-    createProxy(obj, path) {
-      const self = this;
+          // Обрабатываем каждое свойство объекта
+          for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+              const value = obj[key];
+              const currentPath = path ? `${path}.${key}` : key;
 
-      return new Proxy(obj, {
-        get(target, prop) {
-          // Специальная обработка для методов массива
-          if (Array.isArray(target) && typeof target[prop] === "function") {
-            const method = target[prop];
+              // Если это объект или массив, создаем для него прокси
+              if (value !== null && typeof value === "object") {
+                // Создаем прокси для текущего свойства
+                obj[key] = this.createProxy(value, currentPath);
 
-            // Перехватываем методы, которые изменяют массив
-            if (
-              [
-                "push",
-                "pop",
-                "shift",
-                "unshift",
-                "splice",
-                "sort",
-                "reverse",
-              ].includes(prop)
-            ) {
-              return function (...args) {
-                const result = method.apply(target, args);
+                // Рекурсивно обрабатываем вложенные свойства
+                this.deepProxyify(obj[key], currentPath);
+              }
+            }
+          }
+        },
+
+        /**
+         * Создает прокси для объекта
+         * @param {Object} obj - Исходный объект
+         * @param {string} path - Путь к объекту
+         * @returns {Proxy} Прокси объект
+         */
+        createProxy(obj, path) {
+          const self = this;
+
+          return new Proxy(obj, {
+            get(target, prop) {
+              // Специальная обработка для методов массива
+              if (Array.isArray(target) && typeof target[prop] === "function") {
+                const method = target[prop];
+
+                // Перехватываем методы, которые изменяют массив
+                if (
+                  [
+                    "push",
+                    "pop",
+                    "shift",
+                    "unshift",
+                    "splice",
+                    "sort",
+                    "reverse",
+                  ].includes(prop)
+                ) {
+                  return function (...args) {
+                    const result = method.apply(target, args);
+                    self.notifyChange(path, target);
+                    return result;
+                  };
+                }
+              }
+
+              return target[prop];
+            },
+
+            set(target, prop, value) {
+              const oldValue = target[prop];
+              target[prop] = value;
+
+              const currentPath = path ? `${path}.${prop}` : prop;
+
+              // Если значение - объект, создаем для него прокси
+              if (
+                value !== null &&
+                typeof value === "object" &&
+                !Object.isFrozen(value)
+              ) {
+                target[prop] = self.createProxy(value, currentPath);
+                self.deepProxyify(target[prop], currentPath);
+              }
+
+              // Уведомляем об изменении
+              self.notifyChange(currentPath, value);
+
+              // Если это массив и изменилась его длина, уведомляем о его изменении
+              if (Array.isArray(target) && prop === "length") {
                 self.notifyChange(path, target);
-                return result;
-              };
+              }
+
+              return true;
+            },
+
+            deleteProperty(target, prop) {
+              if (prop in target) {
+                delete target[prop];
+
+                const currentPath = path ? `${path}.${prop}` : prop;
+                self.notifyChange(currentPath, undefined);
+
+                // Уведомляем о изменении родительского объекта
+                if (path) {
+                  self.notifyChange(path, target);
+                }
+              }
+
+              return true;
+            },
+          });
+        },
+
+        /**
+         * Уведомляет об изменениях в данных
+         * @param {string} path - Путь к измененным данным
+         * @param {*} value - Новое значение
+         */
+        notifyChange(path, value) {
+          // Проверяем, есть ли обработчик для этого пути
+          if (this.pathHandlers.has(path)) {
+            this.pathHandlers.get(path)(value);
+          }
+
+          // Проверяем родительские пути
+          const parts = path.split(".");
+          while (parts.length > 1) {
+            parts.pop();
+            const parentPath = parts.join(".");
+
+            if (this.pathHandlers.has(parentPath)) {
+              const parentValue = this.getValueByPath(window.TiLab, parentPath);
+              this.pathHandlers.get(parentPath)(parentValue);
             }
           }
-
-          return target[prop];
         },
 
-        set(target, prop, value) {
-          const oldValue = target[prop];
-          target[prop] = value;
+        /**
+         * Получает значение по пути в объекте
+         * @param {Object} obj - Исходный объект
+         * @param {string} path - Путь к значению
+         * @returns {*} Значение по указанному пути
+         */
+        getValueByPath(obj, path) {
+          if (!path) return obj;
 
-          const currentPath = path ? `${path}.${prop}` : prop;
+          const parts = path.split(".");
+          let current = obj;
 
-          // Если значение - объект, создаем для него прокси
-          if (
-            value !== null &&
-            typeof value === "object" &&
-            !Object.isFrozen(value)
-          ) {
-            target[prop] = self.createProxy(value, currentPath);
-            self.deepProxyify(target[prop], currentPath);
-          }
-
-          // Уведомляем об изменении
-          self.notifyChange(currentPath, value);
-
-          // Если это массив и изменилась его длина, уведомляем о его изменении
-          if (Array.isArray(target) && prop === "length") {
-            self.notifyChange(path, target);
-          }
-
-          return true;
-        },
-
-        deleteProperty(target, prop) {
-          if (prop in target) {
-            delete target[prop];
-
-            const currentPath = path ? `${path}.${prop}` : prop;
-            self.notifyChange(currentPath, undefined);
-
-            // Уведомляем о изменении родительского объекта
-            if (path) {
-              self.notifyChange(path, target);
+          for (const part of parts) {
+            if (current === null || current === undefined) {
+              return undefined;
             }
+            current = current[part];
           }
 
-          return true;
+          return current;
         },
-      });
-    }
+      };
 
-    // Уведомление об изменениях
-    notifyChange(path, value) {
-      // Проверяем, есть ли обработчик для этого пути
-      if (this.pathHandlers.has(path)) {
-        this.pathHandlers.get(path)(value);
+      // Регистрируем стандартные обработчики
+      stateManager.registerDefaultHandlers();
+
+      return stateManager;
+    },
+
+    /**
+     * Настраивает обработку перетаскивания панели
+     * @param {HTMLElement} dragHandle - Элемент для перетаскивания
+     * @param {HTMLElement} container - Контейнер панели
+     * @param {HTMLElement} frame - Рамка панели
+     */
+    setupDragHandling(dragHandle, container, frame) {
+      const minHeight = 200;
+      const maxHeight = window.innerHeight * 0.9;
+      let startY, startHeight;
+
+      function startDrag(e) {
+        startY = e.clientY;
+        startHeight = parseInt(window.getComputedStyle(frame).height);
+        frame.classList.add("dragging");
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("mouseup", endDrag);
+        e.preventDefault();
       }
 
-      // Проверяем родительские пути
-      const parts = path.split(".");
-      while (parts.length > 1) {
-        parts.pop();
-        const parentPath = parts.join(".");
-
-        if (this.pathHandlers.has(parentPath)) {
-          const parentValue = this.getValueByPath(window.TiLab, parentPath);
-          this.pathHandlers.get(parentPath)(parentValue);
-        }
-      }
-    }
-
-    // Получение значения по пути
-    getValueByPath(obj, path) {
-      if (!path) return obj;
-
-      const parts = path.split(".");
-      let current = obj;
-
-      for (const part of parts) {
-        if (current === null || current === undefined) {
-          return undefined;
-        }
-        current = current[part];
+      function drag(e) {
+        const deltaY = startY - e.clientY;
+        const newHeight = Math.max(
+          minHeight,
+          Math.min(startHeight + deltaY, maxHeight)
+        );
+        container.style.setProperty("--tsqd-panel-height", `${newHeight}px`);
       }
 
-      return current;
-    }
-  }
+      function endDrag() {
+        frame.classList.remove("dragging");
+        document.removeEventListener("mousemove", drag);
+        document.removeEventListener("mouseup", endDrag);
+      }
 
-  // Инициализация панели отладки
+      dragHandle.addEventListener("mousedown", startDrag);
+    },
+
+    /**
+     * Настраивает переключение состояния панели (открыто/закрыто)
+     * @param {NodeList} stateButtons - Кнопки для переключения состояния
+     * @param {HTMLElement} frame - Рамка панели
+     */
+    setupStateToggle(stateButtons, frame) {
+      stateButtons.forEach((button) =>
+        button.addEventListener("click", () => {
+          const currentState = frame.getAttribute("data-state") === "true";
+          frame.setAttribute("data-state", (!currentState).toString());
+        })
+      );
+    },
+
+    /**
+     * Экспортирует публичные методы для использования извне
+     * @returns {Object} Публичное API
+     */
+    exportPublicAPI() {
+      return {
+        /**
+         * Добавляет новый рендерер для отображения данных
+         * @param {string} path - Путь к данным
+         * @param {Function} renderFn - Функция рендеринга
+         */
+        addRenderer: (path, renderFn) => {
+          this.ui.registerRenderer(path, renderFn);
+        },
+
+        /**
+         * Добавляет обработчик для отслеживания изменений данных
+         * @param {string} path - Путь к данным
+         * @param {Function} handler - Функция обработчик
+         */
+        addPathHandler: (path, handler) => {
+          this.state.registerPathHandler(path, handler);
+        },
+
+        /**
+         * Обновляет UI для указанного пути
+         * @param {string} path - Путь к данным
+         * @param {*} value - Значение для отображения
+         */
+        updateUI: (path, value) => {
+          this.ui.update(path, value);
+        },
+      };
+    },
+  };
+
+  // =============================
+  // ЧАСТЬ 3: ИНИЦИАЛИЗАЦИЯ ПАНЕЛИ
+  // =============================
+
+  /**
+   * Инициализирует панель отладки
+   */
   function initializeDebugPanel() {
+    // Создаем DOM элементы
     const container = document.createElement("div");
     container.classList.add("tilab");
     container.innerHTML = html;
     document.body.appendChild(container);
 
+    // Получаем ссылки на основные элементы
     const frame = container.querySelector(".tilab-frame");
     const stateButtons = container.querySelectorAll(".tilab-state");
     const dragHandle = container.querySelector(".tilab-drag-handle");
 
-    // Настройка переключения состояния
-    stateButtons.forEach((button) =>
-      button.addEventListener("click", () => {
-        const currentState = frame.getAttribute("data-state") === "true";
-        frame.setAttribute("data-state", (!currentState).toString());
-      })
-    );
+    // Сохраняем ссылки на элементы
+    TiLabPanel.elements = {
+      container,
+      frame,
+      console: container.querySelector(".tilab-console"),
+      versionElement: container.querySelector(".tilab-logo-desc"),
+    };
 
-    // Настройка перетаскивания
+    // Настраиваем переключение состояния панели
+    TiLabPanel.setupStateToggle(stateButtons, frame);
+
+    // Настраиваем перетаскивание панели
     if (dragHandle) {
-      setupDragHandling(dragHandle, container, frame);
+      TiLabPanel.setupDragHandling(dragHandle, container, frame);
     }
 
     // Создаем менеджер UI
-    const uiManager = new UIManager(container);
+    TiLabPanel.ui = TiLabPanel.createUIManager();
 
     // Создаем менеджер состояния
-    const stateManager = new StateManager(uiManager);
+    TiLabPanel.state = TiLabPanel.createStateManager(TiLabPanel.ui);
 
     // Оборачиваем существующий объект TiLab в прокси
-    stateManager.wrapExistingObject(window.TiLab);
+    TiLabPanel.state.wrapExistingObject(window.TiLab);
 
     // Первоначальное обновление UI
-    uiManager.update("version", window.TiLab.version);
-    uiManager.update("debug.storage", window.TiLab.debug?.storage);
-  }
+    TiLabPanel.ui.update("version", window.TiLab.version);
+    TiLabPanel.ui.update("debug.storage", window.TiLab.debug?.storage);
 
-  // Настройка перетаскивания
-  function setupDragHandling(dragHandle, container, frame) {
-    const minHeight = 200;
-    const maxHeight = window.innerHeight * 0.9;
-    let startY, startHeight;
-
-    function startDrag(e) {
-      startY = e.clientY;
-      startHeight = parseInt(window.getComputedStyle(frame).height);
-      frame.classList.add("dragging");
-      document.addEventListener("mousemove", drag);
-      document.addEventListener("mouseup", endDrag);
-      e.preventDefault();
-    }
-
-    function drag(e) {
-      const deltaY = startY - e.clientY;
-      const newHeight = Math.max(
-        minHeight,
-        Math.min(startHeight + deltaY, maxHeight)
-      );
-      container.style.setProperty("--tsqd-panel-height", `${newHeight}px`);
-    }
-
-    function endDrag() {
-      frame.classList.remove("dragging");
-      document.removeEventListener("mousemove", drag);
-      document.removeEventListener("mouseup", endDrag);
-    }
-
-    dragHandle.addEventListener("mousedown", startDrag);
+    // Добавляем публичное API к объекту TiLab
+    window.TiLab._panel = TiLabPanel.exportPublicAPI();
   }
 
   // Запуск инициализации
