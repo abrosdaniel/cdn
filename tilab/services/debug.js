@@ -1,9 +1,8 @@
 (function (window) {
   const html = `
-<div
-    class="tilab"
-    style="
-      display: block;
+    <style>
+    .tilab {
+    display: block;
       position: fixed;
       left: 0;
       bottom: 0;
@@ -13,9 +12,7 @@
       --tsqd-panel-height: 536px;
       --tsqd-panel-width: 500px;
       --tsqd-font-size: 16px;
-    "
-  >
-    <style>
+    }
       .tilab * {
         box-sizing: border-box !important;
         text-transform: none !important;
@@ -167,8 +164,7 @@
         <div class="tilab-section"></div>
       </aside>
       <button></button>
-    </div>
-  </div>`;
+    </div>`;
 
   function switchState() {
     const frame = document.querySelector(".tilab-frame");
@@ -179,9 +175,10 @@
   }
 
   function initializeDebugPanel() {
-    // const container = document.createElement("div");
-    // container.innerHTML = html;
-    document.body.appendChild(html);
+    const container = document.createElement("div");
+    container.classList.add("tilab");
+    container.innerHTML = html;
+    document.body.appendChild(container);
 
     const closeButton = document.getElementById("tilab-close");
     if (closeButton) {
