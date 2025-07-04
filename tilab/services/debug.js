@@ -340,66 +340,162 @@
     }
   }
 
-  // Класс для наблюдения за изменениями в объекте
-  class ObjectObserver {
+  // Класс для управления состоянием данных через Proxy
+  class StateManager {
     constructor(uiManager) {
       this.uiManager = uiManager;
-      this.observedPaths = new Set(["version", "debug.storage"]);
+      this.pathHandlers = new Map();
+      this.registerDefaultHandlers();
     }
 
-    // Добавить наблюдение за путем
-    observe(path) {
-      this.observedPaths.add(path);
+    // Регистрация обработчиков для путей
+    registerPathHandler(path, handler) {
+      this.pathHandlers.set(path, handler);
       return this;
     }
 
-    // Установить обработчики для наблюдения за объектом
-    setupObservers(originalObj) {
-      // Сохраняем оригинальные методы для массива debug.storage
-      if (originalObj.debug && Array.isArray(originalObj.debug.storage)) {
-        const originalPush = originalObj.debug.storage.push;
-        const originalSplice = originalObj.debug.storage.splice;
-        const self = this;
+    // Регистрация стандартных обработчиков
+    registerDefaultHandlers() {
+      this.registerPathHandler("version", (value) => {
+        this.uiManager.update("version", value);
+      });
 
-        // Переопределяем метод push для отслеживания добавления логов
-        originalObj.debug.storage.push = function (...items) {
-          const result = originalPush.apply(this, items);
-          self.uiManager.update("debug.storage", originalObj.debug.storage);
-          return result;
-        };
+      this.registerPathHandler("debug.storage", (value) => {
+        this.uiManager.update("debug.storage", value);
+      });
+    }
 
-        // Переопределяем метод splice для отслеживания удаления логов
-        originalObj.debug.storage.splice = function (...args) {
-          const result = originalSplice.apply(this, args);
-          self.uiManager.update("debug.storage", originalObj.debug.storage);
-          return result;
-        };
+    // Создание прокси для существующего объекта без его замены
+    wrapExistingObject(obj) {
+      // Сохраняем ссылку на оригинальный объект
+      const originalObj = obj;
+
+      // Создаем прокси для всех вложенных объектов
+      this.deepProxyify(originalObj);
+
+      // Возвращаем оригинальный объект, который теперь содержит прокси внутри
+      return originalObj;
+    }
+
+    // Рекурсивно создаем прокси для всех вложенных объектов
+    deepProxyify(obj, path = "") {
+      if (obj === null || typeof obj !== "object") {
+        return;
       }
 
-      // Наблюдаем за изменениями в объекте
-      this.setupMutationObserver(originalObj);
+      // Обрабатываем каждое свойство объекта
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          const value = obj[key];
+          const currentPath = path ? `${path}.${key}` : key;
 
-      // Первоначальное обновление UI
-      this.updateAllObservedPaths(originalObj);
+          // Если это объект или массив, создаем для него прокси
+          if (value !== null && typeof value === "object") {
+            // Создаем прокси для текущего свойства
+            obj[key] = this.createProxy(value, currentPath);
+
+            // Рекурсивно обрабатываем вложенные свойства
+            this.deepProxyify(obj[key], currentPath);
+          }
+        }
+      }
     }
 
-    // Настройка MutationObserver для отслеживания изменений в DOM
-    setupMutationObserver(obj) {
-      // Это простая имитация наблюдения за объектом
-      // В реальном приложении можно использовать более сложную логику
+    // Создание прокси для объекта
+    createProxy(obj, path) {
       const self = this;
 
-      // Проверяем изменения каждые 500мс
-      setInterval(() => {
-        self.updateAllObservedPaths(obj);
-      }, 500);
+      return new Proxy(obj, {
+        get(target, prop) {
+          // Специальная обработка для методов массива
+          if (Array.isArray(target) && typeof target[prop] === "function") {
+            const method = target[prop];
+
+            // Перехватываем методы, которые изменяют массив
+            if (
+              [
+                "push",
+                "pop",
+                "shift",
+                "unshift",
+                "splice",
+                "sort",
+                "reverse",
+              ].includes(prop)
+            ) {
+              return function (...args) {
+                const result = method.apply(target, args);
+                self.notifyChange(path, target);
+                return result;
+              };
+            }
+          }
+
+          return target[prop];
+        },
+
+        set(target, prop, value) {
+          const oldValue = target[prop];
+          target[prop] = value;
+
+          const currentPath = path ? `${path}.${prop}` : prop;
+
+          // Если значение - объект, создаем для него прокси
+          if (
+            value !== null &&
+            typeof value === "object" &&
+            !Object.isFrozen(value)
+          ) {
+            target[prop] = self.createProxy(value, currentPath);
+            self.deepProxyify(target[prop], currentPath);
+          }
+
+          // Уведомляем об изменении
+          self.notifyChange(currentPath, value);
+
+          // Если это массив и изменилась его длина, уведомляем о его изменении
+          if (Array.isArray(target) && prop === "length") {
+            self.notifyChange(path, target);
+          }
+
+          return true;
+        },
+
+        deleteProperty(target, prop) {
+          if (prop in target) {
+            delete target[prop];
+
+            const currentPath = path ? `${path}.${prop}` : prop;
+            self.notifyChange(currentPath, undefined);
+
+            // Уведомляем о изменении родительского объекта
+            if (path) {
+              self.notifyChange(path, target);
+            }
+          }
+
+          return true;
+        },
+      });
     }
 
-    // Обновление всех наблюдаемых путей
-    updateAllObservedPaths(obj) {
-      for (const path of this.observedPaths) {
-        const value = this.getValueByPath(obj, path);
-        this.uiManager.update(path, value);
+    // Уведомление об изменениях
+    notifyChange(path, value) {
+      // Проверяем, есть ли обработчик для этого пути
+      if (this.pathHandlers.has(path)) {
+        this.pathHandlers.get(path)(value);
+      }
+
+      // Проверяем родительские пути
+      const parts = path.split(".");
+      while (parts.length > 1) {
+        parts.pop();
+        const parentPath = parts.join(".");
+
+        if (this.pathHandlers.has(parentPath)) {
+          const parentValue = this.getValueByPath(window.TiLab, parentPath);
+          this.pathHandlers.get(parentPath)(parentValue);
+        }
       }
     }
 
@@ -448,11 +544,15 @@
     // Создаем менеджер UI
     const uiManager = new UIManager(container);
 
-    // Создаем наблюдатель за объектом
-    const observer = new ObjectObserver(uiManager);
+    // Создаем менеджер состояния
+    const stateManager = new StateManager(uiManager);
 
-    // Настраиваем наблюдение за существующим объектом TiLab
-    observer.setupObservers(window.TiLab);
+    // Оборачиваем существующий объект TiLab в прокси
+    stateManager.wrapExistingObject(window.TiLab);
+
+    // Первоначальное обновление UI
+    uiManager.update("version", window.TiLab.version);
+    uiManager.update("debug.storage", window.TiLab.debug?.storage);
   }
 
   // Настройка перетаскивания
