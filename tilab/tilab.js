@@ -33,26 +33,11 @@
 
   const CDN = "https://cdn.abros.dev";
   const urlParams = new URLSearchParams(window.location.search);
-  const services = ["console", "errors", "params"];
 
-  if (urlParams.get("tilab") !== null) {
-    if (window.TiLab.debug === undefined) {
-      if (urlParams.get("debug") !== null) {
-        window.TiLab.debug = true;
-        if (urlParams.get("debug") === "lib") {
-          loadScript(`${CDN}/tilab/test/tilab.js`);
-        }
-        if (urlParams.get("test") !== null) {
-          loadScript(`${CDN}/tilab/test/${urlParams.get("test")}`);
-        }
-      }
-    } else {
-      services.forEach((service) => {
-        if (urlParams.get(service) !== null) {
-          loadScript(`${CDN}/tilab/services/${service}.js`);
-        }
-      });
-    }
+  switch (urlParams.get("tilab")) {
+    case "debug":
+      loadScript(`${CDN}/tilab/services/debug.js`);
+      break;
   }
 
   /**
@@ -71,10 +56,6 @@
       const libName = libsArray[0];
 
       if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
-        if (window.TiLab.debug) {
-          console.log(`TiLab: библиотека ${libName} уже загружена`);
-        }
-
         if (window.TiLab.libs[libName].exports) {
           const exports = window.TiLab.libs[libName].exports;
           const exportKeys = Object.keys(exports);
@@ -83,7 +64,6 @@
           }
           return Promise.resolve(exports);
         }
-
         return Promise.resolve();
       }
 
@@ -98,7 +78,7 @@
           };
 
           if (window.TiLab.debug) {
-            console.log(`TiLab: загружена библиотека ${libName}`);
+            TiLab.debug.push(log, tilab, `загружена библиотека ${libName}`);
           }
 
           if (window.TiLab.libs[libName].exports) {
