@@ -10,8 +10,7 @@
       margin: 0 !important;
       padding: 0 !important;
       font-size: 16px !important;
-      --tsqd-panel-height: 536px;
-      --tsqd-panel-width: 500px;
+      --tsqd-panel-height: 500px;
       --tsqd-font-size: 16px;
     }
       .tilab * {
@@ -23,8 +22,12 @@
       }
       .tilab-frame {
         width: 100vw;
-        height: 40em;
+        height: var(--tsqd-panel-height);
         position: relative;
+        transition: height 0.3s ease-in-out;
+      }
+      .tilab-frame[data-state="false"] {
+        height: 0;
       }
       .tilab aside {
         width: 100%;
@@ -129,9 +132,6 @@
         -webkit-text-fill-color: transparent;
         white-space: nowrap;
       }
-      .tilab-frame[data-state="false"] {
-        display: none;
-      }
     </style>
     <div class="tilab-frame" data-state="true">
       <aside aria-label="TiLab debug">
@@ -164,7 +164,7 @@
         </div>
         <div class="tilab-section"></div>
       </aside>
-      <button class="tilab-state"></button>
+      <button class="tilab-open tilab-state"></button>
     </div>`;
 
   function switchState() {
@@ -175,16 +175,57 @@
     }
   }
 
+  function initializeDragHandle() {
+    const dragHandle = document.querySelector(".tilab-drag-handle");
+    const tilabContainer = document.querySelector(".tilab");
+
+    if (!dragHandle || !tilabContainer) return;
+
+    let startY;
+    let startHeight;
+    const minHeight = 200;
+    const maxHeight = window.innerHeight * 0.9;
+
+    function onDragStart(e) {
+      startY = e.clientY;
+      const computedStyle = window.getComputedStyle(
+        document.querySelector(".tilab-frame")
+      );
+      startHeight = parseInt(computedStyle.height);
+      document.addEventListener("mousemove", onDragMove);
+      document.addEventListener("mouseup", onDragEnd);
+      e.preventDefault();
+    }
+
+    function onDragMove(e) {
+      const deltaY = startY - e.clientY;
+      let newHeight = startHeight + deltaY;
+      newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+      tilabContainer.style.setProperty("--tsqd-panel-height", `${newHeight}px`);
+    }
+
+    function onDragEnd() {
+      document.removeEventListener("mousemove", onDragMove);
+      document.removeEventListener("mouseup", onDragEnd);
+    }
+
+    dragHandle.addEventListener("mousedown", onDragStart);
+  }
+
   function initializeDebugPanel() {
     const container = document.createElement("div");
     container.classList.add("tilab");
     container.innerHTML = html;
     document.body.appendChild(container);
 
-    const closeButton = document.querySelector(".tilab-state");
-    if (closeButton) {
-      closeButton.addEventListener("click", switchState);
-    }
+    const stateButtons = document.querySelectorAll(".tilab-state");
+    stateButtons.forEach((button) => {
+      if (button) {
+        button.addEventListener("click", switchState);
+      }
+    });
+
+    initializeDragHandle();
   }
 
   if (document.readyState === "loading") {
