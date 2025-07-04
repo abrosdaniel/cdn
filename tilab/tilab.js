@@ -13,8 +13,29 @@
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
       libs: {},
+      debug: {
+        storage: [],
+      },
     };
   }
+
+  ["log", "info", "trace", "warn", "error"].forEach(function (type) {
+    window.TiLab.debug[type] = function (name, message, data) {
+      window.TiLab.debug.storage.push({
+        time: new Date().getDate(),
+        type: type,
+        name: name,
+        message: message,
+        data: data,
+      });
+
+      if (data !== undefined) {
+        console[type](`[ ${name}.js ]\n${message}`, data);
+      } else {
+        console[type](`[ ${name}.js ]\n${message}`);
+      }
+    };
+  });
 
   function loadScript(src, async = true) {
     return new Promise((resolve, reject) => {
@@ -77,9 +98,7 @@
             async: isAsync,
           };
 
-          if (window.TiLab.debug) {
-            TiLab.debug.push("!Tilab", `загружена библиотека ${libName}`);
-          }
+          TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
 
           if (window.TiLab.libs[libName].exports) {
             const exports = window.TiLab.libs[libName].exports;
@@ -93,12 +112,11 @@
           }
         })
         .catch((error) => {
-          if (window.TiLab.debug) {
-            console.error(
-              `TiLab: ошибка загрузки библиотеки ${libName}:`,
-              error
-            );
-          }
+          TiLab.debug.error(
+            "TiLab",
+            `Ошибка загрузки библиотеки ${libName}:`,
+            error
+          );
           window.TiLab.libs[libName] = {
             loaded: false,
             error: error.message,
@@ -112,9 +130,6 @@
     libsArray.forEach((libName) => {
       if (typeof libName === "string") {
         if (window.TiLab.libs[libName]) {
-          if (window.TiLab.debug) {
-            console.log(`TiLab: библиотека ${libName} уже загружена`);
-          }
           return;
         }
 
@@ -128,17 +143,14 @@
               async: isAsync,
             };
 
-            if (window.TiLab.debug) {
-              console.log(`TiLab: загружена библиотека ${libName}`);
-            }
+            TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
           })
           .catch((error) => {
-            if (window.TiLab.debug) {
-              console.error(
-                `TiLab: ошибка загрузки библиотеки ${libName}:`,
-                error
-              );
-            }
+            TiLab.debug.error(
+              "TiLab",
+              `Ошибка загрузки библиотеки ${libName}:`,
+              error
+            );
             window.TiLab.libs[libName] = {
               loaded: false,
               error: error.message,
