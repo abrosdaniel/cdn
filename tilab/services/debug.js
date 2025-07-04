@@ -29,6 +29,9 @@
       .tilab-frame[data-state="false"] {
         height: 0;
       }
+      .tilab-frame.dragging {
+        transition: none;
+      }
       .tilab aside {
         width: 100%;
         height: 100%;
@@ -192,6 +195,7 @@
         document.querySelector(".tilab-frame")
       );
       startHeight = parseInt(computedStyle.height);
+      frame.classList.add("dragging");
       document.addEventListener("mousemove", onDragMove);
       document.addEventListener("mouseup", onDragEnd);
       e.preventDefault();
@@ -205,6 +209,7 @@
     }
 
     function onDragEnd() {
+      frame.classList.remove("dragging");
       document.removeEventListener("mousemove", onDragMove);
       document.removeEventListener("mouseup", onDragEnd);
     }
