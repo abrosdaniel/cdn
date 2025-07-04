@@ -135,7 +135,7 @@
     <div class="tilab-frame" data-state="true">
       <aside aria-label="TiLab debug">
         <div class="tilab-drag-handle"></div>
-        <button aria-label="Close TiLab debug" class="tilab-close">
+        <button aria-label="Close TiLab debug" class="tilab-close tilab-state">
           <svg
             width="10"
             height="6"
@@ -163,7 +163,7 @@
         </div>
         <div class="tilab-section"></div>
       </aside>
-      <button></button>
+      <button class="tilab-state"></button>
     </div>`;
 
   function switchState() {
@@ -180,7 +180,7 @@
     container.innerHTML = html;
     document.body.appendChild(container);
 
-    const closeButton = document.getElementById("tilab-close");
+    const closeButton = document.querySelector(".tilab-state");
     if (closeButton) {
       closeButton.addEventListener("click", switchState);
     }
