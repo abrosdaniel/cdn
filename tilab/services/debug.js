@@ -222,267 +222,6 @@
       <button class="tilab-open tilab-state"></button>
     </div>`;
 
-  // Реализация библиотеки htm (Hyperscript Tagged Markup)
-  // Взято из https://github.com/developit/htm
-  function htm(n) {
-    var l = function (l) {
-      for (
-        var s,
-          h,
-          u,
-          a,
-          o = 0,
-          r = [],
-          i = 0,
-          c = 0,
-          f = "",
-          v = !1,
-          d = !1,
-          p = !1,
-          m = 0;
-        c < l.length;
-        c++
-      ) {
-        var y = l.charCodeAt(c);
-        if (v) 34 === y && "\\" !== l[c - 1] && (v = !v);
-        else if (d) 39 === y && "\\" !== l[c - 1] && (d = !d);
-        else if (p) 96 === y && "\\" !== l[c - 1] && (p = !p);
-        else if (
-          47 === y &&
-          47 === l.charCodeAt(c + 1) &&
-          47 !== l.charCodeAt(c - 1)
-        )
-          c += 2;
-        else if (123 === y && "/" !== l[c - 1] && "/" !== l[c + 1])
-          o++, (r[i++] = f), (f = "");
-        else if (125 === y && o > 0) {
-          if (--o === 0) {
-            var g = r[--i] || "";
-            if ("..." === g.trim().slice(0, 3)) {
-              var b = r[--i] || "";
-              (g = b + "," + g), (r[i] = b);
-            }
-            f = g + l.slice(m, c + 1);
-          }
-          m = c + 1;
-        } else 34 === y ? (v = !0) : 39 === y ? (d = !0) : 96 === y && (p = !0);
-      }
-      var C = l.slice(0, m).split("<"),
-        k = [C[0]],
-        w = C.length;
-      if (w > 1) {
-        k.push(C[1]);
-        for (var A = 2; A < w; A++) {
-          var x = C[A],
-            $ = x.indexOf(">");
-          if ($ > -1) {
-            var j = x.slice(0, $),
-              E = x.slice($ + 1) || "";
-            k.push(j, E);
-          } else k.push(x);
-        }
-      }
-      var O = k.length - 1,
-        S = k[O];
-      if (S && />$/.test(S)) {
-        var _ = /^<([^\s/>]+)/.exec(k[1]),
-          L = _ ? _[1] : "div";
-        (k[O] = S.replace(/>$/, "")), k.push("/", L, ">");
-      }
-      for (var M = [], N = [], T = [], z = [], A = 0; A < k.length; A++) {
-        var H = k[A];
-        if (A & 1) {
-          var P = H.split(/\s+/),
-            L = P[0],
-            I = L && L.toLowerCase();
-          if ("/" === L) {
-            for (var q = T.pop(); q && q !== I; ) q = T.pop();
-            if (q !== I) throw new Error("Malformed HTML: Unclosed tag " + I);
-          } else {
-            var D = "/" === H.slice(-1);
-            if ((D && P.pop(), L && ">" !== L && !D)) T.push(I);
-            var F = [];
-            for (var R = 1; R < P.length; R++) {
-              var J = P[R],
-                B = J.indexOf("=");
-              if (B > -1) {
-                var G = J.slice(0, B),
-                  K = J.slice(B + 1);
-                if (
-                  ((K.charCodeAt(0) === 34 || K.charCodeAt(0) === 39) &&
-                    (K = K.slice(1, -1)),
-                  "..." === G.slice(0, 3))
-                ) {
-                  var Q = G.slice(3) || o++;
-                  F.push({
-                    spread: !0,
-                    name: Q,
-                    value: K,
-                  });
-                } else
-                  F.push({
-                    name: G,
-                    value: K,
-                  });
-              } else
-                "..." === J.slice(0, 3)
-                  ? F.push({
-                      spread: !0,
-                      name: J.slice(3) || o++,
-                      value: !0,
-                    })
-                  : F.push({
-                      name: J,
-                      value: !0,
-                    });
-            }
-            var U = {
-              tag: L,
-              props: F,
-            };
-            if (D) for (var q = T.pop(); q && q !== I; ) q = T.pop();
-            M.push(U), z.push(M.length);
-          }
-        } else {
-          for (var V = H.split("<"), W = 0; W < V.length; W++) {
-            var X = V[W];
-            if (X) {
-              for (var Y = [], Z = 0, ee = !1, te = 0; te < X.length; te++) {
-                var ne = X.charCodeAt(te);
-                if (123 === ne && 125 !== X.charCodeAt(te + 1) && !ee)
-                  Z++, Y.push(X.slice(ee ? te : 0, te), o++), (ee = !0);
-                else if (125 === ne && ee) {
-                  if (0 === --Z) {
-                    var le = te + 1;
-                    Y.push(X.slice(0, le)), (ee = !1);
-                  }
-                }
-              }
-              if (ee) throw new Error("Malformed HTML: Unclosed block");
-              if (Y.length) {
-                for (var se = 0; se < Y.length; se++) {
-                  var he = Y[se];
-                  "string" == typeof he
-                    ? N.push({
-                        value: he,
-                      })
-                    : N.push({
-                        name: he,
-                      });
-                }
-                var ae = X.slice(le);
-                ae &&
-                  N.push({
-                    value: ae,
-                  });
-              } else
-                N.push({
-                  value: X,
-                });
-            }
-            W < V.length - 1 && z.push(M.length);
-          }
-        }
-      }
-      var oe = [],
-        re = [],
-        ie = M.length;
-      for (A = 0; A < ie; A++) {
-        var U = M[A],
-          ce = U.tag,
-          ue = ce.toLowerCase(),
-          fe = z.indexOf(A + 1),
-          de = fe > -1 ? z[fe] : ie,
-          pe = [];
-        for (R = A + 1; R < de; R++) {
-          var me = M[R];
-          me && pe.push(me);
-        }
-        var ve = [];
-        for (var ge in N) {
-          var be = parseInt(ge, 10);
-          if (be >= z[A] && (!fe || be < z[fe])) {
-            var Ce = N[be];
-            Ce && ve.push(Ce);
-          }
-        }
-        var ke = {
-          tag: ce,
-          props: U.props,
-          children: pe,
-          text: ve,
-        };
-        oe.push(ke);
-      }
-      for (var we = [], A = 0; A < oe.length; A++) {
-        var Ae = oe[A];
-        if (Ae) {
-          var xe = Ae.tag,
-            $e = [],
-            je = Ae.props,
-            Ee = Ae.children,
-            Oe = Ae.text;
-          if (Ee.length)
-            for (R = 0; R < Ee.length; R++) {
-              var Se = re[Ee[R].index];
-              Se && $e.push(Se);
-            }
-          for (var _e = [], R = 0; R < Oe.length; R++) {
-            var Le = Oe[R];
-            if (Le) {
-              var Me = Le.value;
-              if (void 0 !== Me) _e.push(Me);
-              else {
-                var Ne = Le.name,
-                  Te = r[Ne];
-                void 0 !== Te && _e.push(Te);
-              }
-            }
-          }
-          if (
-            (_e.length &&
-              (1 === _e.length ? $e.push(_e[0]) : $e.push(_e.join(""))),
-            je)
-          ) {
-            for (var ze = {}, R = 0; R < je.length; R++) {
-              var He = je[R],
-                Pe = He.name;
-              if (He.spread) {
-                var Ie = r[Pe];
-                if (Ie && "object" == typeof Ie)
-                  for (var qe in Ie) ze[qe] = Ie[qe];
-              } else {
-                var De = He.value;
-                if ("string" == typeof De && De.charCodeAt(0) === 123) {
-                  var Fe = De.slice(1, -1).trim(),
-                    Re = r[Fe];
-                  void 0 !== Re && (De = Re);
-                }
-                ze[Pe] = De;
-              }
-            }
-            var Je = re.length,
-              Be = n(xe, ze, $e.length ? $e : void 0);
-            re[Je] = Be;
-          } else {
-            var Je = re.length,
-              Be = n(xe, null, $e.length ? $e : void 0);
-            re[Je] = Be;
-          }
-        }
-      }
-      return re[re.length - 1];
-    };
-    return function (n) {
-      var s = n[0];
-      if (!s) return "";
-      "string" == typeof s && (s = [s]);
-      for (var h = s[0], u = "", a = 1, o = arguments.length; a < o; a++)
-        (u += n[a - 1]), (u += arguments[a]);
-      return (u += n[o - 1]), l(h + u);
-    };
-  }
-
   // ПРОВАЙДЕРЫ И УТИЛИТЫ
 
   const ProxyManager = {
@@ -626,215 +365,7 @@
     },
   };
 
-  // React-подобная система для создания компонентов
-  const React = {
-    createElement(type, props = {}, ...children) {
-      return {
-        type,
-        props: {
-          ...props,
-          children: children
-            .flat()
-            .filter((child) => child !== null && child !== undefined),
-        },
-      };
-    },
-
-    Fragment: ({ children }) => children,
-
-    useState(initialState) {
-      const id = React._getHookId();
-      const component = React._getCurrentComponent();
-
-      if (!component._states) component._states = {};
-      if (!(id in component._states)) {
-        component._states[id] = initialState;
-      }
-
-      const setState = (newState) => {
-        if (typeof newState === "function") {
-          component._states[id] = newState(component._states[id]);
-        } else {
-          component._states[id] = newState;
-        }
-        component._render();
-      };
-
-      return [component._states[id], setState];
-    },
-
-    useEffect(callback, deps) {
-      const id = React._getHookId();
-      const component = React._getCurrentComponent();
-
-      if (!component._effects) component._effects = {};
-
-      const hasChanged =
-        !component._effects[id] ||
-        !deps ||
-        deps.some((dep, i) => dep !== component._effects[id].deps[i]);
-
-      if (hasChanged) {
-        // Очищаем предыдущий эффект, если он был
-        if (component._effects[id] && component._effects[id].cleanup) {
-          component._effects[id].cleanup();
-        }
-
-        // Запускаем новый эффект
-        const cleanup = callback();
-        component._effects[id] = {
-          deps,
-          cleanup: typeof cleanup === "function" ? cleanup : undefined,
-        };
-      }
-    },
-
-    useMemo(factory, deps) {
-      const id = React._getHookId();
-      const component = React._getCurrentComponent();
-
-      if (!component._memos) component._memos = {};
-
-      const hasChanged =
-        !component._memos[id] ||
-        !deps ||
-        deps.some((dep, i) => dep !== component._memos[id].deps[i]);
-
-      if (hasChanged) {
-        component._memos[id] = {
-          deps,
-          value: factory(),
-        };
-      }
-
-      return component._memos[id].value;
-    },
-
-    useCallback(callback, deps) {
-      return React.useMemo(() => callback, deps);
-    },
-
-    // Внутренние методы для управления хуками
-    _currentComponent: null,
-    _hookId: 0,
-
-    _setCurrentComponent(component) {
-      React._currentComponent = component;
-      React._hookId = 0;
-    },
-
-    _getCurrentComponent() {
-      if (!React._currentComponent) {
-        throw new Error(
-          "Хуки можно использовать только внутри функциональных компонентов"
-        );
-      }
-      return React._currentComponent;
-    },
-
-    _getHookId() {
-      return React._hookId++;
-    },
-  };
-
-  // Подключаем htm к React.createElement
-  const html = htm(React.createElement);
-
-  // Система рендеринга
-  const ReactDOM = {
-    render(element, container) {
-      container.innerHTML = "";
-      const renderedElement = this._renderElement(element);
-      if (renderedElement) {
-        container.appendChild(renderedElement);
-      }
-      return renderedElement;
-    },
-
-    _renderElement(element) {
-      if (typeof element === "string" || typeof element === "number") {
-        return document.createTextNode(element.toString());
-      }
-
-      if (!element || !element.type) {
-        return document.createTextNode("");
-      }
-
-      if (element.type === "TEXT_ELEMENT") {
-        return document.createTextNode(element.props.nodeValue);
-      }
-
-      if (typeof element.type === "function") {
-        // Создаем компонент
-        const component = {
-          props: element.props,
-          _render: function () {
-            React._setCurrentComponent(this);
-            const result = element.type(this.props);
-            const renderedElement = ReactDOM._renderElement(result);
-
-            // Заменяем DOM-элемент
-            if (this._domElement && this._domElement.parentNode) {
-              this._domElement.parentNode.replaceChild(
-                renderedElement,
-                this._domElement
-              );
-            }
-
-            this._domElement = renderedElement;
-            return renderedElement;
-          },
-          _cleanup: function () {
-            // Очищаем эффекты при размонтировании
-            if (this._effects) {
-              Object.values(this._effects).forEach((effect) => {
-                if (effect.cleanup) effect.cleanup();
-              });
-            }
-          },
-        };
-
-        // Рендерим компонент
-        return component._render();
-      }
-
-      const domElement = document.createElement(element.type);
-
-      // Устанавливаем атрибуты
-      Object.keys(element.props || {})
-        .filter((key) => key !== "children")
-        .forEach((key) => {
-          if (
-            key.startsWith("on") &&
-            typeof element.props[key] === "function"
-          ) {
-            const eventType = key.toLowerCase().substring(2);
-            domElement.addEventListener(eventType, element.props[key]);
-          } else if (key === "className") {
-            domElement.setAttribute("class", element.props[key]);
-          } else if (
-            key === "style" &&
-            typeof element.props[key] === "object"
-          ) {
-            Object.assign(domElement.style, element.props[key]);
-          } else {
-            domElement.setAttribute(key, element.props[key]);
-          }
-        });
-
-      // Рекурсивно рендерим дочерние элементы
-      (element.props.children || []).forEach((child) => {
-        const childElement = this._renderElement(child);
-        if (childElement) {
-          domElement.appendChild(childElement);
-        }
-      });
-
-      return domElement;
-    },
-  };
-
-  // Система для связывания React-компонентов с данными TiLab
+  // Система для связывания Preact-компонентов с данными TiLab
   const Mount = {
     mounts: new Map(),
 
@@ -852,14 +383,14 @@
         render() {
           // Создаем компонент-обертку, который передает данные в пропсы
           const WrappedComponent = (props) => {
-            return React.createElement(this.Component, {
+            return window.preact.h(this.Component, {
               ...props,
               ...this.data,
             });
           };
 
           // Рендерим компонент
-          ReactDOM.render(React.createElement(WrappedComponent), this.element);
+          window.preact.render(window.preact.h(WrappedComponent), this.element);
         },
 
         update(key, value) {
@@ -978,71 +509,109 @@
     );
   }
 
-  // КОМПОНЕНТЫ
-
-  // Компонент для отображения одного лога с использованием htm
-  function LogItem({ log }) {
-    const type = log.type || "info";
-    const name = log.name || "Unknown";
-    const time = formatTime(log.time || Date.now());
-
-    return html`
-      <div className=${`tilab-log tilab-log-${type}`}>
-        <div className="tilab-log-header">
-          <span className="tilab-log-name">${name}</span>
-          <span className="tilab-log-time">${time}</span>
-        </div>
-        ${log.message &&
-        html`<div className="tilab-log-message">${log.message}</div>`}
-        ${log.data !== undefined &&
-        html`
-          <div className="tilab-log-data">
-            ${typeof log.data === "object"
-              ? JSON.stringify(log.data, null, 2)
-              : String(log.data)}
-          </div>
-        `}
-      </div>
-    `;
+  // Функция для загрузки скриптов
+  function loadScript(url) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = url;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
   }
 
-  // Компонент для отображения списка логов с использованием htm
-  function LogsList({ logs }) {
-    if (!logs || logs.length === 0) {
-      return html`<div style="padding: 16px; color: #98a2b3;">
-        Нет логов для отображения
-      </div>`;
+  // Функция для инициализации компонентов после загрузки Preact и HTM
+  async function initializeComponents() {
+    // Загружаем Preact и HTM
+    await loadScript(
+      "https://cdn.jsdelivr.net/npm/preact@10.15.1/dist/preact.min.js"
+    );
+    await loadScript("https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js");
+
+    // Настраиваем HTM с Preact
+    window.html = window.htm.bind(window.preact.h);
+
+    // КОМПОНЕНТЫ
+
+    // Компонент для отображения одного лога с использованием htm
+    function LogItem({ log }) {
+      const type = log.type || "info";
+      const name = log.name || "Unknown";
+      const time = formatTime(log.time || Date.now());
+
+      return window.html`
+        <div className=${`tilab-log tilab-log-${type}`}>
+          <div className="tilab-log-header">
+            <span className="tilab-log-name">${name}</span>
+            <span className="tilab-log-time">${time}</span>
+          </div>
+          ${
+            log.message &&
+            window.html`<div className="tilab-log-message">${log.message}</div>`
+          }
+          ${
+            log.data !== undefined &&
+            window.html`
+            <div className="tilab-log-data">
+              ${
+                typeof log.data === "object"
+                  ? JSON.stringify(log.data, null, 2)
+                  : String(log.data)
+              }
+            </div>
+          `
+          }
+        </div>
+      `;
     }
 
-    return html`
-      <${React.Fragment}>
-        ${logs
-          .slice()
-          .reverse()
-          .map((log) => html`<${LogItem} log=${log} key=${log.time} />`)}
-      <//>
-    `;
-  }
+    // Компонент для отображения списка логов с использованием htm
+    function LogsList({ logs }) {
+      if (!logs || logs.length === 0) {
+        return window.html`<div style="padding: 16px; color: #98a2b3;">
+          Нет логов для отображения
+        </div>`;
+      }
 
-  // Компонент для отображения версии с использованием htm
-  function VersionDisplay({ version }) {
-    return html`<span>Версия: ${version || "1.0.0"}</span>`;
-  }
+      return window.html`
+        <${window.preact.Fragment}>
+          ${logs
+            .slice()
+            .reverse()
+            .map(
+              (log) => window.html`<${LogItem} log=${log} key=${log.time} />`
+            )}
+        <//>
+      `;
+    }
 
-  // БИЗНЕС ЛОГИКА
+    // Компонент для отображения версии с использованием htm
+    function VersionDisplay({ version }) {
+      return window.html`<span>Версия: ${version || "1.0.0"}</span>`;
+    }
 
-  function setupConsoleOutput(container) {
-    const consoleElement = container.querySelector(".tilab-console");
-    return Mount.create({ logs: "@debug.storage" }, consoleElement, LogsList);
-  }
+    // БИЗНЕС ЛОГИКА
 
-  function setupVersionDisplay(container) {
-    const versionElement = container.querySelector(".tilab-logo-desc");
-    return Mount.create(
-      { version: "@version" },
-      versionElement,
-      VersionDisplay
-    );
+    function setupConsoleOutput(container) {
+      const consoleElement = container.querySelector(".tilab-console");
+      return Mount.create({ logs: "@debug.storage" }, consoleElement, LogsList);
+    }
+
+    function setupVersionDisplay(container) {
+      const versionElement = container.querySelector(".tilab-logo-desc");
+      return Mount.create(
+        { version: "@version" },
+        versionElement,
+        VersionDisplay
+      );
+    }
+
+    // Получаем ссылки на основные элементы
+    const container = document.querySelector(".tilab");
+
+    // Настраиваем отображение данных
+    setupVersionDisplay(container);
+    setupConsoleOutput(container);
   }
 
   // ИНИЦИАЛИЗАЦИЯ ПАНЕЛИ
@@ -1107,9 +676,8 @@
     // Оборачиваем существующий объект TiLab в прокси
     ProxyManager.wrapObject(window.TiLab);
 
-    // Настраиваем отображение данных
-    setupVersionDisplay(container);
-    setupConsoleOutput(container);
+    // Инициализируем компоненты после загрузки Preact и HTM
+    initializeComponents();
   }
 
   if (document.readyState === "loading") {
