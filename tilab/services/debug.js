@@ -222,7 +222,7 @@
       <button class="tilab-open tilab-state"></button>
     </div>`;
 
-  const Panel = {
+  const tl = {
     data: null,
 
     create() {
@@ -315,14 +315,27 @@
     },
   };
 
-  function startPanel() {
-    Panel.create();
-    Panel.listen("TiLab");
+  const App = {
+    logo() {
+      tl.mount(".tilab-logo", function () {
+        const version = tl.data.version;
+        return `
+        <span class="tilab-logo-tilab">TILAB</span>
+        <span class="tilab-logo-desc">Версия: ${version}</span>
+          `;
+      });
+    },
+  };
+
+  function startApp() {
+    tl.create();
+    tl.listen("TiLab");
+    App.logo();
   }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", startPanel());
   } else {
-    startPanel();
+    startApp();
   }
 })(window);
