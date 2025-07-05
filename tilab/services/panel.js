@@ -429,11 +429,57 @@
     },
   };
 
+  const Console = {
+    list() {
+      tl.mount(".tilab-console", function () {
+        if (
+          !tl.data.debug ||
+          !tl.data.debug.storage ||
+          !tl.data.debug.storage.length
+        ) {
+          return `<div class="tilab-log tilab-log-info">
+          <div class="tilab-log-header">
+            <span class="tilab-log-name">Информация</span>
+            <span class="tilab-log-time">сейчас</span>
+          </div>
+          <div class="tilab-log-message">Нет доступных записей</div>
+        </div>`;
+        }
+
+        return tl.data.debug.storage
+          .map((item) => {
+            const logTypeClass = `tilab-log-${item.type || "info"}`;
+            const dataContent =
+              item.data !== undefined
+                ? `<div class="tilab-log-data">${JSON.stringify(
+                    item.data,
+                    null,
+                    2
+                  )}</div>`
+                : "";
+
+            return `
+          <div class="tilab-log ${logTypeClass}">
+            <div class="tilab-log-header">
+              <span class="tilab-log-name">${item.name || "Неизвестно"}</span>
+              <span class="tilab-log-time">${item.time || "неизвестно"}</span>
+            </div>
+            <div class="tilab-log-message">${item.message || ""}</div>
+            ${dataContent}
+          </div>
+        `;
+          })
+          .join("");
+      });
+    },
+  };
+
   function startApp() {
     tl.create();
     tl.listen("TiLab");
     App.logo();
     App.notification();
+    Console.list();
   }
 
   if (document.readyState === "loading") {
