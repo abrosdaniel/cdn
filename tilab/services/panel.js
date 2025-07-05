@@ -419,7 +419,7 @@
       });
     },
     notification() {
-      tl.mount("tilab-notify-count", function () {
+      tl.mount(".tilab-notify-count", function () {
         const count = tl.data.debug.storage.length;
         return `
         <span>${count}</span>
