@@ -56,7 +56,7 @@
   const urlParams = new URLSearchParams(window.location.search);
 
   switch (urlParams.get("tilab")) {
-    case " ":
+    case "panel":
       loadScript(`${CDN}/tilab/services/panel.js`);
       break;
   }
