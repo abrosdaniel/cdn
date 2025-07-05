@@ -163,6 +163,7 @@
         background-color: transparent;
         border: none;
         border-radius: 500px;
+        transition: all 0.5s ease-in-out;
       }
       .tilab-frame[data-state="true"] .tilab-open {
         bottom: calc(var(--tsqd-font-size) * -7);
