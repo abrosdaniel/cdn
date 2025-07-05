@@ -315,8 +315,13 @@
     },
   };
 
-  document.addEventListener("DOMContentLoaded", function () {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      Panel.create();
+      Panel.listen("TiLab");
+    });
+  } else {
     Panel.create();
-    Panel.listen(window.TiLab);
-  });
+    Panel.listen("TiLab");
+  }
 })(window);
