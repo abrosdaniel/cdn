@@ -223,6 +223,7 @@
     data: null,
     components: new Map(),
     dependencies: new Map(),
+    activeComponent: null,
 
     create() {
       const container = document.createElement("div");
@@ -289,7 +290,7 @@
           components.forEach((componentId) => {
             if (this.components.has(componentId)) {
               const component = this.components.get(componentId);
-              this.render(component.target, component.render);
+              this.render(component.target, component.render, componentId);
             }
           });
         }
@@ -341,20 +342,20 @@
       window[varName] = this.data;
     },
 
-    mount(target, renderFunc) {
+    mount(target, render) {
       const componentId =
         target + "_" + Math.random().toString(36).substr(2, 9);
-      this.components.set(componentId, { target, renderFunc });
-      this.render(target, renderFunc, componentId);
+      this.components.set(componentId, { target, render });
+      this.render(target, render, componentId);
       return componentId;
     },
 
-    render(target, renderFunc, componentId) {
+    render(target, render, componentId) {
       const targetElement = document.querySelector(target);
       this.activeComponent = componentId;
 
       try {
-        const html = renderFunc();
+        const html = render();
         targetElement.innerHTML = html;
       } catch (error) {
         console.error(
@@ -374,7 +375,7 @@
         return `
         <span class="tilab-logo-tilab">TILAB</span>
         <span class="tilab-logo-desc">Версия: ${version}</span>
-          `;
+        `;
       });
     },
   };
@@ -386,7 +387,9 @@
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startApp());
+    document.addEventListener("DOMContentLoaded", function () {
+      startApp();
+    });
   } else {
     startApp();
   }
