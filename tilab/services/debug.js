@@ -272,8 +272,8 @@
       dragHandle.addEventListener("mousedown", startDrag);
     },
 
-    listen(global) {
-      const originalObj = window[global];
+    listen(varName) {
+      const originalObj = window[varName];
 
       const createDeepProxy = (obj, path = "") => {
         if (obj === null || typeof obj !== "object") return obj;
@@ -292,7 +292,7 @@
 
             // Логируем изменение
             const fullPath = path ? `${path}.${prop}` : prop;
-            console.log(`TiLab: Изменение в ${variableName}.${fullPath}`, {
+            console.log(`TiLab: Изменение в ${varName}.${fullPath}`, {
               старое: oldValue,
               новое: value,
             });
@@ -304,7 +304,7 @@
 
       this.data = createDeepProxy(originalObj);
 
-      window[variableName] = this.data;
+      window[varName] = this.data;
     },
 
     mount(target, render) {
@@ -315,13 +315,14 @@
     },
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      Panel.create();
-      Panel.listen("TiLab");
-    });
-  } else {
+  function startPanel() {
     Panel.create();
     Panel.listen("TiLab");
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startPanel());
+  } else {
+    startPanel();
   }
 })(window);
