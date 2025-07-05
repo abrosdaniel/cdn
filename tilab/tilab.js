@@ -9,7 +9,7 @@
 (function (window) {
   if (window.TiLab === undefined) {
     window.TiLab = {
-      version: "0.1a",
+      version: "0.1 (alpha)",
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
       libs: {},
