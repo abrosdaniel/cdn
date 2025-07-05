@@ -386,7 +386,7 @@
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startPanel());
+    document.addEventListener("DOMContentLoaded", startApp());
   } else {
     startApp();
   }
