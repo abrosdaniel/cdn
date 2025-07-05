@@ -79,6 +79,9 @@
           calc(var(--tsqd-font-size) * 0.125)
           calc(var(--tsqd-font-size) * 0.375);
       }
+      .tilab-frame[data-state="false"] .tilab-close {
+        display: none;
+      }
       .tilab-close:hover {
         background-color: #292e3d;
       }
@@ -148,6 +151,40 @@
         border-left: 3px solid;
         background-color: rgba(255, 255, 255, 0.05);
       }
+      .tilab-open {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        margin: calc(var(--tsqd-font-size) * 0.5);
+        height: calc(var(--tsqd-font-size) * 3.5);
+        width: calc(var(--tsqd-font-size) * 3.5);
+        padding: 0;
+        cursor: pointer;
+        background-color: transparent;
+        border: none;
+        border-radius: 500px;
+      }
+      .tilab-frame[data-state="true"] .tilab-open {
+        bottom: calc(var(--tsqd-font-size) * -7);
+      }
+      .tilab-notify-count {
+        position: absolute;
+        right: calc(var(--tsqd-font-size) * -0.4);
+        top: calc(var(--tsqd-font-size) * -0.4);
+        background-color: #868686;
+        color: #fff;
+        padding-right: calc(var(--tsqd-font-size) * 0.3);
+        padding-left: calc(var(--tsqd-font-size) * 0.3);
+        padding-top: calc(var(--tsqd-font-size) * 0.1);
+        padding-bottom: calc(var(--tsqd-font-size) * 0.1);
+        border-radius: 100px;
+      }
+      .tilab-open img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        aspect-ratio: 1 / 1;
+      }
       .tilab-log-info {
         border-color: #3b82f6;
       }
@@ -186,7 +223,7 @@
         color: #a3a3a3;
       }
     </style>
-    <div class="tilab-frame" data-state="true">
+    <div class="tilab-frame" data-state="false">
       <aside aria-label="TiLab debug">
         <div class="tilab-drag-handle"></div>
         <button aria-label="Close TiLab debug" class="tilab-close tilab-state">
