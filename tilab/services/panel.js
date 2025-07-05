@@ -216,7 +216,10 @@
         <div class="tilab-section">
         </div>
       </aside>
-      <button class="tilab-open tilab-state"></button>
+      <button class="tilab-open tilab-state">
+        <div class="tilab-notify-count"></div>
+        <img src="https://cdn.abros.dev/tilab/services/assets/tilab.png" />
+      </button>
     </div>`;
 
   const tl = {
@@ -378,12 +381,21 @@
         `;
       });
     },
+    notification() {
+      tl.mount("tilab-notify-count", function () {
+        const count = tl.data.debug.storage.length;
+        return `
+        <span>${count}</span>
+        `;
+      });
+    },
   };
 
   function startApp() {
     tl.create();
     tl.listen("TiLab");
     App.logo();
+    App.notification();
   }
 
   if (document.readyState === "loading") {
