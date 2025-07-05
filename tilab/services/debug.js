@@ -208,10 +208,7 @@
         </button>
         <div class="tilab-section">
           <div class="tilab-header">
-            <div class="tilab-logo">
-              <span class="tilab-logo-tilab">TILAB</span>
-              <span class="tilab-logo-desc">Версия: 1.0.0</span>
-            </div>
+            <div class="tilab-logo"></div>
             <div class="tilab-status"></div>
           </div>
           <div class="tilab-console"></div>
@@ -224,6 +221,8 @@
 
   const tl = {
     data: null,
+    components: new Map(),
+    dependencies: new Map(),
 
     create() {
       const container = document.createElement("div");
@@ -275,14 +274,47 @@
     listen(varName) {
       const originalObj = window[varName];
 
-      const createDeepProxy = (obj, path = "") => {
+      const track = (path) => {
+        if (this.activeComponent) {
+          if (!this.dependencies.has(path)) {
+            this.dependencies.set(path, new Set());
+          }
+          this.dependencies.get(path).add(this.activeComponent);
+        }
+      };
+
+      const notify = (path) => {
+        if (this.dependencies.has(path)) {
+          const components = this.dependencies.get(path);
+          components.forEach((componentId) => {
+            if (this.components.has(componentId)) {
+              const component = this.components.get(componentId);
+              this.render(component.target, component.render);
+            }
+          });
+        }
+      };
+
+      const createProxy = (obj, path = "") => {
         if (obj === null || typeof obj !== "object") return obj;
 
         return new Proxy(obj, {
           get: (target, prop) => {
+            if (
+              prop === Symbol.toPrimitive ||
+              prop === "toString" ||
+              prop === "valueOf"
+            ) {
+              return () => String(target);
+            }
+
             const value = target[prop];
+            const currentPath = path ? `${path}.${prop}` : prop;
+
+            track(currentPath);
+
             if (value !== null && typeof value === "object") {
-              return createDeepProxy(value, path ? `${path}.${prop}` : prop);
+              return createProxy(value, currentPath);
             }
             return value;
           },
@@ -290,28 +322,48 @@
             const oldValue = target[prop];
             target[prop] = value;
 
-            // Логируем изменение
             const fullPath = path ? `${path}.${prop}` : prop;
+
+            // Логируем изменение
             console.log(`TiLab: Изменение в ${varName}.${fullPath}`, {
               старое: oldValue,
               новое: value,
             });
+
+            notify(fullPath);
 
             return true;
           },
         });
       };
 
-      this.data = createDeepProxy(originalObj);
-
+      this.data = createProxy(originalObj);
       window[varName] = this.data;
     },
 
-    mount(target, render) {
+    mount(target, renderFunc) {
+      const componentId =
+        target + "_" + Math.random().toString(36).substr(2, 9);
+      this.components.set(componentId, { target, renderFunc });
+      this.render(target, renderFunc, componentId);
+      return componentId;
+    },
+
+    render(target, renderFunc, componentId) {
       const targetElement = document.querySelector(target);
-      targetElement.innerHTML = "";
-      const html = render();
-      targetElement.innerHTML = html;
+      this.activeComponent = componentId;
+
+      try {
+        const html = renderFunc();
+        targetElement.innerHTML = html;
+      } catch (error) {
+        console.error(
+          `TiLab: Ошибка при рендеринге компонента ${target}:`,
+          error
+        );
+      } finally {
+        this.activeComponent = null;
+      }
     },
   };
 
