@@ -37,10 +37,6 @@
         height: 100%;
         flex-direction: row;
         background-color: #0b0d10;
-        max-height: 90%;
-        min-height: calc(var(--tsqd-font-size) * 3.5);
-        position: fixed;
-        z-index: 9999;
         display: flex;
         gap: calc(var(--tsqd-font-size) * 0.125);
       }

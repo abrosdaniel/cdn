@@ -22,7 +22,7 @@
   ["log", "info", "trace", "warn", "error"].forEach(function (type) {
     window.TiLab.debug[type] = function (name, message, data) {
       window.TiLab.debug.storage.push({
-        time: new Date().getDate(),
+        time: new Date().toLocaleString(),
         type: type,
         name: name,
         message: message,
