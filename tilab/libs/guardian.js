@@ -110,17 +110,6 @@
         }
       };
 
-      // Метод 5: Проверка через функцию-приманку в console
-      const checkDebuggerTrap = () => {
-        function debuggerTrap() {
-          debugger;
-        }
-
-        try {
-          debuggerTrap();
-        } catch (e) {}
-      };
-
       // Метод 6: Проверка наличия мобильной эмуляции
       const checkMobileEmulation = () => {
         const isMobileEmulated =
@@ -144,13 +133,11 @@
       checkWindowSizeOnInit();
       checkDevToolsAPI();
       checkConsoleDebug();
-      checkDebuggerTrap();
       checkMobileEmulation();
 
       const devtoolsCheckInterval = setInterval(() => {
         checkDevToolsAPI();
         checkConsoleDebug();
-        checkDebuggerTrap();
         checkMobileEmulation();
       }, 3000);
 
