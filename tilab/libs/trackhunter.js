@@ -173,7 +173,7 @@
     window.TiLab.libs["trackhunter"].exports = {
       track: track,
     };
-    if (window.TiLab.debug) {
+    if (window.TiLab.console) {
       console.log("TrackHunter: API успешно инициализирован");
     }
   }

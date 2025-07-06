@@ -13,15 +13,15 @@
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
       libs: {},
-      debug: {
+      console: {
         storage: [],
       },
     };
   }
 
   ["log", "info", "trace", "warn", "error"].forEach(function (type) {
-    window.TiLab.debug[type] = function (name, message, data) {
-      window.TiLab.debug.storage.push({
+    window.TiLab.console[type] = function (name, message, data) {
+      window.TiLab.console.storage.push({
         time: new Date().toLocaleString(),
         type: type,
         name: name,
@@ -98,7 +98,7 @@
             async: isAsync,
           };
 
-          TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
+          TiLab.console.log("TiLab", `Загружена библиотека ${libName}`);
 
           if (window.TiLab.libs[libName].exports) {
             const exports = window.TiLab.libs[libName].exports;
@@ -112,7 +112,7 @@
           }
         })
         .catch((error) => {
-          TiLab.debug.error(
+          TiLab.console.error(
             "TiLab",
             `Ошибка загрузки библиотеки ${libName}:`,
             error
@@ -143,10 +143,10 @@
               async: isAsync,
             };
 
-            TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
+            TiLab.console.log("TiLab", `Загружена библиотека ${libName}`);
           })
           .catch((error) => {
-            TiLab.debug.error(
+            TiLab.console.error(
               "TiLab",
               `Ошибка загрузки библиотеки ${libName}:`,
               error

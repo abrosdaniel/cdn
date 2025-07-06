@@ -28,20 +28,20 @@
               allrecords.innerHTML = "";
               allrecords.appendChild(clone);
             } else {
-              TiLab.debug.warn(
+              TiLab.console.warn(
                 "Guardian.js",
                 `Блок "${options.block}" не найден`
               );
             }
           } else {
-            TiLab.debug.warn("Guardian.js", `Нет параметра "block"`);
+            TiLab.console.warn("Guardian.js", `Нет параметра "block"`);
           }
           break;
         case "custom":
           if (options.custom) {
             document.body.innerHTML = options.custom;
           } else {
-            TiLab.debug.warn("Guardian.js", `Нет параметра "custom"`);
+            TiLab.console.warn("Guardian.js", `Нет параметра "custom"`);
           }
           break;
       }
@@ -243,7 +243,7 @@
       } else if (Array.isArray(options.media)) {
         selectors = options.media;
       } else {
-        TiLab.debug.warn(
+        TiLab.console.warn(
           "Guardian.js",
           `Неверное значение параметра "media": ${options.media}`
         );
@@ -303,7 +303,7 @@
 
           protectedCount++;
         } catch (err) {
-          TiLab.debug.warn("Guardian.js", `Ошибка при защите элемента`, err);
+          TiLab.console.warn("Guardian.js", `Ошибка при защите элемента`, err);
         }
       };
 
@@ -312,7 +312,7 @@
           const elements = document.querySelectorAll(selector);
           elements.forEach(protectElement);
         } catch (err) {
-          TiLab.debug.warn(
+          TiLab.console.warn(
             "Guardian.js",
             `Ошибка при выборе элементов по селектору "${selector}"`,
             err
@@ -362,12 +362,12 @@
       //     subtree: true,
       //   });
       // } catch (err) {
-      //   TiLab.debug.warn(
+      //   TiLab.console.warn(
       //     "Guardian.js",
       //     `Ошибка при настройке MutationObserver: ${err.message}`
       //   );
       // }
-      TiLab.debug.info(
+      TiLab.console.info(
         "Guardian.js",
         `Защита применена к ${protectedCount} элементам`
       );
@@ -400,6 +400,6 @@
     window.TiLab.libs["guardian"].exports = {
       protect: protect,
     };
-    TiLab.debug.info("Guardian.js", "Библиотека успешно иницифлизирована.");
+    TiLab.console.info("Guardian.js", "Библиотека успешно иницифлизирована.");
   }
 })();

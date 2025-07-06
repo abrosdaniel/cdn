@@ -221,9 +221,9 @@
       }
     </style>
     <div class="tilab-frame" data-state="false">
-      <aside aria-label="TiLab debug">
+      <aside aria-label="TiLab panel">
         <div class="tilab-drag-handle"></div>
-        <button aria-label="Close TiLab debug" class="tilab-close tilab-state">
+        <button aria-label="Close TiLab panel" class="tilab-close tilab-state">
           <svg
             width="10"
             height="6"
@@ -411,7 +411,7 @@
     },
     notification() {
       tl.mount(".tilab-notify-count", function () {
-        const count = tl.data.debug.storage.length;
+        const count = tl.data.console.storage.length;
         return `
         <span>${count}</span>
         `;
@@ -420,9 +420,9 @@
     console() {
       tl.mount(".tilab-console", function () {
         if (
-          !tl.data.debug ||
-          !tl.data.debug.storage ||
-          !tl.data.debug.storage.length
+          !tl.data.console ||
+          !tl.data.console.storage ||
+          !tl.data.console.storage.length
         ) {
           return `<div class="tilab-log tilab-log-info">
           <div class="tilab-log-header">
@@ -433,7 +433,7 @@
         </div>`;
         }
 
-        return tl.data.debug.storage
+        return tl.data.console.storage
           .map((item) => {
             const logTypeClass = `tilab-log-${item.type || "info"}`;
             const dataContent =
