@@ -87,7 +87,37 @@
         } catch (e) {}
       };
 
-      const devtoolsCheckInterval = setInterval(checkDevToolsAPI, 3000);
+      // Метод 3: Проверка размеров окна при инициализации
+      const checkWindowSizeOnInit = () => {
+        const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
+        const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+
+        if (
+          (widthDiff > threshold && widthDiff > window.innerWidth * 0.3) ||
+          (heightDiff > threshold && heightDiff > window.innerHeight * 0.3)
+        ) {
+          emitEvent();
+        }
+      };
+
+      // Метод 4: Проверка через console.debug
+      const checkConsoleDebug = () => {
+        const startTime = new Date();
+        console.debug("Guardian.js DevTools Detection");
+        const endTime = new Date();
+        if (endTime - startTime > 100) {
+          emitEvent();
+        }
+      };
+
+      checkWindowSizeOnInit();
+      checkDevToolsAPI();
+      checkConsoleDebug();
+
+      const devtoolsCheckInterval = setInterval(() => {
+        checkDevToolsAPI();
+        checkConsoleDebug();
+      }, 3000);
 
       window.addEventListener("beforeunload", function () {
         clearInterval(devtoolsCheckInterval);
