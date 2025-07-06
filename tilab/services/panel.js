@@ -362,12 +362,6 @@
 
             const fullPath = path ? `${path}.${prop}` : prop;
 
-            // Логируем изменение
-            console.log(`TiLab: Изменение в ${varName}.${fullPath}`, {
-              старое: oldValue,
-              новое: value,
-            });
-
             notify(fullPath);
 
             return true;
@@ -423,10 +417,7 @@
         `;
       });
     },
-  };
-
-  const Console = {
-    list() {
+    console() {
       tl.mount(".tilab-console", function () {
         if (
           !tl.data.debug ||
@@ -475,7 +466,7 @@
     tl.listen("TiLab");
     App.logo();
     App.notification();
-    Console.list();
+    App.console();
   }
 
   if (document.readyState === "loading") {
