@@ -55,6 +55,7 @@
           this.template(options);
         }
       };
+
       // Метод 1: Отслеживание размера окна
       window.addEventListener("resize", function () {
         if (
@@ -64,6 +65,7 @@
           emitEvent();
         }
       });
+
       // Метод 2: Отслеживание через console.log
       const originalLog = console.log;
       console.log = function () {
@@ -72,14 +74,88 @@
         }
         originalLog.apply(console, arguments);
       };
+
       // Метод 3: Отслеживание через debugger
-      setInterval(function () {
-        const startTime = new Date();
-        debugger;
-        if (options.devtools && new Date() - startTime > 100) {
-          emitEvent();
+      let lastCheck = Date.now();
+      let checkCount = 0;
+
+      const checkDevTools = function () {
+        const checkInterval = 100;
+        const checkThreshold = 50;
+        const maxChecks = 3;
+
+        const startTime = Date.now();
+
+        function timeConsumingOperation() {
+          const arr = [];
+          for (let i = 0; i < 1000; i++) {
+            arr.push(i * i);
+            console.log(i);
+            console.clear();
+          }
+          return arr;
         }
-      }, 1000);
+
+        if (Date.now() - lastCheck > checkInterval) {
+          timeConsumingOperation();
+
+          const executionTime = Date.now() - startTime;
+          lastCheck = Date.now();
+
+          if (executionTime > checkThreshold) {
+            checkCount++;
+
+            if (checkCount >= maxChecks && !devtoolsOpen) {
+              emitEvent();
+            }
+          } else {
+            checkCount = 0;
+          }
+        }
+      };
+
+      const devtoolsCheckInterval = setInterval(checkDevTools, 2000);
+
+      // Метод 4: Использование firebug-lite
+      const checkFirebug = function () {
+        if (
+          window.console &&
+          (window.console.firebug ||
+            window.console.exception ||
+            window.console.table ||
+            window.console.trace ||
+            window.console.dir)
+        ) {
+          if (!devtoolsOpen) {
+            emitEvent();
+          }
+        }
+      };
+
+      setTimeout(checkFirebug, 1000);
+
+      const checkDevToolsElements = function () {
+        const devtoolsElements = [
+          "__firebug__",
+          "__REACT_DEVTOOLS_GLOBAL_HOOK__",
+          "__REDUX_DEVTOOLS_EXTENSION__",
+        ];
+
+        for (let i = 0; i < devtoolsElements.length; i++) {
+          if (window[devtoolsElements[i]]) {
+            if (!devtoolsOpen) {
+              emitEvent();
+              break;
+            }
+          }
+        }
+      };
+
+      setTimeout(checkDevToolsElements, 1500);
+
+      window.addEventListener("beforeunload", function () {
+        clearInterval(devtoolsCheckInterval);
+      });
     },
     frame(options) {
       const emitEvent = () => {
