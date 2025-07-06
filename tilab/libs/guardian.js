@@ -58,100 +58,36 @@
 
       // Метод 1: Отслеживание размера окна
       window.addEventListener("resize", function () {
+        const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
+        const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+
         if (
-          Math.abs(window.outerWidth - window.innerWidth) > threshold ||
-          Math.abs(window.outerHeight - window.innerHeight) > threshold
+          (widthDiff > threshold && widthDiff > window.innerWidth * 0.3) ||
+          (heightDiff > threshold && heightDiff > window.innerHeight * 0.3)
         ) {
           emitEvent();
         }
       });
 
-      // Метод 2: Отслеживание через console.log
-      const originalLog = console.log;
-      console.log = function () {
-        if (options.devtools && !devtoolsOpen) {
-          emitEvent();
-        }
-        originalLog.apply(console, arguments);
-      };
-
-      // Метод 3: Отслеживание через debugger
-      let lastCheck = Date.now();
-      let checkCount = 0;
-
-      const checkDevTools = function () {
-        const checkInterval = 100;
-        const checkThreshold = 50;
-        const maxChecks = 3;
-
-        const startTime = Date.now();
-
-        function timeConsumingOperation() {
-          const arr = [];
-          for (let i = 0; i < 1000; i++) {
-            arr.push(i * i);
-            console.log(i);
-            console.clear();
-          }
-          return arr;
-        }
-
-        if (Date.now() - lastCheck > checkInterval) {
-          timeConsumingOperation();
-
-          const executionTime = Date.now() - startTime;
-          lastCheck = Date.now();
-
-          if (executionTime > checkThreshold) {
-            checkCount++;
-
-            if (checkCount >= maxChecks && !devtoolsOpen) {
-              emitEvent();
-            }
-          } else {
-            checkCount = 0;
-          }
-        }
-      };
-
-      const devtoolsCheckInterval = setInterval(checkDevTools, 2000);
-
-      // Метод 4: Использование firebug-lite
-      const checkFirebug = function () {
-        if (
-          window.console &&
-          (window.console.firebug ||
-            window.console.exception ||
-            window.console.table ||
-            window.console.trace ||
-            window.console.dir)
-        ) {
-          if (!devtoolsOpen) {
+      // Метод 2: Проверка наличия DevTools API
+      const checkDevToolsAPI = () => {
+        try {
+          const devToolsDetected =
+            (window.__REACT_DEVTOOLS_GLOBAL_HOOK__ &&
+              window.__REACT_DEVTOOLS_GLOBAL_HOOK__.renderers &&
+              window.__REACT_DEVTOOLS_GLOBAL_HOOK__.renderers.size > 0) ||
+            (window.Firebug &&
+              window.Firebug.chrome &&
+              window.Firebug.chrome.isInitialized) ||
+            (window.msIsStaticHTML !== undefined &&
+              window.msIsStaticHTML.toString().indexOf("native code") === -1);
+          if (devToolsDetected && !devtoolsOpen) {
             emitEvent();
           }
-        }
+        } catch (e) {}
       };
 
-      setTimeout(checkFirebug, 1000);
-
-      const checkDevToolsElements = function () {
-        const devtoolsElements = [
-          "__firebug__",
-          "__REACT_DEVTOOLS_GLOBAL_HOOK__",
-          "__REDUX_DEVTOOLS_EXTENSION__",
-        ];
-
-        for (let i = 0; i < devtoolsElements.length; i++) {
-          if (window[devtoolsElements[i]]) {
-            if (!devtoolsOpen) {
-              emitEvent();
-              break;
-            }
-          }
-        }
-      };
-
-      setTimeout(checkDevToolsElements, 1500);
+      const devtoolsCheckInterval = setInterval(checkDevToolsAPI, 3000);
 
       window.addEventListener("beforeunload", function () {
         clearInterval(devtoolsCheckInterval);
