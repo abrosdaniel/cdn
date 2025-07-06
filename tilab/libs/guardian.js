@@ -75,7 +75,7 @@
       // Метод 3: Отслеживание через debugger
       setInterval(function () {
         const startTime = new Date();
-        // debugger;
+        debugger;
         if (options.devtools && new Date() - startTime > 100) {
           emitEvent();
         }
@@ -157,20 +157,12 @@
       }
     },
     media(options) {
-      // Проверяем значение options.media
-      if (!options.media) {
-        TiLab.debug.warn("Guardian.js", "Параметр media не указан");
-        return;
-      }
-
-      // Функция для предотвращения событий
       const preventEvent = function (e) {
         e.preventDefault();
         e.stopPropagation();
         return false;
       };
 
-      // Определяем селекторы для защиты
       let selectors = [];
       if (options.media === "all") {
         selectors = [
@@ -194,47 +186,22 @@
         return;
       }
 
-      // Логируем начало процесса
-      TiLab.debug.info(
-        "Guardian.js",
-        "Начало применения защиты медиа-контента"
-      );
-
-      // Защита от контекстного меню для всей страницы
-      document.addEventListener("contextmenu", preventEvent, true);
-
-      // Защита от копирования для всей страницы
-      document.addEventListener("copy", preventEvent, true);
-      document.addEventListener("cut", preventEvent, true);
-
-      // Защита от горячих клавиш
       document.addEventListener(
         "keydown",
         function (e) {
-          if (
-            (e.ctrlKey || e.metaKey) &&
-            ["c", "x", "s", "a"].includes(e.key)
-          ) {
+          if ((e.ctrlKey || e.metaKey) && ["x", "s", "a"].includes(e.key)) {
             preventEvent(e);
           }
         },
         true
       );
 
-      // Отключаем выделение текста на странице
-      document.body.style.webkitUserSelect = "none";
-      document.body.style.userSelect = "none";
-      document.body.style.webkitTouchCallout = "none";
-
-      // Счетчик для отслеживания прогресса
       let protectedCount = 0;
 
-      // Функция для применения защиты к элементу
       const protectElement = function (element) {
         if (!element || !element.nodeType) return;
 
         try {
-          // Основные события для блокировки
           const events = [
             "contextmenu",
             "dragstart",
@@ -250,12 +217,10 @@
             "cut",
           ];
 
-          // Блокируем все события
           events.forEach(function (eventName) {
             element.addEventListener(eventName, preventEvent, true);
           });
 
-          // Блокируем события касания для мобильных устройств
           ["touchstart", "touchend", "touchmove"].forEach(function (eventName) {
             element.addEventListener(eventName, preventEvent, {
               passive: false,
@@ -263,125 +228,81 @@
             });
           });
 
-          // Применяем CSS защиту
           element.style.webkitUserSelect = "none";
           element.style.userSelect = "none";
           element.style.webkitTouchCallout = "none";
           element.setAttribute("unselectable", "on");
 
-          // Для изображений и видео добавляем дополнительную защиту
           if (element.tagName === "IMG" || element.tagName === "VIDEO") {
-            // Отключаем перетаскивание
             element.setAttribute("draggable", "false");
-            element.style.pointerEvents = "none";
-
-            // Добавляем защитный слой поверх элемента
-            const parent = element.parentNode;
-
-            // Проверяем, есть ли уже защитный слой
-            const existingOverlay = parent.querySelector(".guardian-overlay");
-            if (!existingOverlay) {
-              // Проверяем позиционирование родителя
-              const parentStyle = window.getComputedStyle(parent);
-              if (parentStyle.position === "static") {
-                parent.style.position = "relative";
-              }
-
-              // Создаем защитный слой
-              const overlay = document.createElement("div");
-              overlay.className = "guardian-overlay";
-              overlay.style.position = "absolute";
-              overlay.style.top = "0";
-              overlay.style.left = "0";
-              overlay.style.width = "100%";
-              overlay.style.height = "100%";
-              overlay.style.zIndex = "1";
-              overlay.style.cursor = "default";
-
-              // Блокируем события на защитном слое
-              events.forEach(function (eventName) {
-                overlay.addEventListener(eventName, preventEvent, true);
-              });
-
-              // Добавляем слой в DOM
-              parent.appendChild(overlay);
-            }
           }
 
           protectedCount++;
         } catch (err) {
-          TiLab.debug.warn(
-            "Guardian.js",
-            `Ошибка при защите элемента: ${err.message}`
-          );
+          TiLab.debug.warn("Guardian.js", `Ошибка при защите элемента`, err);
         }
       };
 
-      // Применяем защиту к существующим элементам
       selectors.forEach(function (selector) {
         try {
           const elements = document.querySelectorAll(selector);
-          TiLab.debug.info(
-            "Guardian.js",
-            `Найдено ${elements.length} элементов по селектору "${selector}"`
-          );
-
           elements.forEach(protectElement);
         } catch (err) {
           TiLab.debug.warn(
             "Guardian.js",
-            `Ошибка при выборе элементов по селектору "${selector}": ${err.message}`
+            `Ошибка при выборе элементов по селектору "${selector}"`,
+            err
           );
         }
       });
 
       // Наблюдаем за изменениями в DOM для защиты новых элементов
-      try {
-        const observer = new MutationObserver(function (mutations) {
-          mutations.forEach(function (mutation) {
-            if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-              mutation.addedNodes.forEach(function (node) {
-                // Проверяем, является ли узел элементом
-                if (node.nodeType === 1) {
-                  // Проверяем, соответствует ли элемент нашим селекторам
-                  if (
-                    selectors.some((selector) => {
-                      try {
-                        return node.matches(selector);
-                      } catch (e) {
-                        return false;
-                      }
-                    })
-                  ) {
-                    protectElement(node);
-                  }
+      // try {
+      //   const observer = new MutationObserver(function (mutations) {
+      //     mutations.forEach(function (mutation) {
+      //       if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+      //         mutation.addedNodes.forEach(function (node) {
+      //           // Проверяем, является ли узел элементом
+      //           if (node.nodeType === 1) {
+      //             // Проверяем, соответствует ли элемент нашим селекторам
+      //             if (
+      //               selectors.some((selector) => {
+      //                 try {
+      //                   return node.matches(selector);
+      //                 } catch (e) {
+      //                   return false;
+      //                 }
+      //               })
+      //             ) {
+      //               protectElement(node);
+      //             }
 
-                  // Проверяем дочерние элементы
-                  selectors.forEach(function (selector) {
-                    try {
-                      const childElements = node.querySelectorAll(selector);
-                      childElements.forEach(protectElement);
-                    } catch (e) {
-                      // Игнорируем ошибки
-                    }
-                  });
-                }
-              });
-            }
-          });
-        });
+      //             // Проверяем дочерние элементы
+      //             selectors.forEach(function (selector) {
+      //               try {
+      //                 const childElements = node.querySelectorAll(selector);
+      //                 childElements.forEach(protectElement);
+      //               } catch (e) {
+      //                 // Игнорируем ошибки
+      //               }
+      //             });
+      //           }
+      //         });
+      //       }
+      //     });
+      //   });
 
-        // Начинаем наблюдение за изменениями в DOM
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-        });
-      } catch (err) {
-        TiLab.debug.warn(
-          "Guardian.js",
-          `Ошибка при настройке MutationObserver: ${err.message}`
-        );
-      }
+      //   // Начинаем наблюдение за изменениями в DOM
+      //   observer.observe(document.body, {
+      //     childList: true,
+      //     subtree: true,
+      //   });
+      // } catch (err) {
+      //   TiLab.debug.warn(
+      //     "Guardian.js",
+      //     `Ошибка при настройке MutationObserver: ${err.message}`
+      //   );
+      // }
       TiLab.debug.info(
         "Guardian.js",
         `Защита применена к ${protectedCount} элементам`
