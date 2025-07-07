@@ -175,7 +175,7 @@
     let activeComponent = null;
 
     // Добавляем отладочную информацию для диагностики обновлений
-    const DEBUG = true;
+    const DEBUG = false;
 
     const ARRAY_MUTATING_METHODS = [
       "push",
