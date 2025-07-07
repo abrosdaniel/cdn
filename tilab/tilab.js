@@ -174,21 +174,138 @@
     const urlCache = new Map();
     let activeComponent = null;
 
+    // Обновляет все компоненты, зависящие от данного пути и всех его родительских путей
     function updateDependentComponents(path) {
-      if (dependencies.has(path)) {
-        const affectedComponents = dependencies.get(path);
-        affectedComponents.forEach((componentId) => {
-          if (components.has(componentId)) {
-            const component = components.get(componentId);
-            renderComponent(component.target, component.render, componentId);
-          }
-        });
+      // Создаем массив путей для проверки: сам путь и все его родительские пути
+      const pathsToCheck = [path];
+
+      // Добавляем все родительские пути
+      let currentPath = path;
+      while (currentPath.includes(".")) {
+        currentPath = currentPath.substring(0, currentPath.lastIndexOf("."));
+        pathsToCheck.push(currentPath);
       }
+
+      // Проходим по всем зависимостям и обновляем компоненты
+      const updatedComponents = new Set();
+
+      pathsToCheck.forEach((checkPath) => {
+        if (dependencies.has(checkPath)) {
+          const affectedComponents = dependencies.get(checkPath);
+          affectedComponents.forEach((componentId) => {
+            if (
+              !updatedComponents.has(componentId) &&
+              components.has(componentId)
+            ) {
+              const component = components.get(componentId);
+              renderComponent(component.target, component.render, componentId);
+              updatedComponents.add(componentId);
+            }
+          });
+        }
+      });
+    }
+
+    // Рекурсивно регистрирует зависимости для всех путей в объекте
+    function registerDependenciesForObject(obj, basePath) {
+      if (obj === null || typeof obj !== "object" || !activeComponent) return;
+
+      // Регистрируем зависимость для базового пути
+      if (!dependencies.has(basePath)) {
+        dependencies.set(basePath, new Set());
+      }
+      dependencies.get(basePath).add(activeComponent);
+
+      // Рекурсивно регистрируем зависимости для всех свойств объекта
+      Object.keys(obj).forEach((key) => {
+        const value = obj[key];
+        const childPath = basePath ? `${basePath}.${key}` : key;
+
+        // Регистрируем зависимость для этого пути
+        if (!dependencies.has(childPath)) {
+          dependencies.set(childPath, new Set());
+        }
+        dependencies.get(childPath).add(activeComponent);
+
+        // Если значение - объект, рекурсивно регистрируем зависимости для его свойств
+        if (value !== null && typeof value === "object") {
+          registerDependenciesForObject(value, childPath);
+        }
+      });
     }
 
     function createProxy(obj, path = "") {
       if (obj === null || typeof obj !== "object") return obj;
 
+      // Для массивов создаем специальный прокси
+      if (Array.isArray(obj)) {
+        return new Proxy(obj, {
+          get: (target, prop) => {
+            // Обработка стандартных методов массивов, которые модифицируют массив
+            if (
+              typeof prop === "string" &&
+              [
+                "push",
+                "pop",
+                "shift",
+                "unshift",
+                "splice",
+                "sort",
+                "reverse",
+              ].includes(prop)
+            ) {
+              const originalMethod = target[prop];
+              return function (...args) {
+                const result = originalMethod.apply(target, args);
+                // После модификации массива обновляем все зависимые компоненты
+                updateDependentComponents(path);
+                return result;
+              };
+            }
+
+            if (
+              prop === Symbol.toPrimitive ||
+              prop === "toString" ||
+              prop === "valueOf"
+            ) {
+              return () => String(target);
+            }
+
+            const value = target[prop];
+            const currentPath = path ? `${path}.${prop}` : String(prop);
+
+            if (activeComponent) {
+              if (!dependencies.has(currentPath)) {
+                dependencies.set(currentPath, new Set());
+              }
+              dependencies.get(currentPath).add(activeComponent);
+
+              if (path) {
+                if (!dependencies.has(path)) {
+                  dependencies.set(path, new Set());
+                }
+                dependencies.get(path).add(activeComponent);
+              }
+            }
+
+            if (value !== null && typeof value === "object") {
+              return createProxy(value, currentPath);
+            }
+            return value;
+          },
+          set: (target, prop, value) => {
+            const oldValue = target[prop];
+            target[prop] = value;
+
+            const fullPath = path ? `${path}.${prop}` : String(prop);
+            updateDependentComponents(fullPath);
+
+            return true;
+          },
+        });
+      }
+
+      // Для обычных объектов
       return new Proxy(obj, {
         get: (target, prop) => {
           if (
@@ -222,15 +339,20 @@
           return value;
         },
         set: (target, prop, value) => {
+          const oldValue = target[prop];
           target[prop] = value;
 
           const fullPath = path ? `${path}.${prop}` : String(prop);
           updateDependentComponents(fullPath);
 
-          if (path) {
-            updateDependentComponents(path);
+          return true;
+        },
+        deleteProperty: (target, prop) => {
+          if (prop in target) {
+            delete target[prop];
+            const fullPath = path ? `${path}.${prop}` : String(prop);
+            updateDependentComponents(fullPath);
           }
-
           return true;
         },
       });
@@ -244,6 +366,12 @@
           })
           .then((data) => {
             const proxiedData = createProxy(data, url);
+
+            // Регистрируем все возможные пути в данных
+            if (activeComponent) {
+              registerDependenciesForObject(data, url);
+            }
+
             urlCache.set(url, {
               data: proxiedData,
               timestamp: Date.now(),
@@ -286,7 +414,8 @@
     }
 
     function renderComponent(target, renderFn, componentId) {
-      const targetElement = document.querySelector(target);
+      const targetElement =
+        target === "body" ? document.body : document.querySelector(target);
       if (!targetElement) {
         TiLab.console.error(`TiLab(render)`, `Элемент ${target} не найден`);
         return;
@@ -336,6 +465,12 @@
                   dependencies.set(param, new Set());
                 }
                 dependencies.get(param).add(activeComponent);
+
+                // Регистрируем все возможные пути в данных
+                const data = sharedData.get(param);
+                if (data && typeof data === "object") {
+                  registerDependenciesForObject(data, param);
+                }
               }
               return sharedData.get(param);
             }
@@ -357,6 +492,11 @@
                 dependencies.set(param, new Set());
               }
               dependencies.get(param).add(activeComponent);
+
+              // Регистрируем все возможные пути в данных
+              if (originalObj && typeof originalObj === "object") {
+                registerDependenciesForObject(originalObj, param);
+              }
             }
 
             return proxiedData;
