@@ -1,5 +1,5 @@
 /*!
- * TiLab.js v0.1a
+ * TiLab.js v0.2a
  * MIT License
  * (c) 2025 Daniel Abros
  * Сайт → https://abros.dev
@@ -7,19 +7,31 @@
  */
 
 (function (window) {
+  // Константы
+  const CDN = "https://cdn.abros.dev";
+  const CONSOLE_TYPES = ["log", "info", "trace", "warn", "error"];
+  const ARRAY_MUTATION_METHODS = [
+    "push",
+    "pop",
+    "shift",
+    "unshift",
+    "splice",
+    "sort",
+    "reverse",
+  ];
+  const PRIMITIVE_METHODS = [Symbol.toPrimitive, "toString", "valueOf"];
+
   if (window.TiLab === undefined) {
     window.TiLab = {
-      version: "0.1 (alpha)",
+      version: "0.2 (alpha)",
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
       libs: {},
-      console: {
-        storage: [],
-      },
+      console: { storage: [] },
     };
   }
 
-  ["log", "info", "trace", "warn", "error"].forEach(function (type) {
+  CONSOLE_TYPES.forEach(function (type) {
     window.TiLab.console[type] = function (name, message, data) {
       window.TiLab.console.storage.push({
         time: new Date().toLocaleString(),
@@ -42,130 +54,79 @@
       const script = document.createElement("script");
       script.src = src;
       script.async = async;
-      script.onload = () => {
-        resolve(src);
-      };
-      script.onerror = () => {
+      script.onload = () => resolve(src);
+      script.onerror = () =>
         reject(new Error(`Не удалось загрузить скрипт: ${src}`));
-      };
       document.head.appendChild(script);
     });
   }
 
-  const CDN = "https://cdn.abros.dev";
   const urlParams = new URLSearchParams(window.location.search);
-
-  switch (urlParams.get("tilab")) {
-    case "":
-      loadScript(`${CDN}/tilab/services/panel.js`);
-      break;
+  if (urlParams.get("tilab") === "") {
+    loadScript(`${CDN}/tilab/services/panel.js`);
   }
 
-  /**
-   * Загрузка библиотеки
-   * @param {string} libName - Имя библиотеки
-   * @param {Object} options - Параметры загрузки
-   * @param {...*} args - Аргументы для передачи методу библиотеки
-   * @returns {Promise} - Промис, который разрешается после загрузки всех библиотек
-   */
   window.TiLab.init = function (libs, options = {}, ...args) {
     const libsArray = Array.isArray(libs) ? libs : [libs];
-    const loadPromises = [];
     const isAsync = options.async !== undefined ? options.async : true;
 
     if (libsArray.length === 1 && typeof libsArray[0] === "string") {
-      const libName = libsArray[0];
-
-      if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
-        if (window.TiLab.libs[libName].exports) {
-          const exports = window.TiLab.libs[libName].exports;
-          const exportKeys = Object.keys(exports);
-          if (exportKeys.length === 1) {
-            return Promise.resolve(exports[exportKeys[0]]);
-          }
-          return Promise.resolve(exports);
-        }
-        return Promise.resolve();
-      }
-
-      const libPath = `${CDN}/tilab/libs/${libName}.js`;
-
-      return loadScript(libPath, isAsync)
-        .then(() => {
-          window.TiLab.libs[libName] = window.TiLab.libs[libName] || {
-            loaded: true,
-            timestamp: new Date().getTime(),
-            async: isAsync,
-          };
-
-          TiLab.console.log("TiLab", `Загружена библиотека ${libName}`);
-
-          if (window.TiLab.libs[libName].exports) {
-            const exports = window.TiLab.libs[libName].exports;
-            const exportKeys = Object.keys(exports);
-
-            if (exportKeys.length === 1) {
-              return exports[exportKeys[0]];
-            }
-
-            return exports;
-          }
-        })
-        .catch((error) => {
-          TiLab.console.error(
-            "TiLab",
-            `Ошибка загрузки библиотеки ${libName}:`,
-            error
-          );
-          window.TiLab.libs[libName] = {
-            loaded: false,
-            error: error.message,
-            timestamp: new Date().getTime(),
-          };
-
-          throw error;
-        });
+      return loadSingleLibrary(libsArray[0], isAsync);
     }
 
-    libsArray.forEach((libName) => {
-      if (typeof libName === "string") {
-        if (window.TiLab.libs[libName]) {
-          return;
-        }
-
-        const libPath = `${CDN}/tilab/libs/${libName}.js`;
-
-        const loadPromise = loadScript(libPath, isAsync)
-          .then(() => {
-            window.TiLab.libs[libName] = {
-              loaded: true,
-              timestamp: new Date().getTime(),
-              async: isAsync,
-            };
-
-            TiLab.console.log("TiLab", `Загружена библиотека ${libName}`);
-          })
-          .catch((error) => {
-            TiLab.console.error(
-              "TiLab",
-              `Ошибка загрузки библиотеки ${libName}:`,
-              error
-            );
-            window.TiLab.libs[libName] = {
-              loaded: false,
-              error: error.message,
-              timestamp: new Date().getTime(),
-            };
-
-            throw error;
-          });
-
-        loadPromises.push(loadPromise);
-      }
-    });
+    const loadPromises = libsArray
+      .filter(
+        (libName) => typeof libName === "string" && !window.TiLab.libs[libName]
+      )
+      .map((libName) => loadSingleLibrary(libName, isAsync));
 
     return Promise.all(loadPromises);
   };
+
+  function loadSingleLibrary(libName, isAsync) {
+    if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
+      const exports = window.TiLab.libs[libName].exports;
+      if (exports) {
+        const exportKeys = Object.keys(exports);
+        return Promise.resolve(
+          exportKeys.length === 1 ? exports[exportKeys[0]] : exports
+        );
+      }
+      return Promise.resolve();
+    }
+
+    const libPath = `${CDN}/tilab/libs/${libName}.js`;
+
+    return loadScript(libPath, isAsync)
+      .then(() => {
+        window.TiLab.libs[libName] = {
+          loaded: true,
+          timestamp: new Date().getTime(),
+          async: isAsync,
+        };
+
+        TiLab.console.log("TiLab", `Загружена библиотека ${libName}`);
+
+        if (window.TiLab.libs[libName].exports) {
+          const exports = window.TiLab.libs[libName].exports;
+          const exportKeys = Object.keys(exports);
+          return exportKeys.length === 1 ? exports[exportKeys[0]] : exports;
+        }
+      })
+      .catch((error) => {
+        TiLab.console.error(
+          "TiLab",
+          `Ошибка загрузки библиотеки ${libName}:`,
+          error
+        );
+        window.TiLab.libs[libName] = {
+          loaded: false,
+          error: error.message,
+          timestamp: new Date().getTime(),
+        };
+        throw error;
+      });
+  }
 
   window.tlc = (function () {
     const components = new Map();
@@ -174,9 +135,7 @@
     const urlCache = new Map();
     let activeComponent = null;
 
-    // Обновляет все компоненты, зависящие от данного пути
     function updateDependentComponents(path) {
-      // Создаем массив путей: сам путь и все родительские пути
       const pathsToCheck = [path];
       let currentPath = path;
 
@@ -185,7 +144,6 @@
         pathsToCheck.push(currentPath);
       }
 
-      // Обновляем компоненты без дублирования
       const updatedComponents = new Set();
 
       pathsToCheck.forEach((checkPath) => {
@@ -206,123 +164,50 @@
       });
     }
 
-    // Регистрирует зависимости для объекта
     function registerDependencies(obj, path) {
       if (!obj || typeof obj !== "object" || !activeComponent) return;
 
-      // Регистрируем зависимость для текущего пути
-      if (!dependencies.has(path)) {
-        dependencies.set(path, new Set());
-      }
-      dependencies.get(path).add(activeComponent);
+      [path, ...Object.keys(obj).map((key) => `${path}.${key}`)].forEach(
+        (p) => {
+          if (!dependencies.has(p)) {
+            dependencies.set(p, new Set());
+          }
+          dependencies.get(p).add(activeComponent);
+        }
+      );
 
-      // Рекурсивно регистрируем для всех свойств
       Object.keys(obj).forEach((key) => {
         const value = obj[key];
-        const childPath = `${path}.${key}`;
-
-        if (!dependencies.has(childPath)) {
-          dependencies.set(childPath, new Set());
-        }
-        dependencies.get(childPath).add(activeComponent);
-
         if (value && typeof value === "object") {
-          registerDependencies(value, childPath);
+          registerDependencies(value, `${path}.${key}`);
         }
       });
     }
 
-    // Создает прокси для реактивности данных
+    function addDependency(path) {
+      if (!activeComponent) return;
+
+      if (!dependencies.has(path)) {
+        dependencies.set(path, new Set());
+      }
+      dependencies.get(path).add(activeComponent);
+    }
+
     function createProxy(obj, path) {
       if (!obj || typeof obj !== "object") return obj;
+      if (sharedData.has(path) && sharedData.get(path) === obj) return obj;
 
-      // Проверяем, является ли объект уже прокси
-      if (sharedData.has(path) && sharedData.get(path) === obj) {
-        return obj;
-      }
-
-      // Специальная обработка для массивов
-      if (Array.isArray(obj)) {
-        return new Proxy(obj, {
-          get(target, prop) {
-            // Перехватываем методы, модифицирующие массив
-            if (
-              typeof prop === "string" &&
-              [
-                "push",
-                "pop",
-                "shift",
-                "unshift",
-                "splice",
-                "sort",
-                "reverse",
-              ].includes(prop)
-            ) {
-              const originalMethod = target[prop];
-              return function (...args) {
-                const result = originalMethod.apply(target, args);
-                updateDependentComponents(path);
-                return result;
-              };
-            }
-
-            // Обработка преобразования к примитивам
-            if (
-              prop === Symbol.toPrimitive ||
-              prop === "toString" ||
-              prop === "valueOf"
-            ) {
-              return () => String(target);
-            }
-
-            const value = target[prop];
-            const currentPath = `${path}.${prop}`;
-
-            // Регистрируем зависимость
-            if (activeComponent) {
-              [currentPath, path].forEach((p) => {
-                if (!dependencies.has(p)) {
-                  dependencies.set(p, new Set());
-                }
-                dependencies.get(p).add(activeComponent);
-              });
-            }
-
-            return value && typeof value === "object"
-              ? createProxy(value, currentPath)
-              : value;
-          },
-
-          set(target, prop, value) {
-            target[prop] = value;
-            updateDependentComponents(`${path}.${prop}`);
-            return true;
-          },
-        });
-      }
-
-      // Для обычных объектов
-      return new Proxy(obj, {
+      const proxyHandler = {
         get(target, prop) {
-          if (
-            prop === Symbol.toPrimitive ||
-            prop === "toString" ||
-            prop === "valueOf"
-          ) {
+          if (PRIMITIVE_METHODS.includes(prop)) {
             return () => String(target);
           }
 
           const value = target[prop];
           const currentPath = `${path}.${prop}`;
 
-          if (activeComponent) {
-            [currentPath, path].forEach((p) => {
-              if (!dependencies.has(p)) {
-                dependencies.set(p, new Set());
-              }
-              dependencies.get(p).add(activeComponent);
-            });
-          }
+          addDependency(currentPath);
+          addDependency(path);
 
           return value && typeof value === "object"
             ? createProxy(value, currentPath)
@@ -340,10 +225,28 @@
           updateDependentComponents(`${path}.${prop}`);
           return true;
         },
-      });
+      };
+
+      if (Array.isArray(obj)) {
+        return new Proxy(obj, {
+          ...proxyHandler,
+          get(target, prop) {
+            if (ARRAY_MUTATION_METHODS.includes(prop)) {
+              const originalMethod = target[prop];
+              return function (...args) {
+                const result = originalMethod.apply(target, args);
+                updateDependentComponents(path);
+                return result;
+              };
+            }
+            return proxyHandler.get(target, prop);
+          },
+        });
+      }
+
+      return new Proxy(obj, proxyHandler);
     }
 
-    // Загружает данные по URL
     function fetchData(url, interval) {
       const fetchAndProcess = () => {
         return fetch(url)
@@ -373,10 +276,8 @@
           });
       };
 
-      // Настройка периодического обновления
       if (interval && interval > 0) {
         const cached = urlCache.get(url);
-
         if (cached && cached.intervalId) {
           clearInterval(cached.intervalId);
         }
@@ -392,13 +293,11 @@
         }
       }
 
-      // Возвращаем кэшированные данные или загружаем новые
       return urlCache.has(url)
         ? Promise.resolve(urlCache.get(url).data)
         : fetchAndProcess();
     }
 
-    // Рендерит компонент
     function renderComponent(target, renderFn, componentId) {
       const targetElement = document.querySelector(target);
       if (!targetElement) {
@@ -410,11 +309,7 @@
       activeComponent = componentId;
 
       try {
-        const context = {
-          get: api.get,
-          share: api.share,
-        };
-
+        const context = { get: api.get, share: api.share };
         targetElement.innerHTML = renderFn.call(context);
       } catch (error) {
         TiLab.console.error(
@@ -427,75 +322,53 @@
       }
     }
 
-    // API для работы с данными
     const api = {
       get(param, interval) {
-        // URL
-        if (typeof param === "string") {
-          if (
-            param.startsWith("http://") ||
-            param.startsWith("https://") ||
-            param.includes("/")
-          ) {
-            if (activeComponent) {
-              if (!dependencies.has(param)) {
-                dependencies.set(param, new Set());
-              }
-              dependencies.get(param).add(activeComponent);
-            }
-            return fetchData(param, interval);
-          }
-
-          // Доступ к общим данным
-          if (sharedData.has(param)) {
-            if (activeComponent) {
-              if (!dependencies.has(param)) {
-                dependencies.set(param, new Set());
-              }
-              dependencies.get(param).add(activeComponent);
-
-              const data = sharedData.get(param);
-              if (data && typeof data === "object") {
-                registerDependencies(data, param);
-              }
-            }
-            return sharedData.get(param);
-          }
-
-          // Доступ к глобальной переменной
-          const globalData = window[param];
-          if (globalData !== undefined) {
-            // Создаем прокси для глобального объекта
-            const proxiedData = createProxy(globalData, param);
-
-            // Важно: заменяем оригинальный объект на прокси в window
-            // Это обеспечит реактивность при прямом изменении window[param]
-            if (typeof globalData === "object" && globalData !== null) {
-              window[param] = proxiedData;
-            }
-
-            sharedData.set(param, proxiedData);
-
-            if (activeComponent) {
-              if (!dependencies.has(param)) {
-                dependencies.set(param, new Set());
-              }
-              dependencies.get(param).add(activeComponent);
-
-              // Глубокая регистрация зависимостей для всех свойств
-              if (globalData && typeof globalData === "object") {
-                registerDependencies(globalData, param);
-              }
-            }
-
-            return proxiedData;
-          }
-
-          TiLab.console.warn(`TiLab(get)`, `Переменная ${param} не найдена`);
+        if (typeof param !== "string") {
+          TiLab.console.error(
+            "TiLab(get)",
+            "Неверный формат параметра для get"
+          );
           return null;
         }
 
-        TiLab.console.error("TiLab(get)", "Неверный формат параметра для get");
+        if (
+          param.startsWith("http://") ||
+          param.startsWith("https://") ||
+          param.includes("/")
+        ) {
+          addDependency(param);
+          return fetchData(param, interval);
+        }
+
+        if (sharedData.has(param)) {
+          addDependency(param);
+          const data = sharedData.get(param);
+          if (data && typeof data === "object") {
+            registerDependencies(data, param);
+          }
+          return data;
+        }
+
+        const globalData = window[param];
+        if (globalData !== undefined) {
+          const proxiedData = createProxy(globalData, param);
+
+          if (typeof globalData === "object" && globalData !== null) {
+            window[param] = proxiedData;
+          }
+
+          sharedData.set(param, proxiedData);
+          addDependency(param);
+
+          if (globalData && typeof globalData === "object") {
+            registerDependencies(globalData, param);
+          }
+
+          return proxiedData;
+        }
+
+        TiLab.console.warn(`TiLab(get)`, `Переменная ${param} не найдена`);
         return null;
       },
 
@@ -508,12 +381,10 @@
         const proxiedData = createProxy(data, name);
         sharedData.set(name, proxiedData);
         updateDependentComponents(name);
-
         return proxiedData;
       },
     };
 
-    // Публичный API
     return {
       create(target, component) {
         if (typeof target !== "string" || !target) {
