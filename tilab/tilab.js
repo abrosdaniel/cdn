@@ -72,10 +72,6 @@
       const libName = libsArray[0];
 
       if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
-        if (window.TiLab.debug) {
-          console.log(`TiLab: библиотека ${libName} уже загружена`);
-        }
-
         if (window.TiLab.libs[libName].exports) {
           const exports = window.TiLab.libs[libName].exports;
           const exportKeys = Object.keys(exports);
@@ -98,10 +94,6 @@
             async: isAsync,
           };
 
-          if (window.TiLab.debug) {
-            console.log(`TiLab: загружена библиотека ${libName}`);
-          }
-
           if (window.TiLab.libs[libName].exports) {
             const exports = window.TiLab.libs[libName].exports;
             const exportKeys = Object.keys(exports);
@@ -114,12 +106,6 @@
           }
         })
         .catch((error) => {
-          if (window.TiLab.debug) {
-            console.error(
-              `TiLab: ошибка загрузки библиотеки ${libName}:`,
-              error
-            );
-          }
           window.TiLab.libs[libName] = {
             loaded: false,
             error: error.message,
@@ -133,9 +119,6 @@
     libsArray.forEach((libName) => {
       if (typeof libName === "string") {
         if (window.TiLab.libs[libName]) {
-          if (window.TiLab.debug) {
-            console.log(`TiLab: библиотека ${libName} уже загружена`);
-          }
           return;
         }
 
@@ -148,18 +131,8 @@
               timestamp: new Date().getTime(),
               async: isAsync,
             };
-
-            if (window.TiLab.debug) {
-              console.log(`TiLab: загружена библиотека ${libName}`);
-            }
           })
           .catch((error) => {
-            if (window.TiLab.debug) {
-              console.error(
-                `TiLab: ошибка загрузки библиотеки ${libName}:`,
-                error
-              );
-            }
             window.TiLab.libs[libName] = {
               loaded: false,
               error: error.message,
