@@ -65,29 +65,27 @@
 
   window.TiLab.init = function (libs, options = {}, ...args) {
     const libsArray = Array.isArray(libs) ? libs : [libs];
-    const loadPromises = [];
     const isAsync = options.async !== undefined ? options.async : true;
 
     if (libsArray.length === 1 && typeof libsArray[0] === "string") {
       const libName = libsArray[0];
+      const existingLib = window.TiLab.libs[libName];
 
-      if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
-        if (window.TiLab.libs[libName].exports) {
-          const exports = window.TiLab.libs[libName].exports;
-          const exportKeys = Object.keys(exports);
-          if (exportKeys.length === 1) {
-            return Promise.resolve(exports[exportKeys[0]]);
-          }
-          return Promise.resolve(exports);
-        }
-        return Promise.resolve();
+      if (existingLib?.loaded) {
+        const exports = existingLib.exports;
+        if (!exports) return Promise.resolve();
+
+        const exportKeys = Object.keys(exports);
+        return Promise.resolve(
+          exportKeys.length === 1 ? exports[exportKeys[0]] : exports
+        );
       }
 
       const libPath = `${CDN}/tilab/libs/${libName}.js`;
 
       return loadScript(libPath, isAsync)
         .then(() => {
-          window.TiLab.libs[libName] = window.TiLab.libs[libName] || {
+          window.TiLab.libs[libName] = {
             loaded: true,
             timestamp: new Date().getTime(),
             async: isAsync,
@@ -95,16 +93,11 @@
 
           TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
 
-          if (window.TiLab.libs[libName].exports) {
-            const exports = window.TiLab.libs[libName].exports;
-            const exportKeys = Object.keys(exports);
+          const exports = window.TiLab.libs[libName].exports;
+          if (!exports) return;
 
-            if (exportKeys.length === 1) {
-              return exports[exportKeys[0]];
-            }
-
-            return exports;
-          }
+          const exportKeys = Object.keys(exports);
+          return exportKeys.length === 1 ? exports[exportKeys[0]] : exports;
         })
         .catch((error) => {
           TiLab.debug.error(
@@ -117,27 +110,24 @@
             error: error.message,
             timestamp: new Date().getTime(),
           };
-
           throw error;
         });
     }
 
-    libsArray.forEach((libName) => {
-      if (typeof libName === "string") {
-        if (window.TiLab.libs[libName]) {
-          return;
-        }
-
+    const loadPromises = libsArray
+      .filter(
+        (libName) => typeof libName === "string" && !window.TiLab.libs[libName]
+      )
+      .map((libName) => {
         const libPath = `${CDN}/tilab/libs/${libName}.js`;
 
-        const loadPromise = loadScript(libPath, isAsync)
+        return loadScript(libPath, isAsync)
           .then(() => {
             window.TiLab.libs[libName] = {
               loaded: true,
               timestamp: new Date().getTime(),
               async: isAsync,
             };
-
             TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
           })
           .catch((error) => {
@@ -151,75 +141,12 @@
               error: error.message,
               timestamp: new Date().getTime(),
             };
-
             throw error;
           });
-
-        loadPromises.push(loadPromise);
-      }
-    });
+      });
 
     return Promise.all(loadPromises);
   };
-
-  const transformJSX = (jsxString) => {
-    if (typeof jsxString !== "string") return jsxString;
-
-    let transformed = jsxString
-      .replace(/\s*<>\s*/g, "")
-      .replace(/\s*<\/>\s*/g, "")
-      .replace(/\n\s*/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    transformed = transformed.replace(/\$\{([^}]+)\}/g, (match, expression) => {
-      try {
-        return eval(expression);
-      } catch (error) {
-        TiLab.console.error(
-          "TiLab(jsx)",
-          `Ошибка интерполяции: ${expression}`,
-          error
-        );
-        return "";
-      }
-    });
-
-    return transformed;
-  };
-
-  const jsxToString = (jsxCode) => {
-    if (typeof jsxCode === "string") return jsxCode;
-
-    if (typeof jsxCode === "object" && jsxCode !== null) {
-      return String(jsxCode);
-    }
-
-    return jsxCode;
-  };
-
-  const jsx = (tag, props, ...children) => {
-    if (tag === "") return children.join("");
-
-    const attributes = [];
-    if (props) {
-      Object.keys(props).forEach((key) => {
-        if (key !== "children") {
-          const value = props[key];
-          if (typeof value === "boolean") {
-            if (value) attributes.push(key);
-          } else {
-            attributes.push(`${key}="${value}"`);
-          }
-        }
-      });
-    }
-
-    const attrString = attributes.length > 0 ? " " + attributes.join(" ") : "";
-    return `<${tag}${attrString}>${children.join("")}</${tag}>`;
-  };
-
-  const Fragment = (props, ...children) => children.join("");
 
   window.tlc = (function () {
     const components = new Map();
@@ -227,6 +154,60 @@
     const sharedData = new Map();
     const urlCache = new Map();
     let activeComponent = null;
+
+    const transformJSX = (jsxString) => {
+      if (typeof jsxString !== "string") return jsxString;
+
+      return jsxString
+        .replace(/\s*<>\s*/g, "")
+        .replace(/\s*<\/>\s*/g, "")
+        .replace(/\n\s*/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .replace(/\$\{([^}]+)\}/g, (match, expression) => {
+          try {
+            return eval(expression);
+          } catch (error) {
+            TiLab.console.error(
+              "TiLab(jsx)",
+              `Ошибка интерполяции: ${expression}`,
+              error
+            );
+            return "";
+          }
+        });
+    };
+
+    const jsxToString = (jsxCode) => {
+      if (typeof jsxCode === "string") return jsxCode;
+      if (typeof jsxCode === "object" && jsxCode !== null)
+        return String(jsxCode);
+      return jsxCode;
+    };
+
+    const jsx = (tag, props, ...children) => {
+      if (tag === "") return children.join("");
+
+      const attributes = [];
+      if (props) {
+        Object.keys(props).forEach((key) => {
+          if (key !== "children") {
+            const value = props[key];
+            if (typeof value === "boolean") {
+              if (value) attributes.push(key);
+            } else {
+              attributes.push(`${key}="${value}"`);
+            }
+          }
+        });
+      }
+
+      const attrString =
+        attributes.length > 0 ? " " + attributes.join(" ") : "";
+      return `<${tag}${attrString}>${children.join("")}</${tag}>`;
+    };
+
+    const Fragment = (props, ...children) => children.join("");
 
     const updateDependentComponents = (path) => {
       const pathsToCheck = [path];
@@ -260,12 +241,11 @@
     const registerDependencies = (obj, path) => {
       if (!obj || typeof obj !== "object" || !activeComponent) return;
 
-      [path, ...Object.keys(obj).map((key) => `${path}.${key}`)].forEach(
-        (p) => {
-          if (!dependencies.has(p)) dependencies.set(p, new Set());
-          dependencies.get(p).add(activeComponent);
-        }
-      );
+      const paths = [path, ...Object.keys(obj).map((key) => `${path}.${key}`)];
+      paths.forEach((p) => {
+        if (!dependencies.has(p)) dependencies.set(p, new Set());
+        dependencies.get(p).add(activeComponent);
+      });
 
       Object.keys(obj).forEach((key) => {
         const value = obj[key];
@@ -388,10 +368,8 @@
         const context = { get: api.get, share: api.share, jsx, Fragment };
         let result = renderFn.call(context);
 
-        // Преобразуем результат в строку
         result = jsxToString(result);
 
-        // Если это строка, обрабатываем как JSX
         if (typeof result === "string") {
           result = transformJSX(result);
         }
