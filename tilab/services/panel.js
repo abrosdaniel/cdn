@@ -184,43 +184,6 @@
         aspect-ratio: 1 / 1;
         border-radius: 500px;
       }
-      .tilab-log-info {
-        border-color: #3b82f6;
-      }
-      .tilab-log-warn {
-        border-color: #f59e0b;
-      }
-      .tilab-log-error {
-        border-color: #ef4444;
-      }
-      .tilab-log-trace {
-        border-color: #8b5cf6;
-      }
-      .tilab-log-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: calc(var(--tsqd-font-size) * 0.125);
-        font-weight: bold;
-      }
-      .tilab-log-name {
-        color: #e5e7eb;
-      }
-      .tilab-log-time {
-        color: #9ca3af;
-        font-size: calc(var(--tsqd-font-size) * 0.75);
-      }
-      .tilab-log-message {
-        color: #d1d5db;
-        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
-      }
-      .tilab-log-data {
-        background-color: rgba(0, 0, 0, 0.2);
-        padding: calc(var(--tsqd-font-size) * 0.25);
-        border-radius: 4px;
-        overflow-x: auto;
-        font-family: monospace;
-        color: #a3a3a3;
-      }
     </style>
     <div class="tilab-frame" data-state="false">
       <aside aria-label="TiLab panel">
@@ -323,41 +286,89 @@
 
     tlc.create(".tilab-console", function Console() {
       const data = tlc.get("TiLab");
+      const hasLogs = data.console?.storage?.length > 0;
 
-      if (!data.console?.storage?.length) {
-        return `
-          <div class="tilab-log tilab-log-info">
-            <div class="tilab-log-header">
-              <span class="tilab-log-name">Информация</span>
-              <span class="tilab-log-time">сейчас</span>
-            </div>
-            <div class="tilab-log-message">Нет доступных записей</div>
-          </div>
-        `;
+      return `
+        <section>
+        <style>
+        .tilab-log-info {
+        border-color: #3b82f6;
       }
+      .tilab-log-warn {
+        border-color: #f59e0b;
+      }
+      .tilab-log-error {
+        border-color: #ef4444;
+      }
+      .tilab-log-trace {
+        border-color: #8b5cf6;
+      }
+      .tilab-log-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: calc(var(--tsqd-font-size) * 0.125);
+        font-weight: bold;
+      }
+      .tilab-log-name {
+        color: #e5e7eb;
+      }
+      .tilab-log-time {
+        color: #9ca3af;
+        font-size: calc(var(--tsqd-font-size) * 0.75);
+      }
+      .tilab-log-message {
+        color: #d1d5db;
+        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
+      }
+      .tilab-log-data {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: calc(var(--tsqd-font-size) * 0.25);
+        border-radius: 4px;
+        overflow-x: auto;
+        font-family: monospace;
+        color: #a3a3a3;
+      }
+        </style>
+          ${
+            hasLogs
+              ? data.console.storage
+                  .map((item) => {
+                    const logTypeClass = `tilab-log-${item.type || "info"}`;
+                    const dataContent =
+                      item.data !== undefined
+                        ? `<div class="tilab-log-data">
+                      ${JSON.stringify(item.data, null, 2)}
+                    </div>`
+                        : "";
 
-      return data.console.storage
-        .map((item) => {
-          const logTypeClass = `tilab-log-${item.type || "info"}`;
-          const dataContent =
-            item.data !== undefined
-              ? `<div class="tilab-log-data">
-              ${JSON.stringify(item.data, null, 2)}
-            </div>`
-              : "";
-
-          return `
-            <div class="tilab-log ${logTypeClass}">
-              <div class="tilab-log-header">
-                <span class="tilab-log-name">${item.name || "Неизвестно"}</span>
-                <span class="tilab-log-time">${item.time || "неизвестно"}</span>
+                    return `
+                    <div class="tilab-log ${logTypeClass}">
+                      <div class="tilab-log-header">
+                        <span class="tilab-log-name">${
+                          item.name || "Неизвестно"
+                        }</span>
+                        <span class="tilab-log-time">${
+                          item.time || "неизвестно"
+                        }</span>
+                      </div>
+                      <div class="tilab-log-message">${item.message || ""}</div>
+                      ${dataContent}
+                    </div>
+                  `;
+                  })
+                  .join("")
+              : `
+              <div class="tilab-log tilab-log-info">
+                <div class="tilab-log-header">
+                  <span class="tilab-log-name">Информация</span>
+                  <span class="tilab-log-time">сейчас</span>
+                </div>
+                <div class="tilab-log-message">Нет доступных записей</div>
               </div>
-              <div class="tilab-log-message">${item.message || ""}</div>
-              ${dataContent}
-            </div>
-          `;
-        })
-        .join("");
+            `
+          }
+        </section>
+      `;
     });
   };
 
