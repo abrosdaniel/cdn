@@ -174,13 +174,33 @@
     const urlCache = new Map();
     let activeComponent = null;
 
+    const ARRAY_MUTATING_METHODS = [
+      "push",
+      "pop",
+      "shift",
+      "unshift",
+      "splice",
+      "sort",
+      "reverse",
+    ];
+    const PRIMITIVE_SYMBOLS = [Symbol.toPrimitive, "toString", "valueOf"];
+
+    function registerDependency(path) {
+      if (!activeComponent) return;
+
+      if (!dependencies.has(path)) {
+        dependencies.set(path, new Set());
+      }
+      dependencies.get(path).add(activeComponent);
+    }
+
     // Обновляет все компоненты, зависящие от данного пути и всех его родительских путей
     function updateDependentComponents(path) {
       // Создаем массив путей для проверки: сам путь и все его родительские пути
       const pathsToCheck = [path];
+      let currentPath = path;
 
       // Добавляем все родительские пути
-      let currentPath = path;
       while (currentPath.includes(".")) {
         currentPath = currentPath.substring(0, currentPath.lastIndexOf("."));
         pathsToCheck.push(currentPath);
@@ -189,103 +209,78 @@
       // Проходим по всем зависимостям и обновляем компоненты
       const updatedComponents = new Set();
 
-      pathsToCheck.forEach((checkPath) => {
-        if (dependencies.has(checkPath)) {
-          const affectedComponents = dependencies.get(checkPath);
-          affectedComponents.forEach((componentId) => {
-            if (
-              !updatedComponents.has(componentId) &&
-              components.has(componentId)
-            ) {
-              const component = components.get(componentId);
-              renderComponent(component.target, component.render, componentId);
-              updatedComponents.add(componentId);
-            }
-          });
+      for (const checkPath of pathsToCheck) {
+        const affectedComponents = dependencies.get(checkPath);
+        if (!affectedComponents) continue;
+
+        for (const componentId of affectedComponents) {
+          if (
+            updatedComponents.has(componentId) ||
+            !components.has(componentId)
+          )
+            continue;
+
+          const component = components.get(componentId);
+          renderComponent(component.target, component.render, componentId);
+          updatedComponents.add(componentId);
         }
-      });
+      }
     }
 
     // Рекурсивно регистрирует зависимости для всех путей в объекте
     function registerDependenciesForObject(obj, basePath) {
       if (obj === null || typeof obj !== "object" || !activeComponent) return;
 
-      // Регистрируем зависимость для базового пути
-      if (!dependencies.has(basePath)) {
-        dependencies.set(basePath, new Set());
-      }
-      dependencies.get(basePath).add(activeComponent);
+      registerDependency(basePath);
 
       // Рекурсивно регистрируем зависимости для всех свойств объекта
-      Object.keys(obj).forEach((key) => {
+      for (const key of Object.keys(obj)) {
         const value = obj[key];
         const childPath = basePath ? `${basePath}.${key}` : key;
 
-        // Регистрируем зависимость для этого пути
-        if (!dependencies.has(childPath)) {
-          dependencies.set(childPath, new Set());
-        }
-        dependencies.get(childPath).add(activeComponent);
+        registerDependency(childPath);
 
         // Если значение - объект, рекурсивно регистрируем зависимости для его свойств
         if (value !== null && typeof value === "object") {
           registerDependenciesForObject(value, childPath);
         }
-      });
+      }
     }
 
+    // Создает прокси для отслеживания изменений в объектах
     function createProxy(obj, path = "") {
       if (obj === null || typeof obj !== "object") return obj;
 
       const handler = {
-        get: (target, prop) => {
-          // Обработка специальных свойств
-          if (
-            prop === Symbol.toPrimitive ||
-            prop === "toString" ||
-            prop === "valueOf"
-          ) {
+        get(target, prop) {
+          // Обработка примитивных методов
+          if (PRIMITIVE_SYMBOLS.includes(prop)) {
             return () => String(target);
           }
 
           const value = target[prop];
           const currentPath = path ? `${path}.${prop}` : String(prop);
 
-          // Регистрация зависимостей
+          // Регистрируем зависимость текущего компонента от этого пути
           if (activeComponent) {
-            [currentPath, path].forEach((p) => {
-              if (p) {
-                if (!dependencies.has(p)) {
-                  dependencies.set(p, new Set());
-                }
-                dependencies.get(p).add(activeComponent);
-              }
-            });
+            registerDependency(currentPath);
+            if (path) registerDependency(path);
           }
 
-          // Для массивов - перехват методов модификации
+          // Для массивов перехватываем методы, изменяющие массив
           if (
             Array.isArray(target) &&
             typeof prop === "string" &&
-            [
-              "push",
-              "pop",
-              "shift",
-              "unshift",
-              "splice",
-              "sort",
-              "reverse",
-            ].includes(prop)
+            ARRAY_MUTATING_METHODS.includes(prop)
           ) {
-            const originalMethod = target[prop];
             return function (...args) {
-              const result = originalMethod.apply(target, args);
+              const result = Array.prototype[prop].apply(target, args);
               updateDependentComponents(path);
               return result;
             };
           }
 
-          // Рекурсивное создание прокси для вложенных объектов
+          // Рекурсивно создаем прокси для вложенных объектов
           if (value !== null && typeof value === "object") {
             return createProxy(value, currentPath);
           }
@@ -293,24 +288,14 @@
           return value;
         },
 
-        set: (target, prop, value) => {
+        set(target, prop, value) {
           target[prop] = value;
-
-          // Для массивов - особая обработка индексов и length
-          if (
-            Array.isArray(target) &&
-            (prop === "length" || !isNaN(Number(prop)))
-          ) {
-            updateDependentComponents(path);
-          }
-
           const fullPath = path ? `${path}.${prop}` : String(prop);
           updateDependentComponents(fullPath);
-
           return true;
         },
 
-        deleteProperty: (target, prop) => {
+        deleteProperty(target, prop) {
           if (prop in target) {
             delete target[prop];
             const fullPath = path ? `${path}.${prop}` : String(prop);
@@ -323,16 +308,14 @@
       return new Proxy(obj, handler);
     }
 
+    // Загружает данные с URL и кэширует их
     function fetchData(url, interval = null) {
       const fetchAndCache = () => {
         return fetch(url)
-          .then((response) => {
-            return response.json();
-          })
+          .then((response) => response.json())
           .then((data) => {
             const proxiedData = createProxy(data, url);
 
-            // Регистрируем все возможные пути в данных
             if (activeComponent) {
               registerDependenciesForObject(data, url);
             }
@@ -343,7 +326,6 @@
             });
 
             updateDependentComponents(url);
-
             return proxiedData;
           })
           .catch((error) => {
@@ -356,28 +338,33 @@
           });
       };
 
+      // Обработка интервального обновления
       if (interval && interval > 0) {
-        if (urlCache.has(url) && urlCache.get(url).intervalId) {
-          clearInterval(urlCache.get(url).intervalId);
+        const cachedData = urlCache.get(url);
+
+        // Очищаем предыдущий интервал, если он был
+        if (cachedData && cachedData.intervalId) {
+          clearInterval(cachedData.intervalId);
         }
 
         const intervalId = setInterval(fetchAndCache, interval * 1000);
 
-        if (urlCache.has(url)) {
-          urlCache.get(url).intervalId = intervalId;
-          return Promise.resolve(urlCache.get(url).data);
+        if (cachedData && cachedData.data) {
+          urlCache.set(url, { ...cachedData, intervalId });
+          return Promise.resolve(cachedData.data);
         } else {
           urlCache.set(url, { intervalId });
           return fetchAndCache();
         }
-      } else {
-        if (urlCache.has(url)) {
-          return Promise.resolve(urlCache.get(url).data);
-        }
-        return fetchAndCache();
       }
+
+      // Обычная загрузка (без интервала)
+      return urlCache.has(url)
+        ? Promise.resolve(urlCache.get(url).data)
+        : fetchAndCache();
     }
 
+    // Рендерит компонент в целевой элемент
     function renderComponent(target, renderFn, componentId) {
       const targetElement = document.querySelector(target);
       if (!targetElement) {
@@ -407,71 +394,65 @@
       }
     }
 
+    // Внутренний API для работы с данными
     const internalApi = {
-      get: function (param, interval) {
-        if (typeof param === "string") {
-          if (
-            param.startsWith("http://") ||
-            param.startsWith("https://") ||
-            param.includes("/")
-          ) {
-            if (activeComponent) {
-              if (!dependencies.has(param)) {
-                dependencies.set(param, new Set());
-              }
-              dependencies.get(param).add(activeComponent);
+      get(param, interval) {
+        if (typeof param !== "string") {
+          TiLab.console.error(
+            "TiLab(get)",
+            "Неверный формат параметра для get"
+          );
+          return null;
+        }
+
+        // Обработка URL
+        if (
+          param.startsWith("http://") ||
+          param.startsWith("https://") ||
+          param.includes("/")
+        ) {
+          registerDependency(param);
+          return fetchData(param, interval);
+        }
+
+        // Обработка локальных данных
+        if (sharedData.has(param)) {
+          if (activeComponent) {
+            registerDependency(param);
+
+            const data = sharedData.get(param);
+            if (data && typeof data === "object") {
+              registerDependenciesForObject(data, param);
             }
-            return fetchData(param, interval);
-          } else {
-            if (sharedData.has(param)) {
-              if (activeComponent) {
-                if (!dependencies.has(param)) {
-                  dependencies.set(param, new Set());
-                }
-                dependencies.get(param).add(activeComponent);
+          }
+          return sharedData.get(param);
+        }
 
-                // Регистрируем все возможные пути в данных
-                const data = sharedData.get(param);
-                if (data && typeof data === "object") {
-                  registerDependenciesForObject(data, param);
-                }
-              }
-              return sharedData.get(param);
-            }
+        // Обработка глобальных данных
+        const originalObj = window[param];
+        if (originalObj === undefined) {
+          TiLab.console.warn(
+            `TiLab(get)`,
+            `Переменная ${param} не найдена в глобальном контексте`
+          );
+          return null;
+        }
 
-            const originalObj = window[param];
-            if (originalObj === undefined) {
-              TiLab.console.warn(
-                `TiLab(get)`,
-                `Переменная ${param} не найдена в глобальном контексте`
-              );
-              return null;
-            }
+        const proxiedData = createProxy(originalObj, param);
+        sharedData.set(param, proxiedData);
 
-            const proxiedData = createProxy(originalObj, param);
-            sharedData.set(param, proxiedData);
+        if (activeComponent) {
+          registerDependency(param);
 
-            if (activeComponent) {
-              if (!dependencies.has(param)) {
-                dependencies.set(param, new Set());
-              }
-              dependencies.get(param).add(activeComponent);
-
-              // Регистрируем все возможные пути в данных
-              if (originalObj && typeof originalObj === "object") {
-                registerDependenciesForObject(originalObj, param);
-              }
-            }
-
-            return proxiedData;
+          if (originalObj && typeof originalObj === "object") {
+            registerDependenciesForObject(originalObj, param);
           }
         }
 
-        TiLab.console.error("TiLab(get)", "Неверный формат параметра для get");
-        return null;
+        return proxiedData;
       },
 
-      share: function (name, data) {
+      share(name, data) {
         if (!name || typeof name !== "string") {
           TiLab.console.error(
             "TiLab(share)",
@@ -482,7 +463,6 @@
 
         const proxiedData = createProxy(data, name);
         sharedData.set(name, proxiedData);
-
         updateDependentComponents(name);
 
         return proxiedData;
@@ -491,7 +471,7 @@
 
     // Публичный API
     return {
-      create: function (target, component) {
+      create(target, component) {
         if (typeof target !== "string" || !target) {
           TiLab.console.error(
             "TiLab(create)",
@@ -506,14 +486,11 @@
         if (typeof component === "object") {
           const entries = Object.entries(component);
           if (entries.length === 1) {
-            componentName = entries[0][0];
-            componentFn = entries[0][1];
+            [componentName, componentFn] = entries[0];
           }
         } else if (typeof component === "function") {
           componentFn = component;
-          if (componentFn.name) {
-            componentName = componentFn.name;
-          }
+          componentName = componentFn.name || null;
         } else {
           TiLab.console.error(
             "TiLab(create)",
@@ -530,8 +507,9 @@
           return;
         }
 
-        const componentId =
-          target + "_" + Math.random().toString(36).substr(2, 9);
+        const componentId = `${target}_${Math.random()
+          .toString(36)
+          .substring(2, 9)}`;
         components.set(componentId, {
           target,
           render: componentFn,
@@ -539,7 +517,6 @@
         });
 
         renderComponent(target, componentFn, componentId);
-
         return componentId;
       },
       share: internalApi.share,
