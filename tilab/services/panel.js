@@ -169,7 +169,7 @@
         position: absolute;
         right: calc(var(--tsqd-font-size) * -0.4);
         top: calc(var(--tsqd-font-size) * -0.4);
-        background-color: #868686;
+        background-color: #494949;
         color: #fff;
         padding-right: calc(var(--tsqd-font-size) * 0.3);
         padding-left: calc(var(--tsqd-font-size) * 0.3);
