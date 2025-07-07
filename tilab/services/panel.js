@@ -181,6 +181,7 @@
         height: 100%;
         object-fit: cover;
         aspect-ratio: 1 / 1;
+        border-radius: 500px;
       }
       .tilab-log-info {
         border-color: #3b82f6;
