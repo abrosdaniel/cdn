@@ -236,6 +236,11 @@
     function createProxy(obj, path) {
       if (!obj || typeof obj !== "object") return obj;
 
+      // Проверяем, является ли объект уже прокси
+      if (sharedData.has(path) && sharedData.get(path) === obj) {
+        return obj;
+      }
+
       // Специальная обработка для массивов
       if (Array.isArray(obj)) {
         return new Proxy(obj, {
@@ -460,7 +465,15 @@
           // Доступ к глобальной переменной
           const globalData = window[param];
           if (globalData !== undefined) {
+            // Создаем прокси для глобального объекта
             const proxiedData = createProxy(globalData, param);
+
+            // Важно: заменяем оригинальный объект на прокси в window
+            // Это обеспечит реактивность при прямом изменении window[param]
+            if (typeof globalData === "object" && globalData !== null) {
+              window[param] = proxiedData;
+            }
+
             sharedData.set(param, proxiedData);
 
             if (activeComponent) {
@@ -469,6 +482,7 @@
               }
               dependencies.get(param).add(activeComponent);
 
+              // Глубокая регистрация зависимостей для всех свойств
               if (globalData && typeof globalData === "object") {
                 registerDependencies(globalData, param);
               }
