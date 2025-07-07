@@ -237,77 +237,9 @@
     function createProxy(obj, path = "") {
       if (obj === null || typeof obj !== "object") return obj;
 
-      // Для массивов создаем специальный прокси
-      if (Array.isArray(obj)) {
-        return new Proxy(obj, {
-          get: (target, prop) => {
-            // Обработка стандартных методов массивов, которые модифицируют массив
-            if (
-              typeof prop === "string" &&
-              [
-                "push",
-                "pop",
-                "shift",
-                "unshift",
-                "splice",
-                "sort",
-                "reverse",
-              ].includes(prop)
-            ) {
-              const originalMethod = target[prop];
-              return function (...args) {
-                const result = originalMethod.apply(target, args);
-                // После модификации массива обновляем все зависимые компоненты
-                updateDependentComponents(path);
-                return result;
-              };
-            }
-
-            if (
-              prop === Symbol.toPrimitive ||
-              prop === "toString" ||
-              prop === "valueOf"
-            ) {
-              return () => String(target);
-            }
-
-            const value = target[prop];
-            const currentPath = path ? `${path}.${prop}` : String(prop);
-
-            if (activeComponent) {
-              if (!dependencies.has(currentPath)) {
-                dependencies.set(currentPath, new Set());
-              }
-              dependencies.get(currentPath).add(activeComponent);
-
-              if (path) {
-                if (!dependencies.has(path)) {
-                  dependencies.set(path, new Set());
-                }
-                dependencies.get(path).add(activeComponent);
-              }
-            }
-
-            if (value !== null && typeof value === "object") {
-              return createProxy(value, currentPath);
-            }
-            return value;
-          },
-          set: (target, prop, value) => {
-            const oldValue = target[prop];
-            target[prop] = value;
-
-            const fullPath = path ? `${path}.${prop}` : String(prop);
-            updateDependentComponents(fullPath);
-
-            return true;
-          },
-        });
-      }
-
-      // Для обычных объектов
-      return new Proxy(obj, {
+      const handler = {
         get: (target, prop) => {
+          // Обработка специальных свойств
           if (
             prop === Symbol.toPrimitive ||
             prop === "toString" ||
@@ -319,34 +251,65 @@
           const value = target[prop];
           const currentPath = path ? `${path}.${prop}` : String(prop);
 
+          // Регистрация зависимостей
           if (activeComponent) {
-            if (!dependencies.has(currentPath)) {
-              dependencies.set(currentPath, new Set());
-            }
-            dependencies.get(currentPath).add(activeComponent);
-
-            if (path) {
-              if (!dependencies.has(path)) {
-                dependencies.set(path, new Set());
+            [currentPath, path].forEach((p) => {
+              if (p) {
+                if (!dependencies.has(p)) {
+                  dependencies.set(p, new Set());
+                }
+                dependencies.get(p).add(activeComponent);
               }
-              dependencies.get(path).add(activeComponent);
-            }
+            });
           }
 
+          // Для массивов - перехват методов модификации
+          if (
+            Array.isArray(target) &&
+            typeof prop === "string" &&
+            [
+              "push",
+              "pop",
+              "shift",
+              "unshift",
+              "splice",
+              "sort",
+              "reverse",
+            ].includes(prop)
+          ) {
+            const originalMethod = target[prop];
+            return function (...args) {
+              const result = originalMethod.apply(target, args);
+              updateDependentComponents(path);
+              return result;
+            };
+          }
+
+          // Рекурсивное создание прокси для вложенных объектов
           if (value !== null && typeof value === "object") {
             return createProxy(value, currentPath);
           }
+
           return value;
         },
+
         set: (target, prop, value) => {
-          const oldValue = target[prop];
           target[prop] = value;
+
+          // Для массивов - особая обработка индексов и length
+          if (
+            Array.isArray(target) &&
+            (prop === "length" || !isNaN(Number(prop)))
+          ) {
+            updateDependentComponents(path);
+          }
 
           const fullPath = path ? `${path}.${prop}` : String(prop);
           updateDependentComponents(fullPath);
 
           return true;
         },
+
         deleteProperty: (target, prop) => {
           if (prop in target) {
             delete target[prop];
@@ -355,7 +318,9 @@
           }
           return true;
         },
-      });
+      };
+
+      return new Proxy(obj, handler);
     }
 
     function fetchData(url, interval = null) {
@@ -414,8 +379,7 @@
     }
 
     function renderComponent(target, renderFn, componentId) {
-      const targetElement =
-        target === "body" ? document.body : document.querySelector(target);
+      const targetElement = document.querySelector(target);
       if (!targetElement) {
         TiLab.console.error(`TiLab(render)`, `Элемент ${target} не найден`);
         return;
