@@ -309,25 +309,25 @@
 
     tlc.create(".tilab-logo", function Logo() {
       const data = tlc.get("TiLab");
-      return (
+      return `
         <div class="tilab-logo-container">
           <span class="tilab-logo-tilab">TILAB</span>
           <span class="tilab-logo-desc">Версия: ${data.version}</span>
         </div>
-      );
+      `;
     });
 
     tlc.create(".tilab-notify-count", function Notification() {
       const data = tlc.get("TiLab");
       const count = data.console.storage.length;
-      return <span>${count}</span>;
+      return `<span>${count}</span>`;
     });
 
     tlc.create(".tilab-console", function Console() {
       const data = tlc.get("TiLab");
 
       if (!data.console?.storage?.length) {
-        return (
+        return `
           <div class="tilab-log tilab-log-info">
             <div class="tilab-log-header">
               <span class="tilab-log-name">Информация</span>
@@ -335,31 +335,29 @@
             </div>
             <div class="tilab-log-message">Нет доступных записей</div>
           </div>
-        );
+        `;
       }
 
       return data.console.storage
         .map((item) => {
           const logTypeClass = `tilab-log-${item.type || "info"}`;
           const dataContent =
-            item.data !== undefined ? (
-              <div class="tilab-log-data">
-                ${JSON.stringify(item.data, null, 2)}
-              </div>
-            ) : (
-              ""
-            );
+            item.data !== undefined
+              ? `<div class="tilab-log-data">
+              ${JSON.stringify(item.data, null, 2)}
+            </div>`
+              : "";
 
-          return (
-            <div class={`tilab-log ${logTypeClass}`}>
+          return `
+            <div class="tilab-log ${logTypeClass}">
               <div class="tilab-log-header">
                 <span class="tilab-log-name">${item.name || "Неизвестно"}</span>
                 <span class="tilab-log-time">${item.time || "неизвестно"}</span>
               </div>
               <div class="tilab-log-message">${item.message || ""}</div>
-              {dataContent}
+              ${dataContent}
             </div>
-          );
+          `;
         })
         .join("");
     });

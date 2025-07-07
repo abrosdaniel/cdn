@@ -1,5 +1,5 @@
 /*!
- * TiLab.js v0.5a
+ * TiLab.js v0.6a
  * MIT License
  * (c) 2025 Daniel Abros
  * Сайт → https://abros.dev
@@ -25,7 +25,7 @@
 
   if (!window.TiLab) {
     window.TiLab = {
-      version: "0.5 (alpha)",
+      version: "0.6 (alpha)",
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
       libs: {},
@@ -125,28 +125,36 @@
     if (typeof jsxString !== "string") return jsxString;
 
     let transformed = jsxString
-      .replace(JSX_FRAGMENT_REGEX, "")
+      .replace(/\s*<>\s*/g, "")
+      .replace(/\s*<\/>\s*/g, "")
       .replace(/\n\s*/g, "")
-      .replace(WHITESPACE_REGEX, " ")
+      .replace(/\s+/g, " ")
       .trim();
 
-    transformed = transformed.replace(
-      INTERPOLATION_REGEX,
-      (match, expression) => {
-        try {
-          return eval(expression);
-        } catch (error) {
-          TiLab.console.error(
-            "TiLab(jsx)",
-            `Ошибка интерполяции: ${expression}`,
-            error
-          );
-          return "";
-        }
+    transformed = transformed.replace(/\$\{([^}]+)\}/g, (match, expression) => {
+      try {
+        return eval(expression);
+      } catch (error) {
+        TiLab.console.error(
+          "TiLab(jsx)",
+          `Ошибка интерполяции: ${expression}`,
+          error
+        );
+        return "";
       }
-    );
+    });
 
     return transformed;
+  };
+
+  const jsxToString = (jsxCode) => {
+    if (typeof jsxCode === "string") return jsxCode;
+
+    if (typeof jsxCode === "object" && jsxCode !== null) {
+      return String(jsxCode);
+    }
+
+    return jsxCode;
   };
 
   const jsx = (tag, props, ...children) => {
@@ -339,10 +347,12 @@
         const context = { get: api.get, share: api.share, jsx, Fragment };
         let result = renderFn.call(context);
 
+        // Преобразуем результат в строку
+        result = jsxToString(result);
+
+        // Если это строка, обрабатываем как JSX
         if (typeof result === "string") {
           result = transformJSX(result);
-        } else if (typeof result === "object" && result !== null) {
-          result = String(result);
         }
 
         targetElement.innerHTML = result;
