@@ -19,9 +19,6 @@
     "reverse",
   ];
   const PRIMITIVE_METHODS = [Symbol.toPrimitive, "toString", "valueOf"];
-  const INTERPOLATION_REGEX = /\$\{([^}]+)\}/g;
-  const JSX_FRAGMENT_REGEX = /\s*<>\s*|\s*<\/>\s*/g;
-  const WHITESPACE_REGEX = /\s+/g;
 
   if (!window.TiLab) {
     window.TiLab = {
