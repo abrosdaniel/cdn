@@ -310,10 +310,8 @@
     tlc.create(".tilab-logo", function Logo() {
       const data = tlc.get("TiLab");
       return `
-        <div class="tilab-logo-container">
-          <span class="tilab-logo-tilab">TILAB</span>
-          <span class="tilab-logo-desc">Версия: ${data.version}</span>
-        </div>
+        <span class="tilab-logo-tilab">TILAB</span>
+        <span class="tilab-logo-desc">Версия: ${data.version}</span>
       `;
     });
 
