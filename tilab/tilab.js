@@ -174,6 +174,18 @@
     const urlCache = new Map();
     let activeComponent = null;
 
+    function updateDependentComponents(path) {
+      if (dependencies.has(path)) {
+        const affectedComponents = dependencies.get(path);
+        affectedComponents.forEach((componentId) => {
+          if (components.has(componentId)) {
+            const component = components.get(componentId);
+            renderComponent(component.target, component.render, componentId);
+          }
+        });
+      }
+    }
+
     function createProxy(obj, path = "") {
       if (obj === null || typeof obj !== "object") return obj;
 
@@ -188,13 +200,20 @@
           }
 
           const value = target[prop];
-          const currentPath = path ? `${path}.${prop}` : prop;
+          const currentPath = path ? `${path}.${prop}` : String(prop);
 
           if (activeComponent) {
             if (!dependencies.has(currentPath)) {
               dependencies.set(currentPath, new Set());
             }
             dependencies.get(currentPath).add(activeComponent);
+
+            if (path) {
+              if (!dependencies.has(path)) {
+                dependencies.set(path, new Set());
+              }
+              dependencies.get(path).add(activeComponent);
+            }
           }
 
           if (value !== null && typeof value === "object") {
@@ -205,20 +224,11 @@
         set: (target, prop, value) => {
           target[prop] = value;
 
-          const fullPath = path ? `${path}.${prop}` : prop;
+          const fullPath = path ? `${path}.${prop}` : String(prop);
+          updateDependentComponents(fullPath);
 
-          if (dependencies.has(fullPath)) {
-            const affectedComponents = dependencies.get(fullPath);
-            affectedComponents.forEach((componentId) => {
-              if (components.has(componentId)) {
-                const component = components.get(componentId);
-                renderComponent(
-                  component.target,
-                  component.render,
-                  componentId
-                );
-              }
-            });
+          if (path) {
+            updateDependentComponents(path);
           }
 
           return true;
@@ -233,8 +243,14 @@
             return response.json();
           })
           .then((data) => {
-            const proxiedData = createProxy(data);
-            urlCache.set(url, { data: proxiedData, timestamp: Date.now() });
+            const proxiedData = createProxy(data, url);
+            urlCache.set(url, {
+              data: proxiedData,
+              timestamp: Date.now(),
+            });
+
+            updateDependentComponents(url);
+
             return proxiedData;
           })
           .catch((error) => {
@@ -247,40 +263,21 @@
           });
       };
 
-      // Если указан интервал обновления
       if (interval && interval > 0) {
-        if (!urlCache.has(url)) {
-          fetchAndCache(); // Первая загрузка
+        if (urlCache.has(url) && urlCache.get(url).intervalId) {
+          clearInterval(urlCache.get(url).intervalId);
         }
 
-        // Настройка периодического обновления
-        const intervalId = setInterval(() => {
-          fetchAndCache().then((data) => {
-            if (dependencies.has(url)) {
-              const affectedComponents = dependencies.get(url);
-              affectedComponents.forEach((componentId) => {
-                if (components.has(componentId)) {
-                  const component = components.get(componentId);
-                  renderComponent(
-                    component.target,
-                    component.render,
-                    componentId
-                  );
-                }
-              });
-            }
-          });
-        }, interval * 1000);
+        const intervalId = setInterval(fetchAndCache, interval * 1000);
 
         if (urlCache.has(url)) {
           urlCache.get(url).intervalId = intervalId;
+          return Promise.resolve(urlCache.get(url).data);
         } else {
           urlCache.set(url, { intervalId });
+          return fetchAndCache();
         }
-
-        return fetchAndCache();
       } else {
-        // Одноразовая загрузка
         if (urlCache.has(url)) {
           return Promise.resolve(urlCache.get(url).data);
         }
@@ -334,8 +331,15 @@
             return fetchData(param, interval);
           } else {
             if (sharedData.has(param)) {
+              if (activeComponent) {
+                if (!dependencies.has(param)) {
+                  dependencies.set(param, new Set());
+                }
+                dependencies.get(param).add(activeComponent);
+              }
               return sharedData.get(param);
             }
+
             const originalObj = window[param];
             if (originalObj === undefined) {
               TiLab.console.warn(
@@ -345,8 +349,16 @@
               return null;
             }
 
-            const proxiedData = createProxy(originalObj);
+            const proxiedData = createProxy(originalObj, param);
             sharedData.set(param, proxiedData);
+
+            if (activeComponent) {
+              if (!dependencies.has(param)) {
+                dependencies.set(param, new Set());
+              }
+              dependencies.get(param).add(activeComponent);
+            }
+
             return proxiedData;
           }
         }
@@ -364,8 +376,11 @@
           return null;
         }
 
-        const proxiedData = createProxy(data);
+        const proxiedData = createProxy(data, name);
         sharedData.set(name, proxiedData);
+
+        updateDependentComponents(name);
+
         return proxiedData;
       },
     };
@@ -392,10 +407,13 @@
           }
         } else if (typeof component === "function") {
           componentFn = component;
+          if (componentFn.name) {
+            componentName = componentFn.name;
+          }
         } else {
           TiLab.console.error(
             "TiLab(create)",
-            "Компонент должен быть функцией или объектом с одним свойством"
+            "Компонент должен быть функцией с именем"
           );
           return;
         }
