@@ -11,8 +11,8 @@
       margin: 0 !important;
       padding: 0 !important;
       font-size: 16px !important;
-      --tsqd-panel-height: 500px;
-      --tsqd-font-size: 16px;
+      --tlp-panel-height: 500px;
+      --tlp-font-size: 16px;
     }
       .tilab * {
         box-sizing: border-box !important;
@@ -23,7 +23,7 @@
       }
       .tilab-frame {
         width: 100vw;
-        height: var(--tsqd-panel-height);
+        height: var(--tlp-panel-height);
         position: relative;
         transition: height 0.3s ease-in-out;
       }
@@ -39,7 +39,7 @@
         flex-direction: row;
         background-color: #0b0d10;
         display: flex;
-        gap: calc(var(--tsqd-font-size) * 0.125);
+        gap: calc(var(--tlp-font-size) * 0.125);
       }
       .tilab-drag-handle {
         position: absolute;
@@ -63,18 +63,18 @@
         outline: none;
         background-color: #191c24;
         top: 0;
-        right: calc(var(--tsqd-font-size) * 0.5);
+        right: calc(var(--tlp-font-size) * 0.5);
         transform: translate(0, -100%);
         border-right: #394056 1px solid;
         border-left: #394056 1px solid;
         border-top: #394056 1px solid;
         border-bottom: none;
-        border-radius: calc(var(--tsqd-font-size) * 0.25)
-          calc(var(--tsqd-font-size) * 0.25) 0px 0px;
-        padding: calc(var(--tsqd-font-size) * 0.25)
-          calc(var(--tsqd-font-size) * 0.375)
-          calc(var(--tsqd-font-size) * 0.125)
-          calc(var(--tsqd-font-size) * 0.375);
+        border-radius: calc(var(--tlp-font-size) * 0.25)
+          calc(var(--tlp-font-size) * 0.25) 0px 0px;
+        padding: calc(var(--tlp-font-size) * 0.25)
+          calc(var(--tlp-font-size) * 0.375)
+          calc(var(--tlp-font-size) * 0.125)
+          calc(var(--tlp-font-size) * 0.375);
       }
       .tilab-frame[data-state="false"] .tilab-close {
         display: none;
@@ -86,14 +86,14 @@
         content: " ";
         position: absolute;
         top: 100%;
-        left: -calc(var(--tsqd-font-size) * 0.625);
-        height: calc(var(--tsqd-font-size) * 0.375);
-        width: calc(100% + calc(var(--tsqd-font-size) * 1.25));
+        left: -calc(var(--tlp-font-size) * 0.625);
+        height: calc(var(--tlp-font-size) * 0.375);
+        width: calc(100% + calc(var(--tlp-font-size) * 1.25));
       }
       .tilab-close svg {
         color: #98a2b3;
-        width: calc(var(--tsqd-font-size) * 0.5);
-        height: calc(var(--tsqd-font-size) * 0.5);
+        width: calc(var(--tlp-font-size) * 0.5);
+        height: calc(var(--tlp-font-size) * 0.5);
       }
       .tilab-section {
         flex: 1 1 700px;
@@ -105,25 +105,25 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: calc(var(--tsqd-font-size) * 0.5)
-          calc(var(--tsqd-font-size) * 0.625);
-        gap: calc(var(--tsqd-font-size) * 0.625);
+        padding: calc(var(--tlp-font-size) * 0.5)
+          calc(var(--tlp-font-size) * 0.625);
+        gap: calc(var(--tlp-font-size) * 0.625);
         border-bottom: #292e3d 1px solid;
       }
       .tilab-console {
         flex: 1;
         overflow-y: auto;
-        padding: calc(var(--tsqd-font-size) * 0.5);
+        padding: calc(var(--tlp-font-size) * 0.5);
         font-family: monospace;
-        font-size: calc(var(--tsqd-font-size) * 0.875);
+        font-size: calc(var(--tlp-font-size) * 0.875);
       }
       .tilab-open {
         position: fixed;
         bottom: 0;
         right: 0;
-        margin: calc(var(--tsqd-font-size) * 0.5);
-        height: calc(var(--tsqd-font-size) * 3.5);
-        width: calc(var(--tsqd-font-size) * 3.5);
+        margin: calc(var(--tlp-font-size) * 0.5);
+        height: calc(var(--tlp-font-size) * 3.5);
+        width: calc(var(--tlp-font-size) * 3.5);
         padding: 0;
         cursor: pointer;
         background-color: transparent;
@@ -132,7 +132,7 @@
         transition: all 0.5s ease-in-out;
       }
       .tilab-frame[data-state="true"] .tilab-open {
-        bottom: calc(var(--tsqd-font-size) * -7);
+        bottom: calc(var(--tlp-font-size) * -7);
       }
       .tilab-open img {
         width: 100%;
@@ -212,7 +212,7 @@
         minHeight,
         Math.min(startHeight + deltaY, maxHeight)
       );
-      container.style.setProperty("--tsqd-panel-height", `${newHeight}px`);
+      container.style.setProperty("--tlp-panel-height", `${newHeight}px`);
     };
 
     const endDrag = () => {
@@ -236,19 +236,19 @@
         flex-direction: column;
         background-color: transparent;
         border: none;
-        gap: calc(var(--tsqd-font-size) 16px * 0.125);
+        gap: calc(var(--tlp-font-size) 16px * 0.125);
         padding: 0px;
       }
       .tilab-logo-tilab {
-        font-size: var(--tsqd-font-size);
+        font-size: var(--tlp-font-size);
         font-weight: 700;
-        line-height: calc(var(--tsqd-font-size) * 1);
+        line-height: calc(var(--tlp-font-size) * 1);
         white-space: nowrap;
         color: #d0d5dd;
       }
       .tilab-logo-desc {
         font-weight: 600;
-        font-size: calc(var(--tsqd-font-size) * 0.75);
+        font-size: calc(var(--tlp-font-size) * 0.75);
         background: linear-gradient(to right, #dd524b, #e9a03b);
         background-clip: text;
         -webkit-background-clip: text;
@@ -269,14 +269,14 @@
       <style>
       .tilab-notify-count {
         position: absolute;
-        right: calc(var(--tsqd-font-size) * -0.4);
-        top: calc(var(--tsqd-font-size) * -0.4);
+        right: calc(var(--tlp-font-size) * -0.4);
+        top: calc(var(--tlp-font-size) * -0.4);
         background-color: #494949;
         color: #fff;
-        padding-right: calc(var(--tsqd-font-size) * 0.3);
-        padding-left: calc(var(--tsqd-font-size) * 0.3);
-        padding-top: calc(var(--tsqd-font-size) * 0.1);
-        padding-bottom: calc(var(--tsqd-font-size) * 0.1);
+        padding-right: calc(var(--tlp-font-size) * 0.3);
+        padding-left: calc(var(--tlp-font-size) * 0.3);
+        padding-top: calc(var(--tlp-font-size) * 0.1);
+        padding-bottom: calc(var(--tlp-font-size) * 0.1);
         border-radius: 100px;
       }
       </style>
@@ -287,12 +287,19 @@
       const data = tlc.get("TiLab");
       const hasLogs = data.console?.storage?.length > 0;
 
+      setTimeout(() => {
+        const consoleElement = document.querySelector(".tilab-console");
+        if (consoleElement && hasLogs) {
+          consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+      }, 0);
+
       return `
         <section>
         <style>
         .tilab-log {
-        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
-        padding: calc(var(--tsqd-font-size) * 0.25);
+        margin-bottom: calc(var(--tlp-font-size) * 0.25);
+        padding: calc(var(--tlp-font-size) * 0.25);
         border-left: 3px solid;
         background-color: rgba(255, 255, 255, 0.05);
       }
@@ -311,7 +318,7 @@
       .tilab-log-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: calc(var(--tsqd-font-size) * 0.125);
+        margin-bottom: calc(var(--tlp-font-size) * 0.125);
         font-weight: bold;
       }
       .tilab-log-name {
@@ -319,15 +326,15 @@
       }
       .tilab-log-time {
         color: #9ca3af;
-        font-size: calc(var(--tsqd-font-size) * 0.75);
+        font-size: calc(var(--tlp-font-size) * 0.75);
       }
       .tilab-log-message {
         color: #d1d5db;
-        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
+        margin-bottom: calc(var(--tlp-font-size) * 0.25);
       }
       .tilab-log-data {
         background-color: rgba(0, 0, 0, 0.2);
-        padding: calc(var(--tsqd-font-size) * 0.25);
+        padding: calc(var(--tlp-font-size) * 0.25);
         border-radius: 4px;
         overflow-x: auto;
         font-family: monospace;
@@ -342,35 +349,37 @@
                     const dataContent =
                       item.data !== undefined
                         ? `<div class="tilab-log-data">
-                      ${JSON.stringify(item.data, null, 2)}
-                    </div>`
+                        ${JSON.stringify(item.data, null, 2)}
+                      </div>`
                         : "";
 
                     return `
-                    <div class="tilab-log ${logTypeClass}">
-                      <div class="tilab-log-header">
-                        <span class="tilab-log-name">${
-                          item.name || "Неизвестно"
-                        }</span>
-                        <span class="tilab-log-time">${
-                          item.time || "неизвестно"
-                        }</span>
+                      <div class="tilab-log ${logTypeClass}">
+                        <div class="tilab-log-header">
+                          <span class="tilab-log-name">${
+                            item.name || "Неизвестно"
+                          }</span>
+                          <span class="tilab-log-time">${
+                            item.time || "неизвестно"
+                          }</span>
+                        </div>
+                        <div class="tilab-log-message">${
+                          item.message || ""
+                        }</div>
+                        ${dataContent}
                       </div>
-                      <div class="tilab-log-message">${item.message || ""}</div>
-                      ${dataContent}
-                    </div>
-                  `;
+                    `;
                   })
                   .join("")
               : `
-              <div class="tilab-log tilab-log-info">
-                <div class="tilab-log-header">
-                  <span class="tilab-log-name">Информация</span>
-                  <span class="tilab-log-time">сейчас</span>
+                <div class="tilab-log tilab-log-info">
+                  <div class="tilab-log-header">
+                    <span class="tilab-log-name">Информация</span>
+                    <span class="tilab-log-time">сейчас</span>
+                  </div>
+                  <div class="tilab-log-message">Нет доступных записей</div>
                 </div>
-                <div class="tilab-log-message">Нет доступных записей</div>
-              </div>
-            `
+              `
           }
         </section>
       `;
