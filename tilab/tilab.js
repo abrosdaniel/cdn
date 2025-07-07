@@ -65,27 +65,29 @@
 
   window.TiLab.init = function (libs, options = {}, ...args) {
     const libsArray = Array.isArray(libs) ? libs : [libs];
+    const loadPromises = [];
     const isAsync = options.async !== undefined ? options.async : true;
 
     if (libsArray.length === 1 && typeof libsArray[0] === "string") {
       const libName = libsArray[0];
-      const existingLib = window.TiLab.libs[libName];
 
-      if (existingLib?.loaded) {
-        const exports = existingLib.exports;
-        if (!exports) return Promise.resolve();
-
-        const exportKeys = Object.keys(exports);
-        return Promise.resolve(
-          exportKeys.length === 1 ? exports[exportKeys[0]] : exports
-        );
+      if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
+        if (window.TiLab.libs[libName].exports) {
+          const exports = window.TiLab.libs[libName].exports;
+          const exportKeys = Object.keys(exports);
+          if (exportKeys.length === 1) {
+            return Promise.resolve(exports[exportKeys[0]]);
+          }
+          return Promise.resolve(exports);
+        }
+        return Promise.resolve();
       }
 
       const libPath = `${CDN}/tilab/libs/${libName}.js`;
 
       return loadScript(libPath, isAsync)
         .then(() => {
-          window.TiLab.libs[libName] = {
+          window.TiLab.libs[libName] = window.TiLab.libs[libName] || {
             loaded: true,
             timestamp: new Date().getTime(),
             async: isAsync,
@@ -93,11 +95,16 @@
 
           TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
 
-          const exports = window.TiLab.libs[libName].exports;
-          if (!exports) return;
+          if (window.TiLab.libs[libName].exports) {
+            const exports = window.TiLab.libs[libName].exports;
+            const exportKeys = Object.keys(exports);
 
-          const exportKeys = Object.keys(exports);
-          return exportKeys.length === 1 ? exports[exportKeys[0]] : exports;
+            if (exportKeys.length === 1) {
+              return exports[exportKeys[0]];
+            }
+
+            return exports;
+          }
         })
         .catch((error) => {
           TiLab.debug.error(
@@ -110,24 +117,27 @@
             error: error.message,
             timestamp: new Date().getTime(),
           };
+
           throw error;
         });
     }
 
-    const loadPromises = libsArray
-      .filter(
-        (libName) => typeof libName === "string" && !window.TiLab.libs[libName]
-      )
-      .map((libName) => {
+    libsArray.forEach((libName) => {
+      if (typeof libName === "string") {
+        if (window.TiLab.libs[libName]) {
+          return;
+        }
+
         const libPath = `${CDN}/tilab/libs/${libName}.js`;
 
-        return loadScript(libPath, isAsync)
+        const loadPromise = loadScript(libPath, isAsync)
           .then(() => {
             window.TiLab.libs[libName] = {
               loaded: true,
               timestamp: new Date().getTime(),
               async: isAsync,
             };
+
             TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
           })
           .catch((error) => {
@@ -141,9 +151,13 @@
               error: error.message,
               timestamp: new Date().getTime(),
             };
+
             throw error;
           });
-      });
+
+        loadPromises.push(loadPromise);
+      }
+    });
 
     return Promise.all(loadPromises);
   };
