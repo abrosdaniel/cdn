@@ -72,6 +72,10 @@
       const libName = libsArray[0];
 
       if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
+        if (window.TiLab.debug) {
+          console.log(`TiLab: библиотека ${libName} уже загружена`);
+        }
+
         if (window.TiLab.libs[libName].exports) {
           const exports = window.TiLab.libs[libName].exports;
           const exportKeys = Object.keys(exports);
@@ -80,6 +84,7 @@
           }
           return Promise.resolve(exports);
         }
+
         return Promise.resolve();
       }
 
@@ -93,7 +98,9 @@
             async: isAsync,
           };
 
-          TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
+          if (window.TiLab.debug) {
+            console.log(`TiLab: загружена библиотека ${libName}`);
+          }
 
           if (window.TiLab.libs[libName].exports) {
             const exports = window.TiLab.libs[libName].exports;
@@ -107,11 +114,12 @@
           }
         })
         .catch((error) => {
-          TiLab.debug.error(
-            "TiLab",
-            `Ошибка загрузки библиотеки ${libName}:`,
-            error
-          );
+          if (window.TiLab.debug) {
+            console.error(
+              `TiLab: ошибка загрузки библиотеки ${libName}:`,
+              error
+            );
+          }
           window.TiLab.libs[libName] = {
             loaded: false,
             error: error.message,
@@ -125,6 +133,9 @@
     libsArray.forEach((libName) => {
       if (typeof libName === "string") {
         if (window.TiLab.libs[libName]) {
+          if (window.TiLab.debug) {
+            console.log(`TiLab: библиотека ${libName} уже загружена`);
+          }
           return;
         }
 
@@ -138,14 +149,17 @@
               async: isAsync,
             };
 
-            TiLab.debug.log("TiLab", `Загружена библиотека ${libName}`);
+            if (window.TiLab.debug) {
+              console.log(`TiLab: загружена библиотека ${libName}`);
+            }
           })
           .catch((error) => {
-            TiLab.debug.error(
-              "TiLab",
-              `Ошибка загрузки библиотеки ${libName}:`,
-              error
-            );
+            if (window.TiLab.debug) {
+              console.error(
+                `TiLab: ошибка загрузки библиотеки ${libName}:`,
+                error
+              );
+            }
             window.TiLab.libs[libName] = {
               loaded: false,
               error: error.message,
