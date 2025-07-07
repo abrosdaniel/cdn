@@ -1,5 +1,5 @@
 (function (window) {
-  function createPanel() {
+  const createPanel = () => {
     const template = `
     <style>
     .tilab {
@@ -277,99 +277,96 @@
       })
     );
 
-    function startDrag(e) {
+    const startDrag = (e) => {
       startY = e.clientY;
       startHeight = parseInt(window.getComputedStyle(frame).height);
       frame.classList.add("dragging");
       document.addEventListener("mousemove", drag);
       document.addEventListener("mouseup", endDrag);
       e.preventDefault();
-    }
+    };
 
-    function drag(e) {
+    const drag = (e) => {
       const deltaY = startY - e.clientY;
       const newHeight = Math.max(
         minHeight,
         Math.min(startHeight + deltaY, maxHeight)
       );
       container.style.setProperty("--tsqd-panel-height", `${newHeight}px`);
-    }
+    };
 
-    function endDrag() {
+    const endDrag = () => {
       frame.classList.remove("dragging");
       document.removeEventListener("mousemove", drag);
       document.removeEventListener("mouseup", endDrag);
-    }
+    };
 
     dragHandle.addEventListener("mousedown", startDrag);
-  }
+  };
 
-  function startApp() {
+  const startApp = () => {
     createPanel();
 
     tlc.create(".tilab-logo", function Logo() {
       const data = tlc.get("TiLab");
-      return `
-        <span class="tilab-logo-tilab">TILAB</span>
-        <span class="tilab-logo-desc">Версия: ${data.version}</span>
-        `;
+      return (
+        <div class="tilab-logo-container">
+          <span class="tilab-logo-tilab">TILAB</span>
+          <span class="tilab-logo-desc">Версия: ${data.version}</span>
+        </div>
+      );
     });
 
     tlc.create(".tilab-notify-count", function Notification() {
       const data = tlc.get("TiLab");
       const count = data.console.storage.length;
-      return `
-        <span>${count}</span>
-        `;
+      return <span>${count}</span>;
     });
 
     tlc.create(".tilab-console", function Console() {
       const data = tlc.get("TiLab");
-      if (
-        !data.console ||
-        !data.console.storage ||
-        !data.console.storage.length
-      ) {
-        return `<div class="tilab-log tilab-log-info">
-          <div class="tilab-log-header">
-            <span class="tilab-log-name">Информация</span>
-            <span class="tilab-log-time">сейчас</span>
+
+      if (!data.console?.storage?.length) {
+        return (
+          <div class="tilab-log tilab-log-info">
+            <div class="tilab-log-header">
+              <span class="tilab-log-name">Информация</span>
+              <span class="tilab-log-time">сейчас</span>
+            </div>
+            <div class="tilab-log-message">Нет доступных записей</div>
           </div>
-          <div class="tilab-log-message">Нет доступных записей</div>
-        </div>`;
+        );
       }
 
       return data.console.storage
         .map((item) => {
           const logTypeClass = `tilab-log-${item.type || "info"}`;
           const dataContent =
-            item.data !== undefined
-              ? `<div class="tilab-log-data">${JSON.stringify(
-                  item.data,
-                  null,
-                  2
-                )}</div>`
-              : "";
+            item.data !== undefined ? (
+              <div class="tilab-log-data">
+                ${JSON.stringify(item.data, null, 2)}
+              </div>
+            ) : (
+              ""
+            );
 
-          return `
-          <div class="tilab-log ${logTypeClass}">
-            <div class="tilab-log-header">
-              <span class="tilab-log-name">${item.name || "Неизвестно"}</span>
-              <span class="tilab-log-time">${item.time || "неизвестно"}</span>
+          return (
+            <div class={`tilab-log ${logTypeClass}`}>
+              <div class="tilab-log-header">
+                <span class="tilab-log-name">${item.name || "Неизвестно"}</span>
+                <span class="tilab-log-time">${item.time || "неизвестно"}</span>
+              </div>
+              <div class="tilab-log-message">${item.message || ""}</div>
+              {dataContent}
             </div>
-            <div class="tilab-log-message">${item.message || ""}</div>
-            ${dataContent}
-          </div>
-        `;
+          );
         })
         .join("");
     });
-  }
+  };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      startApp();
-    });
+    document.addEventListener("DOMContentLoaded", startApp);
   } else {
     startApp();
   }

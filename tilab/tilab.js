@@ -1,5 +1,5 @@
 /*!
- * TiLab.js v0.2a
+ * TiLab.js v0.5a
  * MIT License
  * (c) 2025 Daniel Abros
  * Сайт → https://abros.dev
@@ -7,7 +7,6 @@
  */
 
 (function (window) {
-  // Константы
   const CDN = "https://cdn.abros.dev";
   const CONSOLE_TYPES = ["log", "info", "trace", "warn", "error"];
   const ARRAY_MUTATION_METHODS = [
@@ -20,10 +19,13 @@
     "reverse",
   ];
   const PRIMITIVE_METHODS = [Symbol.toPrimitive, "toString", "valueOf"];
+  const INTERPOLATION_REGEX = /\$\{([^}]+)\}/g;
+  const JSX_FRAGMENT_REGEX = /\s*<>\s*|\s*<\/>\s*/g;
+  const WHITESPACE_REGEX = /\s+/g;
 
-  if (window.TiLab === undefined) {
+  if (!window.TiLab) {
     window.TiLab = {
-      version: "0.2 (alpha)",
+      version: "0.5 (alpha)",
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
       libs: {},
@@ -31,26 +33,21 @@
     };
   }
 
-  CONSOLE_TYPES.forEach(function (type) {
-    window.TiLab.console[type] = function (name, message, data) {
+  CONSOLE_TYPES.forEach((type) => {
+    window.TiLab.console[type] = (name, message, data) => {
       window.TiLab.console.storage.push({
         time: new Date().toLocaleString(),
-        type: type,
-        name: name,
-        message: message,
-        data: data,
+        type,
+        name,
+        message,
+        data,
       });
-
-      if (data !== undefined) {
-        console[type](`[ ${name} ]\n${message}`, data);
-      } else {
-        console[type](`[ ${name} ]\n${message}`);
-      }
+      console[type](`[ ${name} ]\n${message}`, data);
     };
   });
 
-  function loadScript(src, async = true) {
-    return new Promise((resolve, reject) => {
+  const loadScript = (src, async = true) =>
+    new Promise((resolve, reject) => {
       const script = document.createElement("script");
       script.src = src;
       script.async = async;
@@ -59,16 +56,15 @@
         reject(new Error(`Не удалось загрузить скрипт: ${src}`));
       document.head.appendChild(script);
     });
-  }
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get("tilab") === "") {
     loadScript(`${CDN}/tilab/services/panel.js`);
   }
 
-  window.TiLab.init = function (libs, options = {}, ...args) {
+  window.TiLab.init = (libs, options = {}) => {
     const libsArray = Array.isArray(libs) ? libs : [libs];
-    const isAsync = options.async !== undefined ? options.async : true;
+    const isAsync = options.async !== false;
 
     if (libsArray.length === 1 && typeof libsArray[0] === "string") {
       return loadSingleLibrary(libsArray[0], isAsync);
@@ -83,8 +79,8 @@
     return Promise.all(loadPromises);
   };
 
-  function loadSingleLibrary(libName, isAsync) {
-    if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
+  const loadSingleLibrary = (libName, isAsync) => {
+    if (window.TiLab.libs[libName]?.loaded) {
       const exports = window.TiLab.libs[libName].exports;
       if (exports) {
         const exportKeys = Object.keys(exports);
@@ -95,16 +91,13 @@
       return Promise.resolve();
     }
 
-    const libPath = `${CDN}/tilab/libs/${libName}.js`;
-
-    return loadScript(libPath, isAsync)
+    return loadScript(`${CDN}/tilab/libs/${libName}.js`, isAsync)
       .then(() => {
         window.TiLab.libs[libName] = {
           loaded: true,
-          timestamp: new Date().getTime(),
+          timestamp: Date.now(),
           async: isAsync,
         };
-
         TiLab.console.log("TiLab", `Загружена библиотека ${libName}`);
 
         if (window.TiLab.libs[libName].exports) {
@@ -122,11 +115,62 @@
         window.TiLab.libs[libName] = {
           loaded: false,
           error: error.message,
-          timestamp: new Date().getTime(),
+          timestamp: Date.now(),
         };
         throw error;
       });
-  }
+  };
+
+  const transformJSX = (jsxString) => {
+    if (typeof jsxString !== "string") return jsxString;
+
+    let transformed = jsxString
+      .replace(JSX_FRAGMENT_REGEX, "")
+      .replace(/\n\s*/g, "")
+      .replace(WHITESPACE_REGEX, " ")
+      .trim();
+
+    transformed = transformed.replace(
+      INTERPOLATION_REGEX,
+      (match, expression) => {
+        try {
+          return eval(expression);
+        } catch (error) {
+          TiLab.console.error(
+            "TiLab(jsx)",
+            `Ошибка интерполяции: ${expression}`,
+            error
+          );
+          return "";
+        }
+      }
+    );
+
+    return transformed;
+  };
+
+  const jsx = (tag, props, ...children) => {
+    if (tag === "") return children.join("");
+
+    const attributes = [];
+    if (props) {
+      Object.keys(props).forEach((key) => {
+        if (key !== "children") {
+          const value = props[key];
+          if (typeof value === "boolean") {
+            if (value) attributes.push(key);
+          } else {
+            attributes.push(`${key}="${value}"`);
+          }
+        }
+      });
+    }
+
+    const attrString = attributes.length > 0 ? " " + attributes.join(" ") : "";
+    return `<${tag}${attrString}>${children.join("")}</${tag}>`;
+  };
+
+  const Fragment = (props, ...children) => children.join("");
 
   window.tlc = (function () {
     const components = new Map();
@@ -135,7 +179,7 @@
     const urlCache = new Map();
     let activeComponent = null;
 
-    function updateDependentComponents(path) {
+    const updateDependentComponents = (path) => {
       const pathsToCheck = [path];
       let currentPath = path;
 
@@ -162,16 +206,14 @@
           updatedComponents.add(componentId);
         });
       });
-    }
+    };
 
-    function registerDependencies(obj, path) {
+    const registerDependencies = (obj, path) => {
       if (!obj || typeof obj !== "object" || !activeComponent) return;
 
       [path, ...Object.keys(obj).map((key) => `${path}.${key}`)].forEach(
         (p) => {
-          if (!dependencies.has(p)) {
-            dependencies.set(p, new Set());
-          }
+          if (!dependencies.has(p)) dependencies.set(p, new Set());
           dependencies.get(p).add(activeComponent);
         }
       );
@@ -182,26 +224,21 @@
           registerDependencies(value, `${path}.${key}`);
         }
       });
-    }
+    };
 
-    function addDependency(path) {
+    const addDependency = (path) => {
       if (!activeComponent) return;
-
-      if (!dependencies.has(path)) {
-        dependencies.set(path, new Set());
-      }
+      if (!dependencies.has(path)) dependencies.set(path, new Set());
       dependencies.get(path).add(activeComponent);
-    }
+    };
 
-    function createProxy(obj, path) {
+    const createProxy = (obj, path) => {
       if (!obj || typeof obj !== "object") return obj;
       if (sharedData.has(path) && sharedData.get(path) === obj) return obj;
 
       const proxyHandler = {
         get(target, prop) {
-          if (PRIMITIVE_METHODS.includes(prop)) {
-            return () => String(target);
-          }
+          if (PRIMITIVE_METHODS.includes(prop)) return () => String(target);
 
           const value = target[prop];
           const currentPath = `${path}.${prop}`;
@@ -245,24 +282,17 @@
       }
 
       return new Proxy(obj, proxyHandler);
-    }
+    };
 
-    function fetchData(url, interval) {
-      const fetchAndProcess = () => {
-        return fetch(url)
+    const fetchData = (url, interval) => {
+      const fetchAndProcess = () =>
+        fetch(url)
           .then((response) => response.json())
           .then((data) => {
             const proxiedData = createProxy(data, url);
+            if (activeComponent) registerDependencies(data, url);
 
-            if (activeComponent) {
-              registerDependencies(data, url);
-            }
-
-            urlCache.set(url, {
-              data: proxiedData,
-              timestamp: Date.now(),
-            });
-
+            urlCache.set(url, { data: proxiedData, timestamp: Date.now() });
             updateDependentComponents(url);
             return proxiedData;
           })
@@ -274,13 +304,10 @@
             );
             return null;
           });
-      };
 
       if (interval && interval > 0) {
         const cached = urlCache.get(url);
-        if (cached && cached.intervalId) {
-          clearInterval(cached.intervalId);
-        }
+        if (cached?.intervalId) clearInterval(cached.intervalId);
 
         const intervalId = setInterval(fetchAndProcess, interval * 1000);
 
@@ -296,9 +323,9 @@
       return urlCache.has(url)
         ? Promise.resolve(urlCache.get(url).data)
         : fetchAndProcess();
-    }
+    };
 
-    function renderComponent(target, renderFn, componentId) {
+    const renderComponent = (target, renderFn, componentId) => {
       const targetElement = document.querySelector(target);
       if (!targetElement) {
         TiLab.console.error(`TiLab(render)`, `Элемент ${target} не найден`);
@@ -309,8 +336,16 @@
       activeComponent = componentId;
 
       try {
-        const context = { get: api.get, share: api.share };
-        targetElement.innerHTML = renderFn.call(context);
+        const context = { get: api.get, share: api.share, jsx, Fragment };
+        let result = renderFn.call(context);
+
+        if (typeof result === "string") {
+          result = transformJSX(result);
+        } else if (typeof result === "object" && result !== null) {
+          result = String(result);
+        }
+
+        targetElement.innerHTML = result;
       } catch (error) {
         TiLab.console.error(
           `TiLab(render)`,
@@ -320,7 +355,7 @@
       } finally {
         activeComponent = prevComponent;
       }
-    }
+    };
 
     const api = {
       get(param, interval) {
@@ -344,27 +379,22 @@
         if (sharedData.has(param)) {
           addDependency(param);
           const data = sharedData.get(param);
-          if (data && typeof data === "object") {
+          if (data && typeof data === "object")
             registerDependencies(data, param);
-          }
           return data;
         }
 
         const globalData = window[param];
         if (globalData !== undefined) {
           const proxiedData = createProxy(globalData, param);
-
           if (typeof globalData === "object" && globalData !== null) {
             window[param] = proxiedData;
           }
-
           sharedData.set(param, proxiedData);
           addDependency(param);
-
           if (globalData && typeof globalData === "object") {
             registerDependencies(globalData, param);
           }
-
           return proxiedData;
         }
 
@@ -400,9 +430,7 @@
 
         if (typeof component === "object") {
           const entries = Object.entries(component);
-          if (entries.length === 1) {
-            [componentName, componentFn] = entries[0];
-          }
+          if (entries.length === 1) [componentName, componentFn] = entries[0];
         } else if (typeof component === "function") {
           componentFn = component;
           componentName = component.name || null;
@@ -437,6 +465,8 @@
 
       share: api.share,
       get: api.get,
+      jsx,
+      Fragment,
     };
   })();
 })(window);
