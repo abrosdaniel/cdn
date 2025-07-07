@@ -157,7 +157,7 @@
         padding: 0;
         cursor: pointer;
         background-color: transparent;
-        border: none;
+        border: 2px solid #808080;
         border-radius: 500px;
         transition: all 0.5s ease-in-out;
       }
