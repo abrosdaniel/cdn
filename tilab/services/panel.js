@@ -110,43 +110,12 @@
         gap: calc(var(--tsqd-font-size) * 0.625);
         border-bottom: #292e3d 1px solid;
       }
-      .tilab-logo {
-        display: flex;
-        flex-direction: column;
-        background-color: transparent;
-        border: none;
-        gap: calc(var(--tsqd-font-size) 16px * 0.125);
-        padding: 0px;
-      }
-      .tilab-logo-tilab {
-        font-size: var(--tsqd-font-size);
-        font-weight: 700;
-        line-height: calc(var(--tsqd-font-size) * 1);
-        white-space: nowrap;
-        color: #d0d5dd;
-      }
-      .tilab-logo-desc {
-        font-weight: 600;
-        font-size: calc(var(--tsqd-font-size) * 0.75);
-        background: linear-gradient(to right, #dd524b, #e9a03b);
-        background-clip: text;
-        -webkit-background-clip: text;
-        line-height: 1;
-        -webkit-text-fill-color: transparent;
-        white-space: nowrap;
-      }
       .tilab-console {
         flex: 1;
         overflow-y: auto;
         padding: calc(var(--tsqd-font-size) * 0.5);
         font-family: monospace;
         font-size: calc(var(--tsqd-font-size) * 0.875);
-      }
-      .tilab-log {
-        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
-        padding: calc(var(--tsqd-font-size) * 0.25);
-        border-left: 3px solid;
-        background-color: rgba(255, 255, 255, 0.05);
       }
       .tilab-open {
         position: fixed;
@@ -164,18 +133,6 @@
       }
       .tilab-frame[data-state="true"] .tilab-open {
         bottom: calc(var(--tsqd-font-size) * -7);
-      }
-      .tilab-notify-count {
-        position: absolute;
-        right: calc(var(--tsqd-font-size) * -0.4);
-        top: calc(var(--tsqd-font-size) * -0.4);
-        background-color: #494949;
-        color: #fff;
-        padding-right: calc(var(--tsqd-font-size) * 0.3);
-        padding-left: calc(var(--tsqd-font-size) * 0.3);
-        padding-top: calc(var(--tsqd-font-size) * 0.1);
-        padding-bottom: calc(var(--tsqd-font-size) * 0.1);
-        border-radius: 100px;
       }
       .tilab-open img {
         width: 100%;
@@ -273,6 +230,33 @@
     tlc.create(".tilab-logo", function Logo() {
       const data = tlc.get("TiLab");
       return `
+      <style>
+      .tilab-logo {
+        display: flex;
+        flex-direction: column;
+        background-color: transparent;
+        border: none;
+        gap: calc(var(--tsqd-font-size) 16px * 0.125);
+        padding: 0px;
+      }
+      .tilab-logo-tilab {
+        font-size: var(--tsqd-font-size);
+        font-weight: 700;
+        line-height: calc(var(--tsqd-font-size) * 1);
+        white-space: nowrap;
+        color: #d0d5dd;
+      }
+      .tilab-logo-desc {
+        font-weight: 600;
+        font-size: calc(var(--tsqd-font-size) * 0.75);
+        background: linear-gradient(to right, #dd524b, #e9a03b);
+        background-clip: text;
+        -webkit-background-clip: text;
+        line-height: 1;
+        -webkit-text-fill-color: transparent;
+        white-space: nowrap;
+      }
+      </style>
         <span class="tilab-logo-tilab">TILAB</span>
         <span class="tilab-logo-desc">Версия: ${data.version}</span>
       `;
@@ -281,7 +265,22 @@
     tlc.create(".tilab-notify-count", function Notification() {
       const data = tlc.get("TiLab");
       const count = data.console.storage.length;
-      return `<span>${count}</span>`;
+      return `
+      <style>
+      .tilab-notify-count {
+        position: absolute;
+        right: calc(var(--tsqd-font-size) * -0.4);
+        top: calc(var(--tsqd-font-size) * -0.4);
+        background-color: #494949;
+        color: #fff;
+        padding-right: calc(var(--tsqd-font-size) * 0.3);
+        padding-left: calc(var(--tsqd-font-size) * 0.3);
+        padding-top: calc(var(--tsqd-font-size) * 0.1);
+        padding-bottom: calc(var(--tsqd-font-size) * 0.1);
+        border-radius: 100px;
+      }
+      </style>
+      <span>${count}</span>`;
     });
 
     tlc.create(".tilab-console", function Console() {
@@ -291,6 +290,12 @@
       return `
         <section>
         <style>
+        .tilab-log {
+        margin-bottom: calc(var(--tsqd-font-size) * 0.25);
+        padding: calc(var(--tsqd-font-size) * 0.25);
+        border-left: 3px solid;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
         .tilab-log-info {
         border-color: #3b82f6;
       }
