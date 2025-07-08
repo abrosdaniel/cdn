@@ -365,6 +365,19 @@
 
         const fullQueryKey = createQueryKey(queryKey);
 
+        // Проверяем, является ли queryFn функцией, возвращающей глобальные данные
+        const queryFnString = queryFn.toString();
+        const isGlobalDataQuery = queryFnString.includes("window.");
+
+        // Извлекаем путь к глобальным данным из queryFn
+        let globalPath = null;
+        if (isGlobalDataQuery) {
+          const match = queryFnString.match(/window\.([\w.]+)/);
+          if (match) {
+            globalPath = match[1];
+          }
+        }
+
         useEffect(() => {
           if (!enabled) return;
 
@@ -398,7 +411,19 @@
               setQueryLoading(fullQueryKey, true);
               Promise.resolve(queryFn())
                 .then((data) => {
-                  setQuery(fullQueryKey, data);
+                  // Если это глобальные данные, создаем Proxy
+                  let finalData = data;
+                  if (isGlobalDataQuery && globalPath) {
+                    // Создаем Proxy для глобальных данных
+                    const reactiveData = createReactiveData(
+                      `window.${globalPath}`,
+                      fullQueryKey
+                    );
+                    if (reactiveData) {
+                      finalData = reactiveData;
+                    }
+                  }
+                  setQuery(fullQueryKey, finalData);
                 })
                 .catch((error) => {
                   setQueryError(fullQueryKey, error);
@@ -413,7 +438,19 @@
 
             Promise.resolve(queryFn())
               .then((data) => {
-                setQuery(fullQueryKey, data);
+                // Если это глобальные данные, создаем Proxy
+                let finalData = data;
+                if (isGlobalDataQuery && globalPath) {
+                  // Создаем Proxy для глобальных данных
+                  const reactiveData = createReactiveData(
+                    `window.${globalPath}`,
+                    fullQueryKey
+                  );
+                  if (reactiveData) {
+                    finalData = reactiveData;
+                  }
+                }
+                setQuery(fullQueryKey, finalData);
               })
               .catch((error) => {
                 setQueryError(fullQueryKey, error);
