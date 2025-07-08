@@ -126,16 +126,12 @@
       const loadPreact = () => {
         if (preactLoaded) return Promise.resolve();
 
-        return loadScript("https://unpkg.com/htm/preact/standalone.module.js")
-          .then(() => {
+        return import("https://unpkg.com/htm/preact/standalone.module.js")
+          .then((module) => {
             preactLoaded = true;
+            window.preact = module;
             console.log("Preact загружен:", window.preact);
-            console.log(
-              "Глобальные объекты:",
-              Object.keys(window).filter(
-                (key) => key.includes("preact") || key.includes("htm")
-              )
-            );
+            console.log("Доступные функции:", Object.keys(window.preact || {}));
             return Promise.resolve();
           })
           .catch((error) => {
@@ -146,7 +142,6 @@
 
       const jsxWrapper = (componentFunction) => {
         return loadPreact().then(() => {
-          // Получаем функции из htm/preact standalone
           const {
             html,
             render,
@@ -170,7 +165,6 @@
             throw new Error("htm/preact не загружен или функции недоступны");
           }
 
-          // Создаем область видимости с функциями Preact
           const context = {
             h,
             html,
@@ -185,10 +179,14 @@
             createContext,
           };
 
-          // Вызываем функцию компонента в контексте
-          componentFunction.call(context);
+          const componentResult = componentFunction.call(context);
 
-          // Сохраняем информацию о созданном компоненте
+          let container;
+
+          if (container && componentResult) {
+            render(componentResult, container);
+          }
+
           const componentRecord = {
             id: Date.now() + Math.random(),
             name: componentFunction.name || "Anonymous",
