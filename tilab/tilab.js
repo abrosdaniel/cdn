@@ -209,40 +209,60 @@
         if (!originalData) return null;
 
         // Рекурсивная функция для создания глубокого Proxy
-        const createDeepProxy = (obj, path = "") => {
+        const createDeepProxy = (obj) => {
           if (obj === null || typeof obj !== "object") {
             return obj;
           }
 
-          return new Proxy(obj, {
-            get(target, prop) {
-              const value = target[prop];
-              // Если это объект или массив, оборачиваем его в Proxy
-              if (value && typeof value === "object") {
-                return createDeepProxy(value, path ? `${path}.${prop}` : prop);
-              }
-              return value;
-            },
-            set(target, prop, value) {
-              const oldValue = target[prop];
-              target[prop] = value;
+          // Создаем кэш для уже проксированных объектов
+          const proxyCache = new WeakMap();
 
-              // Если значение изменилось, уведомляем подписчиков
-              if (oldValue !== value) {
-                invalidateQueries(queryKey);
-              }
-              return true;
-            },
-            deleteProperty(target, prop) {
-              const hasProperty = prop in target;
-              const result = delete target[prop];
+          const createProxy = (target) => {
+            if (proxyCache.has(target)) {
+              return proxyCache.get(target);
+            }
 
-              if (hasProperty) {
-                invalidateQueries(queryKey);
-              }
-              return result;
-            },
-          });
+            const proxy = new Proxy(target, {
+              get(target, prop) {
+                const value = target[prop];
+                // Если это объект или массив, оборачиваем его в Proxy
+                if (
+                  value &&
+                  typeof value === "object" &&
+                  !proxyCache.has(value)
+                ) {
+                  const nestedProxy = createProxy(value);
+                  proxyCache.set(value, nestedProxy);
+                  return nestedProxy;
+                }
+                return value;
+              },
+              set(target, prop, value) {
+                const oldValue = target[prop];
+                target[prop] = value;
+
+                // Если значение изменилось, уведомляем подписчиков
+                if (oldValue !== value) {
+                  invalidateQueries(queryKey);
+                }
+                return true;
+              },
+              deleteProperty(target, prop) {
+                const hasProperty = prop in target;
+                const result = delete target[prop];
+
+                if (hasProperty) {
+                  invalidateQueries(queryKey);
+                }
+                return result;
+              },
+            });
+
+            proxyCache.set(target, proxy);
+            return proxy;
+          };
+
+          return createProxy(obj);
         };
 
         // Создаем глубокий Proxy и заменяем оригинальные данные
