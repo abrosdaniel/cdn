@@ -146,27 +146,31 @@
 
       const jsxWrapper = (componentFunction) => {
         return loadPreact().then(() => {
-          const preact = window.preact || {};
-          const h = preact.h || window.h;
-          const html = preact.html || window.html;
-          const render = preact.render || window.render;
-          const Component = preact.Component || window.Component;
-          const useState = preact.useState || window.useState;
-          const useEffect = preact.useEffect || window.useEffect;
-          const useRef = preact.useRef || window.useRef;
-          const useMemo = preact.useMemo || window.useMemo;
-          const useCallback = preact.useCallback || window.useCallback;
-          const useContext = preact.useContext || window.useContext;
-          const createContext = preact.createContext || window.createContext;
+          // Получаем функции из htm/preact standalone
+          const {
+            html,
+            render,
+            Component,
+            h,
+            useState,
+            useEffect,
+            useRef,
+            useMemo,
+            useCallback,
+            useContext,
+            createContext,
+          } = window.preact || {};
 
-          if (!h || !html) {
+          if (!html || !render) {
             console.error("Preact объект:", window.preact);
-            console.error("Доступные функции:", Object.keys(preact));
-            console.error("Глобальные h:", window.h);
-            console.error("Глобальные html:", window.html);
-            throw new Error("Preact не загружен или функции недоступны");
+            console.error(
+              "Доступные функции:",
+              Object.keys(window.preact || {})
+            );
+            throw new Error("htm/preact не загружен или функции недоступны");
           }
 
+          // Создаем область видимости с функциями Preact
           const context = {
             h,
             html,
@@ -181,8 +185,10 @@
             createContext,
           };
 
+          // Вызываем функцию компонента в контексте
           componentFunction.call(context);
 
+          // Сохраняем информацию о созданном компоненте
           const componentRecord = {
             id: Date.now() + Math.random(),
             name: componentFunction.name || "Anonymous",
