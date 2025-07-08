@@ -25,15 +25,7 @@
         const [startHeight, setStartHeight] = useState(0);
 
         // Загружаем данные TiLab через QueryModule
-        const useQuery = window.TiLab.query.createUseQuery(
-          useState,
-          useEffect,
-          useCallback
-        );
-        const useMutation = window.TiLab.query.createUseMutation(
-          useState,
-          useCallback
-        );
+        const { useQuery, useMutation } = window.TiLab.query;
 
         const { data: tiLabData = window.TiLab } = useQuery({
           queryKey: ["tilab-data"],

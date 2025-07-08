@@ -143,6 +143,17 @@
               throw new Error("htm/preact не загружен или функции недоступны");
             }
 
+            // Сохраняем хуки глобально для QueryModule
+            window.TiLab.jsx._hooks = {
+              useState,
+              useEffect,
+              useRef,
+              useMemo,
+              useCallback,
+              useContext,
+              createContext,
+            };
+
             callback(
               html,
               render,
@@ -182,8 +193,8 @@
       const queries = new Map();
       const subscribers = new Map();
 
-      const createQueryKey = (key, params) => {
-        return typeof key === "string" ? key : JSON.stringify({ key, params });
+      const createQueryKey = (key) => {
+        return typeof key === "string" ? key : JSON.stringify(key);
       };
 
       const getQuery = (queryKey) => {
@@ -265,162 +276,168 @@
         keysToDelete.forEach((key) => invalidateQuery(key));
       };
 
-      const createUseQuery = (useState, useEffect, useCallback) => {
-        return (options) => {
-          const { queryKey, queryFn, staleTime = 0, enabled = true } = options;
+      // Готовые функции для использования в TiLab.jsx
+      const useQuery = (options) => {
+        const { queryKey, queryFn, staleTime = 0, enabled = true } = options;
 
-          const [state, setState] = useState({
-            data: undefined,
-            isLoading: false,
-            error: null,
-            isSuccess: false,
-            isError: false,
-            isFetching: false,
-          });
+        // Получаем хуки из TiLab.jsx
+        const { useState, useEffect } = window.TiLab.jsx._hooks || {};
 
-          const fullQueryKey = createQueryKey(queryKey);
-
-          useEffect(() => {
-            if (!enabled) return;
-
-            const unsubscribe = subscribe(fullQueryKey, (query) => {
-              if (query) {
-                const isStale = Date.now() - query.timestamp > staleTime;
-
-                setState({
-                  data: query.data,
-                  isLoading: query.isLoading,
-                  error: query.error,
-                  isSuccess:
-                    !query.isLoading &&
-                    !query.error &&
-                    query.data !== undefined,
-                  isError: !!query.error,
-                  isFetching: query.isLoading,
-                });
-
-                // Если данные устарели, обновляем их
-                if (isStale && !query.isLoading) {
-                  setQueryLoading(fullQueryKey, true);
-                  Promise.resolve(queryFn())
-                    .then((data) => {
-                      setQuery(fullQueryKey, data);
-                    })
-                    .catch((error) => {
-                      setQueryError(fullQueryKey, error);
-                    });
-                }
-              }
-            });
-
-            // Если данных нет, запускаем запрос
-            const query = queries.get(fullQueryKey);
-            if (!query && !state.isLoading) {
-              setQueryLoading(fullQueryKey, true);
-
-              Promise.resolve(queryFn())
-                .then((data) => {
-                  setQuery(fullQueryKey, data);
-                })
-                .catch((error) => {
-                  setQueryError(fullQueryKey, error);
-                });
-            }
-
-            return unsubscribe;
-          }, [fullQueryKey, enabled]);
-
-          return state;
-        };
-      };
-
-      const createUseMutation = (useState, useCallback) => {
-        return (options) => {
-          const { mutationFn, onSuccess, onError, onSettled } = options;
-
-          const [state, setState] = useState({
-            data: undefined,
-            isLoading: false,
-            error: null,
-            isSuccess: false,
-            isError: false,
-          });
-
-          const mutate = useCallback(
-            async (variables) => {
-              setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
-              try {
-                const data = await Promise.resolve(mutationFn(variables));
-                setState({
-                  data,
-                  isLoading: false,
-                  error: null,
-                  isSuccess: true,
-                  isError: false,
-                });
-
-                if (onSuccess) {
-                  onSuccess(data, variables);
-                }
-
-                return data;
-              } catch (error) {
-                setState({
-                  data: undefined,
-                  isLoading: false,
-                  error,
-                  isSuccess: false,
-                  isError: true,
-                });
-
-                if (onError) {
-                  onError(error, variables);
-                }
-
-                throw error;
-              } finally {
-                if (onSettled) {
-                  onSettled(state.data, error, variables);
-                }
-              }
-            },
-            [mutationFn, onSuccess, onError, onSettled]
+        if (!useState || !useEffect) {
+          console.error(
+            "useQuery: хуки недоступны. Используйте внутри TiLab.jsx"
           );
+          return { data: undefined, isLoading: false, error: null };
+        }
 
-          const reset = useCallback(() => {
-            setState({
-              data: undefined,
-              isLoading: false,
-              error: null,
-              isSuccess: false,
-              isError: false,
-            });
-          }, []);
+        const [state, setState] = useState({
+          data: undefined,
+          isLoading: false,
+          error: null,
+          isSuccess: false,
+          isError: false,
+          isFetching: false,
+        });
 
-          return {
-            ...state,
-            mutate,
-            reset,
-          };
+        const fullQueryKey = createQueryKey(queryKey);
+
+        useEffect(() => {
+          if (!enabled) return;
+
+          const unsubscribe = subscribe(fullQueryKey, (query) => {
+            if (query) {
+              const isStale = Date.now() - query.timestamp > staleTime;
+
+              setState({
+                data: query.data,
+                isLoading: query.isLoading,
+                error: query.error,
+                isSuccess:
+                  !query.isLoading && !query.error && query.data !== undefined,
+                isError: !!query.error,
+                isFetching: query.isLoading,
+              });
+
+              // Если данные устарели, обновляем их
+              if (isStale && !query.isLoading) {
+                setQueryLoading(fullQueryKey, true);
+                Promise.resolve(queryFn())
+                  .then((data) => {
+                    setQuery(fullQueryKey, data);
+                  })
+                  .catch((error) => {
+                    setQueryError(fullQueryKey, error);
+                  });
+              }
+            }
+          });
+
+          // Если данных нет, запускаем запрос
+          const query = queries.get(fullQueryKey);
+          if (!query && !state.isLoading) {
+            setQueryLoading(fullQueryKey, true);
+
+            Promise.resolve(queryFn())
+              .then((data) => {
+                setQuery(fullQueryKey, data);
+              })
+              .catch((error) => {
+                setQueryError(fullQueryKey, error);
+              });
+          }
+
+          return unsubscribe;
+        }, [fullQueryKey, enabled]);
+
+        return state;
+      };
+
+      const useMutation = (options) => {
+        const { mutationFn, onSuccess, onError, onSettled } = options;
+
+        // Получаем хуки из TiLab.jsx
+        const { useState, useCallback } = window.TiLab.jsx._hooks || {};
+
+        if (!useState || !useCallback) {
+          console.error(
+            "useMutation: хуки недоступны. Используйте внутри TiLab.jsx"
+          );
+          return { mutate: () => {}, isLoading: false, error: null };
+        }
+
+        const [state, setState] = useState({
+          data: undefined,
+          isLoading: false,
+          error: null,
+          isSuccess: false,
+          isError: false,
+        });
+
+        const mutate = useCallback(
+          async (variables) => {
+            setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
+            try {
+              const data = await Promise.resolve(mutationFn(variables));
+              setState({
+                data,
+                isLoading: false,
+                error: null,
+                isSuccess: true,
+                isError: false,
+              });
+
+              if (onSuccess) {
+                onSuccess(data, variables);
+              }
+
+              return data;
+            } catch (error) {
+              setState({
+                data: undefined,
+                isLoading: false,
+                error,
+                isSuccess: false,
+                isError: true,
+              });
+
+              if (onError) {
+                onError(error, variables);
+              }
+
+              throw error;
+            } finally {
+              if (onSettled) {
+                onSettled(state.data, error, variables);
+              }
+            }
+          },
+          [mutationFn, onSuccess, onError, onSettled]
+        );
+
+        const reset = useCallback(() => {
+          setState({
+            data: undefined,
+            isLoading: false,
+            error: null,
+            isSuccess: false,
+            isError: false,
+          });
+        }, []);
+
+        return {
+          ...state,
+          mutate,
+          reset,
         };
       };
 
-      const queryClient = {
-        queries,
-        subscribers,
-        getQuery,
-        setQuery,
-        setQueryLoading,
-        setQueryError,
-        subscribe,
+      return {
+        useQuery,
+        useMutation,
         invalidateQuery,
         invalidateQueries,
-        createUseQuery,
-        createUseMutation,
       };
-
-      return queryClient;
     };
 
     window.TiLab = {
