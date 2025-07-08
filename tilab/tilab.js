@@ -129,6 +129,13 @@
         return loadScript("https://unpkg.com/htm/preact/standalone.module.js")
           .then(() => {
             preactLoaded = true;
+            console.log("Preact загружен:", window.preact);
+            console.log(
+              "Глобальные объекты:",
+              Object.keys(window).filter(
+                (key) => key.includes("preact") || key.includes("htm")
+              )
+            );
             return Promise.resolve();
           })
           .catch((error) => {
@@ -139,21 +146,24 @@
 
       const jsxWrapper = (componentFunction) => {
         return loadPreact().then(() => {
-          const {
-            h,
-            html,
-            render,
-            Component,
-            useState,
-            useEffect,
-            useRef,
-            useMemo,
-            useCallback,
-            useContext,
-            createContext,
-          } = window.preact || {};
+          const preact = window.preact || {};
+          const h = preact.h || window.h;
+          const html = preact.html || window.html;
+          const render = preact.render || window.render;
+          const Component = preact.Component || window.Component;
+          const useState = preact.useState || window.useState;
+          const useEffect = preact.useEffect || window.useEffect;
+          const useRef = preact.useRef || window.useRef;
+          const useMemo = preact.useMemo || window.useMemo;
+          const useCallback = preact.useCallback || window.useCallback;
+          const useContext = preact.useContext || window.useContext;
+          const createContext = preact.createContext || window.createContext;
 
           if (!h || !html) {
+            console.error("Preact объект:", window.preact);
+            console.error("Доступные функции:", Object.keys(preact));
+            console.error("Глобальные h:", window.h);
+            console.error("Глобальные html:", window.html);
             throw new Error("Preact не загружен или функции недоступны");
           }
 
