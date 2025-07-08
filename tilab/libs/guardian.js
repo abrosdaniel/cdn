@@ -396,6 +396,5 @@
     window.TiLabExport({
       protect,
     });
-    TiLab.console.info("Guardian.js", "Библиотека успешно иницифлизирована.");
   }
 })();
