@@ -1,425 +1,435 @@
-/*
- * Abros Tilda Form v1.0
- * (c) 2025
- * by Daniel Abros
- * Site → https://abrosdaniel.com
- * Telegram → https://t.me/abrosdaniel
- */
+const ARRAY_MUTATION_METHODS = [
+  "push",
+  "pop",
+  "shift",
+  "unshift",
+  "splice",
+  "sort",
+  "reverse",
+];
+const PRIMITIVE_METHODS = [Symbol.toPrimitive, "toString", "valueOf"];
 
-class AbrosTiForm {
-  constructor(options = {}) {
-    this.settings = options.settings || {};
-    this.scheme = options.scheme || {};
-    this.currentForm = null;
-    if (!window.AbrosTiForm) {
-      window.AbrosTiForm = {};
-    }
-    if (!window.AbrosTiForm[this.settings.name]) {
-      window.AbrosTiForm[this.settings.name] = {};
-    }
-    this.formData = window.AbrosTiForm[this.settings.name];
-    this.init();
-    console.log(`Создание формы ${this.settings.name} завершено.`);
-    console.groupCollapsed(
-      `%c📋 AbrosTiForm%c Библиотека для создания кастомных форм в Tilda`,
-      "background:rgb(164, 114, 94); color: white; border-radius: 5px; padding: 4px;",
-      ""
-    );
-    console.groupCollapsed(`📚 Документация`);
-    console.log(`Скоро появится документация по использованию библиотеки.`);
-    console.groupEnd();
-    console.log(`📦 Версия библиотеки: 1.0`);
-    console.log(
-      `✨ Данная библиотека является полностью бесплатной. Указание автора не обязательно.`
-    );
-    console.groupCollapsed(
-      `%c👨🏻‍💻 Development by Daniel Abros`,
-      "border: 1px solid; border-radius: 5px; padding: 4px;"
-    );
-    console.log(`💻 Site → https://abrosdaniel.com`);
-    console.groupEnd();
-    console.groupEnd();
-  }
+window.TiLab.init = function (libs, options = {}, ...args) {
+  const libsArray = Array.isArray(libs) ? libs : [libs];
+  const loadPromises = [];
+  const isAsync = options.async !== undefined ? options.async : true;
 
-  init() {
-    if (this.settings.type?.window === "popup") {
-      this.settings.type.form = "quiz";
-    }
-    const firstForm = Object.keys(this.scheme)[0];
-    if (firstForm) {
-      this.setForm(firstForm);
-    }
-    this.initForms();
-    this.initFormTracking();
-  }
+  if (libsArray.length === 1 && typeof libsArray[0] === "string") {
+    const libName = libsArray[0];
 
-  initForms() {
-    if (this.settings.type?.window === "popup") {
-      this.moveFormsToPopup();
-    }
-    Object.entries(this.scheme).forEach(([formName, form]) => {
-      this.bindFormButtons(formName, form);
-    });
-  }
-
-  moveFormsToPopup() {
-    const allrecords = document.querySelector("#allrecords");
-    const div = document.createElement("div");
-    div.id = this.settings.name;
-    div.className = "atf-popup";
-    div.innerHTML = `
-<!-- ATF001 -->
-<div class="atf001">
-  <div class="popup" style="display: none">
-    <div class="popup_container" style="opacity: 0"></div>
-    <div class="popup_close" style="opacity: 0">
-      <svg role="presentation" class="t-popup__close-icon" width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <g stroke="none" stroke-width="1" fill="#1d1d1d" fill-rule="evenodd"> <rect transform="translate(11.313708, 11.313708) rotate(-45.000000) translate(-11.313708, -11.313708) " x="10.3137085" y="-3.6862915" width="2" height="30"></rect> <rect transform="translate(11.313708, 11.313708) rotate(-315.000000) translate(-11.313708, -11.313708) " x="10.3137085" y="-3.6862915" width="2" height="30"></rect> </g> </svg>
-    </div>
-    <div class="popup_bg" style="opacity: 0"></div>
-  </div>
-</div>
-<style>
-  .atf001 .popup {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-  }
-  .atf001 .popup_container {
-    -webkit-transition: opacity ease-in-out 0.3s;
-    -moz-transition: opacity ease-in-out 0.3s;
-    -o-transition: opacity ease-in-out 0.3s;
-    transition: opacity ease-in-out 0.3s;
-    transform: translateY(50%);
-    z-index: 6;
-    position: relative;
-  }
-  .atf001 .popup_close {
-    position: fixed;
-    right: 20px;
-    top: 20px;
-    width: 23px;
-    height: 23px;
-    cursor: pointer;
-    -webkit-transition: opacity ease-in-out 0.3s;
-    -moz-transition: opacity ease-in-out 0.3s;
-    -o-transition: opacity ease-in-out 0.3s;
-    transition: opacity ease-in-out 0.3s;
-    z-index: 9;
-  }
-  .atf001 .popup_bg {
-    -webkit-transition: opacity ease-in-out 0.3s;
-    -moz-transition: opacity ease-in-out 0.3s;
-    -o-transition: opacity ease-in-out 0.3s;
-    transition: opacity ease-in-out 0.3s;
-    cursor: pointer;
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-    position: fixed;
-    inset: 0;
-    z-index: 3;
-  }
-</style>
-    `;
-    allrecords.appendChild(div);
-    const block = allrecords.querySelector(`#${this.settings.name}`);
-    const container = block.querySelector(".popup_container");
-    Object.entries(this.scheme).forEach(([formName, formConfig]) => {
-      const formElement = document.querySelector(formConfig.target);
-      container.appendChild(formElement);
-    });
-    const popupClose = block.querySelector(".popup_close");
-    const popupBg = block.querySelector(".popup_bg");
-    if (popupClose) {
-      popupClose.addEventListener("click", () =>
-        this.hidePopup(block.querySelector(".popup"))
-      );
-    }
-    if (popupBg) {
-      popupBg.addEventListener("click", () =>
-        this.hidePopup(block.querySelector(".popup"))
-      );
-    }
-  }
-
-  bindFormButtons(formName, form) {
-    const formTarget = document.querySelector(form.target);
-    if (!formTarget) return;
-
-    const bindButton = (buttonSelector, callback) => {
-      const button = document.querySelector(buttonSelector);
-      if (button) {
-        button.addEventListener("click", callback);
+    if (window.TiLab.libs[libName] && window.TiLab.libs[libName].loaded) {
+      if (window.TiLab.libs[libName].exports) {
+        const exports = window.TiLab.libs[libName].exports;
+        const exportKeys = Object.keys(exports);
+        if (exportKeys.length === 1) {
+          return Promise.resolve(exports[exportKeys[0]]);
+        }
+        return Promise.resolve(exports);
       }
+
+      return Promise.resolve();
+    }
+
+    const libPath = `${CDN}/tilab/libs/${libName}.js`;
+
+    return loadScript(libPath, isAsync)
+      .then(() => {
+        window.TiLab.libs[libName] = window.TiLab.libs[libName] || {
+          loaded: true,
+          timestamp: new Date().getTime(),
+          async: isAsync,
+        };
+
+        if (window.TiLab.libs[libName].exports) {
+          const exports = window.TiLab.libs[libName].exports;
+          const exportKeys = Object.keys(exports);
+
+          if (exportKeys.length === 1) {
+            return exports[exportKeys[0]];
+          }
+
+          return exports;
+        }
+      })
+      .catch((error) => {
+        window.TiLab.libs[libName] = {
+          loaded: false,
+          error: error.message,
+          timestamp: new Date().getTime(),
+        };
+
+        throw error;
+      });
+  }
+
+  libsArray.forEach((libName) => {
+    if (typeof libName === "string") {
+      if (window.TiLab.libs[libName]) {
+        return;
+      }
+
+      const libPath = `${CDN}/tilab/libs/${libName}.js`;
+
+      const loadPromise = loadScript(libPath, isAsync)
+        .then(() => {
+          window.TiLab.libs[libName] = {
+            loaded: true,
+            timestamp: new Date().getTime(),
+            async: isAsync,
+          };
+        })
+        .catch((error) => {
+          window.TiLab.libs[libName] = {
+            loaded: false,
+            error: error.message,
+            timestamp: new Date().getTime(),
+          };
+
+          throw error;
+        });
+
+      loadPromises.push(loadPromise);
+    }
+  });
+
+  return Promise.all(loadPromises);
+};
+
+window.tlc = (function () {
+  const components = new Map();
+  const dependencies = new Map();
+  const sharedData = new Map();
+  const urlCache = new Map();
+  let activeComponent = null;
+
+  const transformJSX = (jsxString) => {
+    if (typeof jsxString !== "string") return jsxString;
+
+    return jsxString
+      .replace(/\s*<>\s*/g, "")
+      .replace(/\s*<\/>\s*/g, "")
+      .replace(/\n\s*/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/\$\{([^}]+)\}/g, (match, expression) => {
+        try {
+          return eval(expression);
+        } catch (error) {
+          TiLab.console.error(
+            "TiLab(jsx)",
+            `Ошибка интерполяции: ${expression}`,
+            error
+          );
+          return "";
+        }
+      });
+  };
+
+  const jsxToString = (jsxCode) => {
+    if (typeof jsxCode === "string") return jsxCode;
+    if (typeof jsxCode === "object" && jsxCode !== null) return String(jsxCode);
+    return jsxCode;
+  };
+
+  const jsx = (tag, props, ...children) => {
+    if (tag === "") return children.join("");
+
+    const attributes = [];
+    if (props) {
+      Object.keys(props).forEach((key) => {
+        if (key !== "children") {
+          const value = props[key];
+          if (typeof value === "boolean") {
+            if (value) attributes.push(key);
+          } else {
+            attributes.push(`${key}="${value}"`);
+          }
+        }
+      });
+    }
+
+    const attrString = attributes.length > 0 ? " " + attributes.join(" ") : "";
+    return `<${tag}${attrString}>${children.join("")}</${tag}>`;
+  };
+
+  const Fragment = (props, ...children) => children.join("");
+
+  const updateDependentComponents = (path) => {
+    const pathsToCheck = [path];
+    let currentPath = path;
+
+    while (currentPath.includes(".")) {
+      currentPath = currentPath.substring(0, currentPath.lastIndexOf("."));
+      pathsToCheck.push(currentPath);
+    }
+
+    const updatedComponents = new Set();
+
+    pathsToCheck.forEach((checkPath) => {
+      const affectedComponents = dependencies.get(checkPath);
+      if (!affectedComponents) return;
+
+      affectedComponents.forEach((componentId) => {
+        if (updatedComponents.has(componentId) || !components.has(componentId))
+          return;
+
+        const component = components.get(componentId);
+        renderComponent(component.target, component.render, componentId);
+        updatedComponents.add(componentId);
+      });
+    });
+  };
+
+  const registerDependencies = (obj, path) => {
+    if (!obj || typeof obj !== "object" || !activeComponent) return;
+
+    const paths = [path, ...Object.keys(obj).map((key) => `${path}.${key}`)];
+    paths.forEach((p) => {
+      if (!dependencies.has(p)) dependencies.set(p, new Set());
+      dependencies.get(p).add(activeComponent);
+    });
+
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key];
+      if (value && typeof value === "object") {
+        registerDependencies(value, `${path}.${key}`);
+      }
+    });
+  };
+
+  const addDependency = (path) => {
+    if (!activeComponent) return;
+    if (!dependencies.has(path)) dependencies.set(path, new Set());
+    dependencies.get(path).add(activeComponent);
+  };
+
+  const createProxy = (obj, path) => {
+    if (!obj || typeof obj !== "object") return obj;
+    if (sharedData.has(path) && sharedData.get(path) === obj) return obj;
+
+    const proxyHandler = {
+      get(target, prop) {
+        if (PRIMITIVE_METHODS.includes(prop)) return () => String(target);
+
+        const value = target[prop];
+        const currentPath = `${path}.${prop}`;
+
+        addDependency(currentPath);
+        addDependency(path);
+
+        return value && typeof value === "object"
+          ? createProxy(value, currentPath)
+          : value;
+      },
+
+      set(target, prop, value) {
+        target[prop] = value;
+        updateDependentComponents(`${path}.${prop}`);
+        return true;
+      },
+
+      deleteProperty(target, prop) {
+        delete target[prop];
+        updateDependentComponents(`${path}.${prop}`);
+        return true;
+      },
     };
 
-    if (this.settings.type?.window === "popup" && this.settings.popup.url) {
-      const popupButton = document.querySelector(
-        `[href="${this.settings.popup.url}"]`
-      );
-      if (popupButton) {
-        popupButton.addEventListener("click", () => {
-          const block = document.querySelector(`#${this.settings.name}`);
-          if (block) {
-            this.showPopup(block.querySelector(".popup"));
+    if (Array.isArray(obj)) {
+      return new Proxy(obj, {
+        ...proxyHandler,
+        get(target, prop) {
+          if (ARRAY_MUTATION_METHODS.includes(prop)) {
+            const originalMethod = target[prop];
+            return function (...args) {
+              const result = originalMethod.apply(target, args);
+              updateDependentComponents(path);
+              return result;
+            };
           }
-        });
-      }
+          return proxyHandler.get(target, prop);
+        },
+      });
     }
 
-    bindButton(form.prev?.target, () =>
-      this.handleFormPrev(formTarget, formName, form.prev?.select)
-    );
-    bindButton(form.next?.target, () =>
-      this.handleFormNext(formTarget, formName, form.next?.select)
-    );
-    bindButton(form.submit?.target, () => this.handleSubmit());
-  }
+    return new Proxy(obj, proxyHandler);
+  };
 
-  handleFormPrev(formTarget, formName, targetForm) {
-    const formElement = formTarget.querySelector("form");
-    if (formElement) {
-      this.updateFormData(formElement, formName);
-    }
-    if (targetForm) {
-      this.setForm(targetForm);
-    }
-  }
+  const fetchData = (url, interval) => {
+    const fetchAndProcess = () =>
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          const proxiedData = createProxy(data, url);
+          if (activeComponent) registerDependencies(data, url);
 
-  handleFormNext(formTarget, formName, selectConfig) {
-    const formElement = formTarget.querySelector("form");
-    if (formElement) {
-      const validationErrors = window.tildaForm.validate(formElement);
-      if (validationErrors.length > 0) {
-        window.tildaForm.showErrors(formElement, validationErrors);
-        console.warn(`Ошибки валидации в форме ${formName}:`, validationErrors);
-        return;
-      }
-      this.updateFormData(formElement, formName);
-      if (Array.isArray(selectConfig)) {
-        const formData = this.formData[formName];
-        if (!formData) {
-          console.warn(`Данные формы ${formName} отсутствуют.`);
-          return;
-        }
-        const nextForm = selectConfig.find(
-          (config) => formData[config.key] === config.value
-        );
-        if (nextForm) {
-          window.tildaForm.hideErrors(formElement);
-          this.setForm(nextForm.form);
-        } else {
-          const invalidValue =
-            formData[selectConfig[0].key] || "неизвестное значение";
-          const field = formElement?.querySelector(
-            `[name="${selectConfig[0].key}"]`
+          urlCache.set(url, { data: proxiedData, timestamp: Date.now() });
+          updateDependentComponents(url);
+          return proxiedData;
+        })
+        .catch((error) => {
+          TiLab.console.error(
+            `TiLab(get)`,
+            `Ошибка при загрузке данных с ${url}:`,
+            error
           );
-          const fieldContainer = field.closest(".t-input-block");
-          const errorMessage = `Значение "${invalidValue}" не верно.`;
-          var errorElement = fieldContainer.querySelector(".atf-input-error");
-          if (!errorElement) {
-            var errorElement = document.createElement("div");
-            errorElement.className = "atf-input-error";
-            errorElement.innerHTML = `
-<p class="atf-input-error-text"></p>
-<style>
-  .atf-input-error {
-    background-color: #fff;
-    border-radius: 2px;
-    box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.2);
-    left: 0;
-    margin-top: 5px;
-    padding: 8px 10px;
-    position: absolute;
-    z-index: 2;
-    transition: opacity 0.3s ease-in-out;
-  }
-  .atf-input-error-text {
-    color: red;
-    font-size: 13px;
-  }
-  .atf-input-error:after {
-    border: 6px solid transparent;
-    border-bottom-color: #fff;
-    content: "";
-    height: 0;
-    left: 15%;
-    position: absolute;
-    top: -12px;
-    width: 0;
-  }
-</style>
-            `;
-            fieldContainer.appendChild(errorElement);
-          }
-          const errorText = errorElement.querySelector(".atf-input-error-text");
-          errorText.innerHTML = errorMessage;
-          errorElement.style.opacity = "1";
-          setTimeout(() => {
-            errorElement.style.opacity = "0";
-          }, 3000);
-        }
-      } else if (typeof selectConfig === "string") {
-        window.tildaForm.hideErrors(formElement);
-        this.setForm(selectConfig);
-      }
-    }
-  }
+          return null;
+        });
 
-  handleSubmit() {
-    let isValid = true;
-    Object.entries(this.scheme).forEach(([name, form]) => {
-      const formElement = document
-        .querySelector(form.target)
-        ?.querySelector("form");
-      if (formElement) {
-        const validationErrors = window.tildaForm.validate(formElement);
-        if (validationErrors.length > 0) {
-          window.tildaForm.showErrors(formElement, validationErrors);
-          console.warn(`Ошибки валидации в форме ${name}:`, validationErrors);
-          isValid = false;
-        } else {
-          this.updateFormData(formElement, name);
-        }
-      }
-    });
+    if (interval && interval > 0) {
+      const cached = urlCache.get(url);
+      if (cached?.intervalId) clearInterval(cached.intervalId);
 
-    if (isValid) {
-      console.log("Все формы валидны. Данные для отправки:", this.formData);
-      const dataContainer = document.querySelector(this.settings.data);
-      if (dataContainer) {
-        const formElement = dataContainer.querySelector("form");
-        const formBtnSubmit = formElement.querySelector(".t-submit");
-        if (formElement) {
-          t_onFuncLoad("t_forms__getFormDataJSON", () => {
-            let formDataJSON = t_forms__getFormDataJSON(formElement) || {};
-            Object.keys(formDataJSON).forEach((key) => {
-              delete formDataJSON[key];
-            });
-            Object.entries(this.formData).forEach(([formName, formData]) => {
-              Object.entries(formData).forEach(([key, value]) => {
-                formDataJSON[key] = value;
-              });
-            });
-            console.log("Обновлённые данные формы для отправки:", formDataJSON);
-            t_onFuncLoad("tildaForm", () => {
-              window.tildaForm.send(formElement, formBtnSubmit, () => {
-                console.log("Данные успешно отправлены!");
-              });
-            });
-          });
-        } else {
-          console.warn("Форма для отправки не найдена.");
-        }
+      const intervalId = setInterval(fetchAndProcess, interval * 1000);
+
+      if (cached) {
+        cached.intervalId = intervalId;
+        return Promise.resolve(cached.data);
       } else {
-        console.warn("Контейнер данных не найден.");
+        urlCache.set(url, { intervalId });
+        return fetchAndProcess();
       }
-    } else {
-      console.warn("Отправка формы прервана из-за ошибок валидации.");
     }
-  }
 
-  initFormTracking() {
-    const formSelectors = Object.entries(this.scheme).map(
-      ([formName, form]) => ({ selector: form.target, formName })
-    );
+    return urlCache.has(url)
+      ? Promise.resolve(urlCache.get(url).data)
+      : fetchAndProcess();
+  };
 
-    formSelectors.forEach(({ selector, formName }) => {
-      const container = document.querySelector(selector);
-      if (!container) {
-        console.warn(`Блок с классом или ID: ${selector} - не найден.`);
-        return;
-      }
-      const observer = new MutationObserver(() => {
-        const formElement = container.querySelector("form");
-        if (formElement) {
-          observer.disconnect();
-          formElement.updateFormData = () =>
-            this.updateFormData(formElement, formName);
-          const stateBtnSubmit = formElement.querySelector(".t-submit");
-          if (stateBtnSubmit) {
-            stateBtnSubmit.remove();
-          }
-        }
-      });
-
-      observer.observe(document.body, { childList: true, subtree: true });
-    });
-  }
-
-  updateFormData(formElement, formName) {
-    t_onFuncLoad("t_forms__getFormDataJSON", () => {
-      const formDataJSON = t_forms__getFormDataJSON(formElement) || {};
-      if (!this.formData[formName]) {
-        this.formData[formName] = {};
-      }
-      const currentFormData = this.formData[formName];
-
-      Object.keys(currentFormData).forEach((key) => {
-        if (!(key in formDataJSON)) {
-          delete currentFormData[key];
-        }
-      });
-
-      Object.entries(formDataJSON).forEach(([key, value]) => {
-        if (
-          key !== "tildaspec-elemid" &&
-          key !== "form-spec-comments" &&
-          key !== "tildaspec-phone-part" &&
-          key !== "tildaspec-phone-part-iso"
-        ) {
-          currentFormData[key] = value;
-        }
-      });
-
-      console.log("Обновлённые данные формы:", this.formData);
-    });
-  }
-
-  setForm(formName) {
-    if (!this.scheme[formName]) {
-      console.error(`Шаг ${formName} не найден в схеме`);
+  const renderComponent = (target, renderFn, componentId) => {
+    const targetElement = document.querySelector(target);
+    if (!targetElement) {
+      TiLab.console.error(`TiLab(render)`, `Элемент ${target} не найден`);
       return;
     }
-    const isDefaultForm = this.settings.type?.form === "default";
 
-    Object.entries(this.scheme).forEach(([name, form]) => {
-      const element = document.querySelector(form.target);
-      if (element) {
-        element.style.display =
-          isDefaultForm || name === formName ? "block" : "none";
+    const prevComponent = activeComponent;
+    activeComponent = componentId;
+
+    try {
+      const context = { get: api.get, share: api.share, jsx, Fragment };
+      let result = renderFn.call(context);
+
+      result = jsxToString(result);
+
+      if (typeof result === "string") {
+        result = transformJSX(result);
       }
-    });
 
-    if (this.scheme[formName]?.function) {
-      this.scheme[formName].function();
+      targetElement.innerHTML = result;
+    } catch (error) {
+      TiLab.console.error(
+        `TiLab(render)`,
+        `Ошибка при рендеринге компонента ${target}:`,
+        error
+      );
+    } finally {
+      activeComponent = prevComponent;
     }
+  };
 
-    this.currentForm = formName;
-  }
+  const api = {
+    get(param, interval) {
+      if (typeof param !== "string") {
+        TiLab.console.error("TiLab(get)", "Неверный формат параметра для get");
+        return null;
+      }
 
-  showPopup(popup) {
-    window.tildaForm.lockBodyScroll();
-    popup.style.display = "block";
-    setTimeout(() => {
-      const popupContainer = popup.querySelector(".popup_container");
-      const popupBg = popup.querySelector(".popup_bg");
-      const popupClose = popup.querySelector(".popup_close");
-      popupContainer.style.opacity = "1";
-      popupBg.style.opacity = "1";
-      popupClose.style.opacity = "1";
-    }, 100);
-  }
+      if (
+        param.startsWith("http://") ||
+        param.startsWith("https://") ||
+        param.includes("/")
+      ) {
+        addDependency(param);
+        return fetchData(param, interval);
+      }
 
-  hidePopup(popup) {
-    window.tildaForm.unlockBodyScroll();
-    const popupContainer = popup.querySelector(".popup_container");
-    const popupBg = popup.querySelector(".popup_bg");
-    const popupClose = popup.querySelector(".popup_close");
-    popupContainer.style.opacity = "0";
-    popupBg.style.opacity = "0";
-    popupClose.style.opacity = "0";
-    setTimeout(() => {
-      popup.style.display = "none";
-    }, 300);
-  }
-}
+      if (sharedData.has(param)) {
+        addDependency(param);
+        const data = sharedData.get(param);
+        if (data && typeof data === "object") registerDependencies(data, param);
+        return data;
+      }
+
+      const globalData = window[param];
+      if (globalData !== undefined) {
+        const proxiedData = createProxy(globalData, param);
+        if (typeof globalData === "object" && globalData !== null) {
+          window[param] = proxiedData;
+        }
+        sharedData.set(param, proxiedData);
+        addDependency(param);
+        if (globalData && typeof globalData === "object") {
+          registerDependencies(globalData, param);
+        }
+        return proxiedData;
+      }
+
+      TiLab.console.warn(`TiLab(get)`, `Переменная ${param} не найдена`);
+      return null;
+    },
+
+    share(name, data) {
+      if (!name || typeof name !== "string") {
+        TiLab.console.error("TiLab(share)", "Имя должно быть строкой");
+        return null;
+      }
+
+      const proxiedData = createProxy(data, name);
+      sharedData.set(name, proxiedData);
+      updateDependentComponents(name);
+      return proxiedData;
+    },
+  };
+
+  return {
+    create(target, component) {
+      if (typeof target !== "string" || !target) {
+        TiLab.console.error(
+          "TiLab(create)",
+          "Целевой селектор должен быть строкой"
+        );
+        return;
+      }
+
+      let componentFn;
+      let componentName = null;
+
+      if (typeof component === "object") {
+        const entries = Object.entries(component);
+        if (entries.length === 1) [componentName, componentFn] = entries[0];
+      } else if (typeof component === "function") {
+        componentFn = component;
+        componentName = component.name || null;
+      } else {
+        TiLab.console.error("TiLab(create)", "Компонент должен быть функцией");
+        return;
+      }
+
+      if (typeof componentFn !== "function") {
+        TiLab.console.error(
+          "TiLab(create)",
+          "Компонент должен содержать функцию"
+        );
+        return;
+      }
+
+      const componentId = `${target}_${Math.random()
+        .toString(36)
+        .substring(2, 9)}`;
+      components.set(componentId, {
+        target,
+        render: componentFn,
+        name: componentName,
+      });
+
+      renderComponent(target, componentFn, componentId);
+      return componentId;
+    },
+
+    share: api.share,
+    get: api.get,
+    jsx,
+    Fragment,
+  };
+})();

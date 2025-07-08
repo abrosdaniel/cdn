@@ -285,7 +285,7 @@
 
     tlc.create(".tilab-console", function Console() {
       const data = tlc.get("TiLab");
-      const hasLogs = data.console?.storage?.length > 0;
+      const hasLogs = data.console?.getAll()?.length > 0;
 
       setTimeout(() => {
         const consoleElement = document.querySelector(".tilab-console");
@@ -343,7 +343,8 @@
         </style>
           ${
             hasLogs
-              ? data.console.storage
+              ? data.console
+                  .getAll()
                   .map((item) => {
                     const logTypeClass = `tilab-log-${item.type || "info"}`;
                     const dataContent =
@@ -354,7 +355,9 @@
                         : "";
 
                     return `
-                      <div class="tilab-log ${logTypeClass}">
+                      <div class="tilab-log ${logTypeClass}" data-log-id="${
+                      item.id
+                    }">
                         <div class="tilab-log-header">
                           <span class="tilab-log-name">${
                             item.name || "Неизвестно"
