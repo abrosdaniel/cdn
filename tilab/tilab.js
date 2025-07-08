@@ -208,31 +208,45 @@
 
         if (!originalData) return null;
 
-        // Создаем Proxy для отслеживания изменений
-        const reactiveData = new Proxy(originalData, {
-          get(target, prop) {
-            return target[prop];
-          },
-          set(target, prop, value) {
-            const oldValue = target[prop];
-            target[prop] = value;
+        // Рекурсивная функция для создания глубокого Proxy
+        const createDeepProxy = (obj, path = "") => {
+          if (obj === null || typeof obj !== "object") {
+            return obj;
+          }
 
-            // Если значение изменилось, уведомляем подписчиков
-            if (oldValue !== value) {
-              invalidateQueries(queryKey);
-            }
-            return true;
-          },
-          deleteProperty(target, prop) {
-            const hasProperty = prop in target;
-            const result = delete target[prop];
+          return new Proxy(obj, {
+            get(target, prop) {
+              const value = target[prop];
+              // Если это объект или массив, оборачиваем его в Proxy
+              if (value && typeof value === "object") {
+                return createDeepProxy(value, path ? `${path}.${prop}` : prop);
+              }
+              return value;
+            },
+            set(target, prop, value) {
+              const oldValue = target[prop];
+              target[prop] = value;
 
-            if (hasProperty) {
-              invalidateQueries(queryKey);
-            }
-            return result;
-          },
-        });
+              // Если значение изменилось, уведомляем подписчиков
+              if (oldValue !== value) {
+                invalidateQueries(queryKey);
+              }
+              return true;
+            },
+            deleteProperty(target, prop) {
+              const hasProperty = prop in target;
+              const result = delete target[prop];
+
+              if (hasProperty) {
+                invalidateQueries(queryKey);
+              }
+              return result;
+            },
+          });
+        };
+
+        // Создаем глубокий Proxy и заменяем оригинальные данные
+        const reactiveData = createDeepProxy(originalData);
 
         // Заменяем оригинальные данные на Proxy
         current[targetKey] = reactiveData;
