@@ -426,11 +426,16 @@
           const match = funcStr.match(/^function\s*(\w*)\s*\(([^)]*)\)/);
           if (match) {
             const [, funcName, params] = match;
-            return `ƒ ${key}(${params})`;
+            return html`<span style="color: #f59e0b">ƒ</span>
+              <span style="color: #60a5fa">${key}</span
+              ><span style="color: #d1d5db">(${params})</span>`;
           }
-          return `ƒ ${key}()`;
+          return html`<span style="color: #f59e0b">ƒ</span>
+            <span style="color: #60a5fa">${key}</span
+            ><span style="color: #d1d5db">()</span>`;
         }
-        return `${key}: ${type}`;
+        return html`<span style="color: #60a5fa">${key}</span
+          ><span style="color: #d1d5db">: ${type}</span>`;
       };
 
       return html`
@@ -446,7 +451,6 @@
           .tilab-lib-item {
             margin-bottom: calc(var(--tlp-font-size) * 0.25);
             background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
             font-size: calc(var(--tlp-font-size) * 0.75);
           }
           .tilab-lib-header {
@@ -464,6 +468,7 @@
             color: #d1d5db;
             font-weight: 500;
             flex: 1;
+            font-size: var(--tlp-font-size);
           }
           .tilab-lib-info {
             display: flex;
@@ -472,13 +477,13 @@
           }
           .tilab-lib-count {
             color: #9ca3af;
-            font-size: calc(var(--tlp-font-size) * 0.625);
+            font-size: calc(var(--tlp-font-size) * 0.8);
           }
           .tilab-lib-status {
             padding: calc(var(--tlp-font-size) * 0.125)
               calc(var(--tlp-font-size) * 0.25);
             border-radius: 3px;
-            font-size: calc(var(--tlp-font-size) * 0.625);
+            font-size: calc(var(--tlp-font-size) * 0.8);
             font-weight: 500;
           }
           .tilab-lib-loaded {
@@ -501,7 +506,7 @@
             padding: calc(var(--tlp-font-size) * 0.25);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             font-family: monospace;
-            font-size: calc(var(--tlp-font-size) * 0.625);
+            font-size: calc(var(--tlp-font-size) * 0.75);
             display: none;
           }
           .tilab-lib-item[data-expanded="true"] .tilab-lib-exports {
