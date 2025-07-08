@@ -407,6 +407,32 @@
     };
 
     const Libraries = ({ lib }) => {
+      const [expandedLibs, setExpandedLibs] = useState(new Set());
+
+      const toggleLib = (libName) => {
+        const newExpanded = new Set(expandedLibs);
+        if (newExpanded.has(libName)) {
+          newExpanded.delete(libName);
+        } else {
+          newExpanded.add(libName);
+        }
+        setExpandedLibs(newExpanded);
+      };
+
+      const formatExport = (key, value) => {
+        const type = typeof value;
+        if (type === "function") {
+          const funcStr = value.toString();
+          const match = funcStr.match(/^function\s*(\w*)\s*\(([^)]*)\)/);
+          if (match) {
+            const [, funcName, params] = match;
+            return `ƒ ${key}(${params})`;
+          }
+          return `ƒ ${key}()`;
+        }
+        return `${key}: ${type}`;
+      };
+
       return html`
         <style>
           .tilab-libraries {
@@ -428,10 +454,25 @@
             justify-content: space-between;
             align-items: center;
             padding: calc(var(--tlp-font-size) * 0.25);
+            cursor: pointer;
+            user-select: none;
+          }
+          .tilab-lib-header:hover {
+            background-color: rgba(255, 255, 255, 0.05);
           }
           .tilab-lib-name {
             color: #d1d5db;
             font-weight: 500;
+            flex: 1;
+          }
+          .tilab-lib-info {
+            display: flex;
+            align-items: center;
+            gap: calc(var(--tlp-font-size) * 0.25);
+          }
+          .tilab-lib-count {
+            color: #9ca3af;
+            font-size: calc(var(--tlp-font-size) * 0.625);
           }
           .tilab-lib-status {
             padding: calc(var(--tlp-font-size) * 0.125)
@@ -461,19 +502,18 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             font-family: monospace;
             font-size: calc(var(--tlp-font-size) * 0.625);
+            display: none;
+          }
+          .tilab-lib-item[data-expanded="true"] .tilab-lib-exports {
+            display: block;
           }
           .tilab-lib-export {
             color: #a3a3a3;
             margin-bottom: calc(var(--tlp-font-size) * 0.125);
+            padding-left: calc(var(--tlp-font-size) * 0.25);
           }
           .tilab-lib-export:last-child {
             margin-bottom: 0;
-          }
-          .tilab-lib-export-name {
-            color: #60a5fa;
-          }
-          .tilab-lib-export-type {
-            color: #f59e0b;
           }
         </style>
         <div class="tilab-libraries">
@@ -496,29 +536,34 @@
 
                 const exports = libItem.exports || {};
                 const exportKeys = Object.keys(exports);
+                const isExpanded = expandedLibs.has(libItem.name);
 
                 return html`
-                  <div class="tilab-lib-item">
-                    <div class="tilab-lib-header">
+                  <div class="tilab-lib-item" data-expanded="${isExpanded}">
+                    <div
+                      class="tilab-lib-header"
+                      onclick=${() => toggleLib(libItem.name)}
+                    >
                       <span class="tilab-lib-name">${libItem.name}</span>
-                      <span class="tilab-lib-status ${statusClass}"
-                        >${statusText}</span
-                      >
+                      <div class="tilab-lib-info">
+                        ${libItem.isLoaded && exportKeys.length > 0
+                          ? html`<span class="tilab-lib-count"
+                              >${exportKeys.length}</span
+                            >`
+                          : ""}
+                        <span class="tilab-lib-status ${statusClass}"
+                          >${statusText}</span
+                        >
+                      </div>
                     </div>
                     ${libItem.isLoaded && exportKeys.length > 0
                       ? html`
                           <div class="tilab-lib-exports">
                             ${exportKeys.map((key) => {
                               const value = exports[key];
-                              const type = typeof value;
                               return html`
                                 <div class="tilab-lib-export">
-                                  <span class="tilab-lib-export-name"
-                                    >${key}</span
-                                  >
-                                  <span class="tilab-lib-export-type"
-                                    >: ${type}</span
-                                  >
+                                  ${formatExport(key, value)}
                                 </div>
                               `;
                             })}
