@@ -26,22 +26,10 @@
 
         const { useQuery } = window.TiLab.query;
 
-        const { data: tiLabData = window.TiLab } = useQuery({
-          queryKey: ["tilab-version"],
-          queryFn: async () => window.TiLab.version,
+        const { data: tiLabData = {} } = useQuery({
+          queryKey: ["tilab"],
+          queryFn: async () => window.TiLab,
           staleTime: 100,
-        });
-
-        const { data: consoleData = { storage: [] } } = useQuery({
-          queryKey: ["tilab-console"],
-          queryFn: async () => window.TiLab.console,
-          staleTime: 100,
-        });
-
-        const { data: libData = { storage: [] } } = useQuery({
-          queryKey: ["tilab-lib"],
-          queryFn: async () => window.TiLab.lib,
-          staleTime: 1000,
         });
 
         const handleToggle = () => {
@@ -255,14 +243,14 @@
                   <${Logo} version=${tiLabData.version} />
                   <div class="tilab-status"></div>
                 </div>
-                <${Console} console=${consoleData} />
+                <${Console} console=${tiLabData.console} />
               </div>
               <div class="tilab-section">
-                <${Libraries} lib=${libData} />
+                <${Libraries} lib=${tiLabData.lib} />
               </div>
             </aside>
             <button class="tilab-open" onclick=${handleToggle}>
-              <${Notification} count=${consoleData.storage.length} />
+              <${Notification} count=${tiLabData.console.storage.length} />
               <img
                 src="https://cdn.abros.dev/tilab/services/assets/tilab.png"
               />
