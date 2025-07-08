@@ -192,7 +192,7 @@
       const queries = new Map();
       const subscribers = new Map();
 
-      // Универсальная функция для создания реактивных данных из window
+      // Универсальная функция для автоматического отслеживания изменений в глобальных данных
       const createReactiveData = (windowPath, queryKey) => {
         const pathParts = windowPath.split(".");
         let current = window;
@@ -208,77 +208,33 @@
 
         if (!originalData) return null;
 
-        // Рекурсивная функция для создания глубокого Proxy
-        const createDeepProxy = (obj) => {
-          if (obj === null || typeof obj !== "object") {
-            return obj;
-          }
-
-          // Создаем кэш для уже проксированных объектов
-          const proxyCache = new WeakMap();
-
-          const createProxy = (target) => {
-            // Проверяем, не является ли объект уже Proxy
-            if (
-              target &&
-              typeof target === "object" &&
-              target.constructor === Proxy
-            ) {
-              return target;
-            }
-
-            if (proxyCache.has(target)) {
-              return proxyCache.get(target);
-            }
-
-            const proxy = new Proxy(target, {
-              get(target, prop) {
-                const value = target[prop];
-                // Если это объект или массив, оборачиваем его в Proxy
-                if (
-                  value &&
-                  typeof value === "object" &&
-                  value !== target && // Избегаем циклических ссылок
-                  !proxyCache.has(value)
-                ) {
-                  const nestedProxy = createProxy(value);
-                  proxyCache.set(value, nestedProxy);
-                  return nestedProxy;
-                }
-                return value;
-              },
-              set(target, prop, value) {
-                const oldValue = target[prop];
-                target[prop] = value;
-
-                // Если значение изменилось, уведомляем подписчиков
-                if (oldValue !== value) {
-                  invalidateQueries(queryKey);
-                }
-                return true;
-              },
-              deleteProperty(target, prop) {
-                const hasProperty = prop in target;
-                const result = delete target[prop];
-
-                if (hasProperty) {
-                  invalidateQueries(queryKey);
-                }
-                return result;
-              },
-            });
-
-            proxyCache.set(target, proxy);
-            return proxy;
-          };
-
-          return createProxy(obj);
+        // Создаем реактивную обертку без Proxy
+        const reactiveData = {
+          ...originalData,
+          // Перехватываем все методы и свойства
+          get storage() {
+            return originalData.storage;
+          },
+          set storage(value) {
+            originalData.storage = value;
+            invalidateQueries(queryKey);
+          },
         };
 
-        // Создаем глубокий Proxy и заменяем оригинальные данные
-        const reactiveData = createDeepProxy(originalData);
+        // Оборачиваем все методы для отслеживания изменений
+        Object.keys(originalData).forEach((key) => {
+          if (typeof originalData[key] === "function") {
+            const originalMethod = originalData[key];
+            reactiveData[key] = (...args) => {
+              const result = originalMethod.apply(originalData, args);
+              // Уведомляем об изменении после выполнения метода
+              invalidateQueries(queryKey);
+              return result;
+            };
+          }
+        });
 
-        // Заменяем оригинальные данные на Proxy
+        // Заменяем оригинальные данные на реактивную обертку
         current[targetKey] = reactiveData;
 
         return reactiveData;
@@ -441,10 +397,10 @@
               setQueryLoading(fullQueryKey, true);
               Promise.resolve(queryFn())
                 .then((data) => {
-                  // Если это глобальные данные, создаем Proxy
+                  // Если это глобальные данные, создаем реактивную обертку
                   let finalData = data;
                   if (isGlobalDataQuery && globalPath) {
-                    // Создаем Proxy для глобальных данных
+                    // Создаем реактивную обертку для глобальных данных
                     const reactiveData = createReactiveData(
                       `window.${globalPath}`,
                       fullQueryKey
@@ -468,10 +424,10 @@
 
             Promise.resolve(queryFn())
               .then((data) => {
-                // Если это глобальные данные, создаем Proxy
+                // Если это глобальные данные, создаем реактивную обертку
                 let finalData = data;
                 if (isGlobalDataQuery && globalPath) {
-                  // Создаем Proxy для глобальных данных
+                  // Создаем реактивную обертку для глобальных данных
                   const reactiveData = createReactiveData(
                     `window.${globalPath}`,
                     fullQueryKey
