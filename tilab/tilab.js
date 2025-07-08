@@ -274,7 +274,10 @@
             keysToDelete.push(key);
           }
         }
-        keysToDelete.forEach((key) => invalidateQuery(key));
+        keysToDelete.forEach((key) => {
+          queries.delete(key);
+          notifySubscribers(key);
+        });
       };
 
       // Готовые функции для использования в TiLab.jsx
@@ -348,7 +351,7 @@
           }
 
           return unsubscribe;
-        }, [fullQueryKey, enabled]);
+        }, [fullQueryKey, enabled, staleTime]);
 
         return state;
       };

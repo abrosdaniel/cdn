@@ -24,8 +24,7 @@
         const [startY, setStartY] = useState(0);
         const [startHeight, setStartHeight] = useState(0);
 
-        // Загружаем данные TiLab через QueryModule
-        const { useQuery, useMutation } = window.TiLab.query;
+        const { useQuery } = window.TiLab.query;
 
         const { data: tiLabData = window.TiLab } = useQuery({
           queryKey: ["tilab-data"],
@@ -53,28 +52,35 @@
           setStartY(e.clientY);
           setStartHeight(panelHeight);
           setIsDragging(true);
-          document.addEventListener("mousemove", handleDrag);
-          document.addEventListener("mouseup", handleDragEnd);
           e.preventDefault();
         };
 
-        const handleDrag = (e) => {
+        useEffect(() => {
           if (!isDragging) return;
-          const minHeight = 200;
-          const maxHeight = window.innerHeight * 0.9;
-          const deltaY = startY - e.clientY;
-          const newHeight = Math.max(
-            minHeight,
-            Math.min(startHeight + deltaY, maxHeight)
-          );
-          setPanelHeight(newHeight);
-        };
 
-        const handleDragEnd = () => {
-          setIsDragging(false);
-          document.removeEventListener("mousemove", handleDrag);
-          document.removeEventListener("mouseup", handleDragEnd);
-        };
+          const handleMouseMove = (e) => {
+            const minHeight = 200;
+            const maxHeight = window.innerHeight * 0.9;
+            const deltaY = startY - e.clientY;
+            const newHeight = Math.max(
+              minHeight,
+              Math.min(startHeight + deltaY, maxHeight)
+            );
+            setPanelHeight(newHeight);
+          };
+
+          const handleMouseUp = () => {
+            setIsDragging(false);
+          };
+
+          document.addEventListener("mousemove", handleMouseMove);
+          document.addEventListener("mouseup", handleMouseUp);
+
+          return () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+          };
+        }, [isDragging, startY, startHeight]);
 
         return html`
           <style>
@@ -131,7 +137,7 @@
               position: absolute;
               cursor: pointer;
               z-index: 5;
-              display: flex;
+              display: none;
               align-items: center;
               justify-content: center;
               outline: none;
@@ -150,8 +156,8 @@
                 calc(var(--tlp-font-size) * 0.125)
                 calc(var(--tlp-font-size) * 0.375);
             }
-            .tilab-frame[data-state="false"] .tilab-close {
-              display: none;
+            .tilab-frame[data-state="true"] .tilab-close {
+              display: flex;
             }
             .tilab-close:hover {
               background-color: #292e3d;
@@ -329,7 +335,7 @@
           if (consoleElement && console.storage.length > 0) {
             consoleElement.scrollTop = consoleElement.scrollHeight;
           }
-        }, [console.storage.length]);
+        }, [console.storage]);
 
         return html`
           <style>
