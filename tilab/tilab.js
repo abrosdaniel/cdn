@@ -50,10 +50,6 @@
           error: null,
         };
         storage.push(libRecord);
-        // Уведомляем QueryModule об изменении данных библиотек
-        if (window.TiLab?.query?.invalidateQueries) {
-          window.TiLab.query.invalidateQueries("lib-data");
-        }
         window.TiLabExport = (functions) => {
           Object.assign(libRecord.exports, functions);
         };
@@ -65,11 +61,6 @@
             libRecord.isLoaded = true;
             libRecord.isLoading = false;
             libRecord.loadedAt = Date.now();
-
-            // Уведомляем QueryModule об изменении данных библиотек
-            if (window.TiLab?.query?.invalidateQueries) {
-              window.TiLab.query.invalidateQueries("lib-data");
-            }
 
             if (typeof callback === "function") {
               callback(...Object.values(libRecord.exports));
@@ -83,11 +74,6 @@
             libRecord.isLoaded = false;
             libRecord.isLoading = false;
             libRecord.error = error.message;
-
-            // Уведомляем QueryModule об изменении данных библиотек
-            if (window.TiLab?.query?.invalidateQueries) {
-              window.TiLab.query.invalidateQueries("lib-data");
-            }
 
             console.error(`Ошибка загрузки библиотеки ${libName}:`, error);
             throw error;
@@ -114,10 +100,6 @@
           data,
         };
         storage.push(entry);
-        // Уведомляем QueryModule об изменении данных консоли
-        if (window.TiLab?.query?.invalidateQueries) {
-          window.TiLab.query.invalidateQueries("console-data");
-        }
         return entry;
       };
 
@@ -125,10 +107,6 @@
         storage,
         clear: () => {
           storage.length = 0;
-          // Уведомляем QueryModule об изменении данных консоли
-          if (window.TiLab?.query?.invalidateQueries) {
-            window.TiLab.query.invalidateQueries("console-data");
-          }
         },
       };
 
@@ -213,6 +191,34 @@
     const QueryModule = () => {
       const queries = new Map();
       const subscribers = new Map();
+
+      // Proxy для отслеживания изменений в глобальных данных
+      const createReactiveData = (data, queryKey) => {
+        return new Proxy(data, {
+          get(target, prop) {
+            return target[prop];
+          },
+          set(target, prop, value) {
+            const oldValue = target[prop];
+            target[prop] = value;
+
+            // Если значение изменилось, уведомляем подписчиков
+            if (oldValue !== value) {
+              invalidateQueries(queryKey);
+            }
+            return true;
+          },
+          deleteProperty(target, prop) {
+            const hasProperty = prop in target;
+            const result = delete target[prop];
+
+            if (hasProperty) {
+              invalidateQueries(queryKey);
+            }
+            return result;
+          },
+        });
+      };
 
       const createQueryKey = (key) => {
         return typeof key === "string" ? key : JSON.stringify(key);
@@ -325,6 +331,11 @@
 
         const fullQueryKey = createQueryKey(queryKey);
 
+        // Проверяем, является ли queryFn функцией, возвращающей глобальные данные
+        const isGlobalDataQuery =
+          typeof queryFn === "function" &&
+          queryFn.toString().includes("window.");
+
         useEffect(() => {
           if (!enabled) return;
 
@@ -358,7 +369,11 @@
               setQueryLoading(fullQueryKey, true);
               Promise.resolve(queryFn())
                 .then((data) => {
-                  setQuery(fullQueryKey, data);
+                  // Если это глобальные данные, оборачиваем в Proxy
+                  const finalData = isGlobalDataQuery
+                    ? createReactiveData(data, fullQueryKey)
+                    : data;
+                  setQuery(fullQueryKey, finalData);
                 })
                 .catch((error) => {
                   setQueryError(fullQueryKey, error);
@@ -373,7 +388,11 @@
 
             Promise.resolve(queryFn())
               .then((data) => {
-                setQuery(fullQueryKey, data);
+                // Если это глобальные данные, оборачиваем в Proxy
+                const finalData = isGlobalDataQuery
+                  ? createReactiveData(data, fullQueryKey)
+                  : data;
+                setQuery(fullQueryKey, finalData);
               })
               .catch((error) => {
                 setQueryError(fullQueryKey, error);
