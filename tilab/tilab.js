@@ -203,7 +203,8 @@
         const targetKey = pathParts[pathParts.length - 1];
         const originalData = current[targetKey];
 
-        if (!originalData) return null;
+        if (!originalData || typeof originalData !== "object")
+          return originalData;
 
         const reactiveData = {};
         const notify = () => {
