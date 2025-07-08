@@ -152,7 +152,7 @@
               createContext,
             };
 
-            callback(
+            callback({
               html,
               render,
               Component,
@@ -163,8 +163,8 @@
               useMemo,
               useCallback,
               useContext,
-              createContext
-            );
+              createContext,
+            });
 
             const componentRecord = {
               id: Date.now() + Math.random(),

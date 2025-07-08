@@ -3,7 +3,7 @@
   createPanel.classList.add("tilab");
   document.body.appendChild(createPanel);
 
-  TiLab.jsx((html, render, useState, useEffect) => {
+  TiLab.jsx(({ html, render, useState, useEffect }) => {
     const Panel = () => {
       const [isOpen, setIsOpen] = useState(false);
       const [panelHeight, setPanelHeight] = useState(500);
