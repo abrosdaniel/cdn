@@ -512,10 +512,6 @@
       jsx: JSXModule().create,
     };
 
-    // Оборачиваем глобальные объекты в Proxy для реактивности
-    queryModule.createReactiveData("TiLab.console", "console-data");
-    queryModule.createReactiveData("TiLab.lib", "lib-data");
-
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("tilab") === "") {
       loadScript(`${Constants.CDN}/tilab/services/panel.js`);
