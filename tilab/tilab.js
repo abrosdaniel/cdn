@@ -217,7 +217,11 @@
           },
           set storage(value) {
             originalData.storage = value;
-            invalidateQueries(queryKey);
+            // Уведомляем подписчиков напрямую
+            const query = queries.get(queryKey);
+            if (query) {
+              notifySubscribers(queryKey);
+            }
           },
         };
 
@@ -227,8 +231,11 @@
             const originalMethod = originalData[key];
             reactiveData[key] = (...args) => {
               const result = originalMethod.apply(originalData, args);
-              // Уведомляем об изменении после выполнения метода
-              invalidateQueries(queryKey);
+              // Уведомляем подписчиков напрямую
+              const query = queries.get(queryKey);
+              if (query) {
+                notifySubscribers(queryKey);
+              }
               return result;
             };
           }
@@ -340,17 +347,6 @@
           return { data: undefined, isLoading: false, error: null };
         }
 
-        const [state, setState] = useState({
-          data: undefined,
-          isLoading: false,
-          error: null,
-          isSuccess: false,
-          isError: false,
-          isFetching: false,
-        });
-
-        const fullQueryKey = createQueryKey(queryKey);
-
         // Проверяем, является ли queryFn функцией, возвращающей глобальные данные
         const queryFnString = queryFn.toString();
         const isGlobalDataQuery = queryFnString.includes("window.");
@@ -363,6 +359,17 @@
             globalPath = match[1];
           }
         }
+
+        const [state, setState] = useState({
+          data: undefined,
+          isLoading: false,
+          error: null,
+          isSuccess: false,
+          isError: false,
+          isFetching: false,
+        });
+
+        const fullQueryKey = createQueryKey(queryKey);
 
         useEffect(() => {
           if (!enabled) return;
