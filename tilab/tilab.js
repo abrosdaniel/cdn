@@ -142,7 +142,6 @@
               throw new Error("htm/preact не загружен или функции недоступны");
             }
 
-            // Сохраняем хуки глобально для QueryModule
             window.TiLab.jsx._hooks = {
               useState,
               useEffect,
@@ -192,12 +191,10 @@
       const queries = new Map();
       const subscribers = new Map();
 
-      // Универсальная функция для автоматического отслеживания изменений в глобальных данных
       const createReactiveData = (windowPath, queryKey) => {
         const pathParts = windowPath.split(".");
         let current = window;
 
-        // Проходим по пути до предпоследнего элемента
         for (let i = 0; i < pathParts.length - 1; i++) {
           current = current[pathParts[i]];
           if (!current) return null;
@@ -208,42 +205,36 @@
 
         if (!originalData) return null;
 
-        // Создаем реактивную обертку без Proxy
-        const reactiveData = {
-          ...originalData,
-          // Перехватываем все методы и свойства
-          get storage() {
-            return originalData.storage;
-          },
-          set storage(value) {
-            originalData.storage = value;
-            // Уведомляем подписчиков напрямую
-            const query = queries.get(queryKey);
-            if (query) {
-              notifySubscribers(queryKey);
-            }
-          },
+        const reactiveData = {};
+        const notify = () => {
+          const query = queries.get(queryKey);
+          if (query) notifySubscribers(queryKey);
         };
 
-        // Оборачиваем все методы для отслеживания изменений
         Object.keys(originalData).forEach((key) => {
           if (typeof originalData[key] === "function") {
             const originalMethod = originalData[key];
             reactiveData[key] = (...args) => {
               const result = originalMethod.apply(originalData, args);
-              // Уведомляем подписчиков напрямую
-              const query = queries.get(queryKey);
-              if (query) {
-                notifySubscribers(queryKey);
-              }
+              notify();
               return result;
             };
+          } else {
+            Object.defineProperty(reactiveData, key, {
+              get() {
+                return originalData[key];
+              },
+              set(value) {
+                originalData[key] = value;
+                notify();
+              },
+              enumerable: true,
+              configurable: true,
+            });
           }
         });
 
-        // Заменяем оригинальные данные на реактивную обертку
         current[targetKey] = reactiveData;
-
         return reactiveData;
       };
 
@@ -298,7 +289,6 @@
         }
         subscribers.get(queryKey).push(callback);
 
-        // Вызываем callback сразу с текущими данными
         const query = queries.get(queryKey);
         if (query) {
           callback(query);
@@ -329,7 +319,6 @@
         }
         keysToDelete.forEach((key) => {
           queries.delete(key);
-          // Уведомляем подписчиков с пустыми данными, чтобы вызвать ререндер
           notifySubscribers(key);
         });
       };
@@ -337,7 +326,6 @@
       const useQuery = (options) => {
         const { queryKey, queryFn, staleTime = 0, enabled = true } = options;
 
-        // Получаем хуки из TiLab.jsx
         const { useState, useEffect } = window.TiLab.jsx._hooks || {};
 
         if (!useState || !useEffect) {
@@ -347,18 +335,11 @@
           return { data: undefined, isLoading: false, error: null };
         }
 
-        // Проверяем, является ли queryFn функцией, возвращающей глобальные данные
         const queryFnString = queryFn.toString();
         const isGlobalDataQuery = queryFnString.includes("window.");
-
-        // Извлекаем путь к глобальным данным из queryFn
-        let globalPath = null;
-        if (isGlobalDataQuery) {
-          const match = queryFnString.match(/window\.([\w.]+)/);
-          if (match) {
-            globalPath = match[1];
-          }
-        }
+        const globalPath = isGlobalDataQuery
+          ? queryFnString.match(/window\.([\w.]+)/)?.[1]
+          : null;
 
         const [state, setState] = useState({
           data: undefined,
@@ -388,66 +369,47 @@
                 isFetching: query.isLoading,
               });
 
-              // Если данные устарели, обновляем их
               if (isStale && !query.isLoading) {
                 setQueryLoading(fullQueryKey, true);
                 Promise.resolve(queryFn())
-                  .then((data) => {
-                    setQuery(fullQueryKey, data);
-                  })
-                  .catch((error) => {
-                    setQueryError(fullQueryKey, error);
-                  });
+                  .then((data) => setQuery(fullQueryKey, data))
+                  .catch((error) => setQueryError(fullQueryKey, error));
               }
             } else {
-              // Если данных нет в кэше, запускаем запрос
               setQueryLoading(fullQueryKey, true);
               Promise.resolve(queryFn())
                 .then((data) => {
-                  // Если это глобальные данные, создаем реактивную обертку
                   let finalData = data;
                   if (isGlobalDataQuery && globalPath) {
-                    // Создаем реактивную обертку для глобальных данных
                     const reactiveData = createReactiveData(
                       `window.${globalPath}`,
                       fullQueryKey
                     );
-                    if (reactiveData) {
-                      finalData = reactiveData;
-                    }
+                    if (reactiveData) finalData = reactiveData;
                   }
                   setQuery(fullQueryKey, finalData);
                 })
-                .catch((error) => {
-                  setQueryError(fullQueryKey, error);
-                });
+                .catch((error) => setQueryError(fullQueryKey, error));
             }
           });
 
-          // Если данных нет, запускаем запрос
           const query = queries.get(fullQueryKey);
           if (!query && !state.isLoading) {
             setQueryLoading(fullQueryKey, true);
 
             Promise.resolve(queryFn())
               .then((data) => {
-                // Если это глобальные данные, создаем реактивную обертку
                 let finalData = data;
                 if (isGlobalDataQuery && globalPath) {
-                  // Создаем реактивную обертку для глобальных данных
                   const reactiveData = createReactiveData(
                     `window.${globalPath}`,
                     fullQueryKey
                   );
-                  if (reactiveData) {
-                    finalData = reactiveData;
-                  }
+                  if (reactiveData) finalData = reactiveData;
                 }
                 setQuery(fullQueryKey, finalData);
               })
-              .catch((error) => {
-                setQueryError(fullQueryKey, error);
-              });
+              .catch((error) => setQueryError(fullQueryKey, error));
           }
 
           return unsubscribe;
@@ -459,7 +421,6 @@
       const useMutation = (options) => {
         const { mutationFn, onSuccess, onError, onSettled } = options;
 
-        // Получаем хуки из TiLab.jsx
         const { useState, useCallback } = window.TiLab.jsx._hooks || {};
 
         if (!useState || !useCallback) {
@@ -491,10 +452,7 @@
                 isError: false,
               });
 
-              if (onSuccess) {
-                onSuccess(data, variables);
-              }
-
+              if (onSuccess) onSuccess(data, variables);
               return data;
             } catch (error) {
               setState({
@@ -505,15 +463,10 @@
                 isError: true,
               });
 
-              if (onError) {
-                onError(error, variables);
-              }
-
+              if (onError) onError(error, variables);
               throw error;
             } finally {
-              if (onSettled) {
-                onSettled(state.data, error, variables);
-              }
+              if (onSettled) onSettled(state.data, error, variables);
             }
           },
           [mutationFn, onSuccess, onError, onSettled]
@@ -529,11 +482,7 @@
           });
         }, []);
 
-        return {
-          ...state,
-          mutate,
-          reset,
-        };
+        return { ...state, mutate, reset };
       };
 
       return {
