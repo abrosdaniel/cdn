@@ -26,7 +26,7 @@
 
         const { useQuery } = window.TiLab.query;
 
-        const { data: tiLabData = {} } = useQuery({
+        const { data: tiLabData = window.TiLab } = useQuery({
           queryKey: ["tilab"],
           queryFn: async () => window.TiLab,
           staleTime: 100,
