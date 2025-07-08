@@ -1,4 +1,8 @@
 (function (window) {
+  const createPanel = document.createElement("div");
+  createPanel.classList.add("tilab");
+  document.body.appendChild(createPanel);
+
   TiLab.jsx(
     (
       html,
@@ -202,51 +206,48 @@
                 border-radius: 500px;
               }
             </style>
-
-            <div class="tilab">
-              <div class="tilab-frame" data-state="${isOpen}">
-                <aside aria-label="TiLab panel">
-                  <div
-                    class="tilab-drag-handle"
-                    onmousedown=${this.handleDragStart}
-                  ></div>
-                  <button
-                    aria-label="Close TiLab panel"
-                    class="tilab-close"
-                    onclick=${this.handleToggle}
+            <div class="tilab-frame" data-state="${isOpen}">
+              <aside aria-label="TiLab panel">
+                <div
+                  class="tilab-drag-handle"
+                  onmousedown=${this.handleDragStart}
+                ></div>
+                <button
+                  aria-label="Close TiLab panel"
+                  class="tilab-close"
+                  onclick=${this.handleToggle}
+                >
+                  <svg
+                    width="10"
+                    height="6"
+                    viewBox="0 0 10 6"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <svg
-                      width="10"
-                      height="6"
-                      viewBox="0 0 10 6"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1 1L5 5L9 1"
-                        stroke="currentColor"
-                        stroke-width="1.66667"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                    </svg>
-                  </button>
-                  <div class="tilab-section">
-                    <div class="tilab-header">
-                      <${Logo} version=${data.version} />
-                      <div class="tilab-status"></div>
-                    </div>
-                    <${Console} console=${data.console} />
-                  </div>
-                  <div class="tilab-section"></div>
-                </aside>
-                <button class="tilab-open" onclick=${this.handleToggle}>
-                  <${Notification} count=${data.console.storage.length} />
-                  <img
-                    src="https://cdn.abros.dev/tilab/services/assets/tilab.png"
-                  />
+                    <path
+                      d="M1 1L5 5L9 1"
+                      stroke="currentColor"
+                      stroke-width="1.66667"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></path>
+                  </svg>
                 </button>
-              </div>
+                <div class="tilab-section">
+                  <div class="tilab-header">
+                    <${Logo} version=${data.version} />
+                    <div class="tilab-status"></div>
+                  </div>
+                  <${Console} console=${data.console} />
+                </div>
+                <div class="tilab-section"></div>
+              </aside>
+              <button class="tilab-open" onclick=${this.handleToggle}>
+                <${Notification} count=${data.console.storage.length} />
+                <img
+                  src="https://cdn.abros.dev/tilab/services/assets/tilab.png"
+                />
+              </button>
             </div>
           `;
         }
@@ -398,7 +399,7 @@
         `;
       };
 
-      render(html`<${Panel} />`, document.body);
+      render(html`<${Panel} />`, createPanel);
     }
   );
 })(window);
