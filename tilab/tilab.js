@@ -192,9 +192,24 @@
       const queries = new Map();
       const subscribers = new Map();
 
-      // Proxy для отслеживания изменений в глобальных данных
-      const createReactiveData = (data, queryKey) => {
-        return new Proxy(data, {
+      // Универсальная функция для создания реактивных данных из window
+      const createReactiveData = (windowPath, queryKey) => {
+        const pathParts = windowPath.split(".");
+        let current = window;
+
+        // Проходим по пути до предпоследнего элемента
+        for (let i = 0; i < pathParts.length - 1; i++) {
+          current = current[pathParts[i]];
+          if (!current) return null;
+        }
+
+        const targetKey = pathParts[pathParts.length - 1];
+        const originalData = current[targetKey];
+
+        if (!originalData) return null;
+
+        // Создаем Proxy для отслеживания изменений
+        const reactiveData = new Proxy(originalData, {
           get(target, prop) {
             return target[prop];
           },
@@ -218,6 +233,11 @@
             return result;
           },
         });
+
+        // Заменяем оригинальные данные на Proxy
+        current[targetKey] = reactiveData;
+
+        return reactiveData;
       };
 
       const createQueryKey = (key) => {
@@ -331,11 +351,6 @@
 
         const fullQueryKey = createQueryKey(queryKey);
 
-        // Проверяем, является ли queryFn функцией, возвращающей глобальные данные
-        const isGlobalDataQuery =
-          typeof queryFn === "function" &&
-          queryFn.toString().includes("window.");
-
         useEffect(() => {
           if (!enabled) return;
 
@@ -369,11 +384,7 @@
               setQueryLoading(fullQueryKey, true);
               Promise.resolve(queryFn())
                 .then((data) => {
-                  // Если это глобальные данные, оборачиваем в Proxy
-                  const finalData = isGlobalDataQuery
-                    ? createReactiveData(data, fullQueryKey)
-                    : data;
-                  setQuery(fullQueryKey, finalData);
+                  setQuery(fullQueryKey, data);
                 })
                 .catch((error) => {
                   setQueryError(fullQueryKey, error);
@@ -388,11 +399,7 @@
 
             Promise.resolve(queryFn())
               .then((data) => {
-                // Если это глобальные данные, оборачиваем в Proxy
-                const finalData = isGlobalDataQuery
-                  ? createReactiveData(data, fullQueryKey)
-                  : data;
-                setQuery(fullQueryKey, finalData);
+                setQuery(fullQueryKey, data);
               })
               .catch((error) => {
                 setQueryError(fullQueryKey, error);
@@ -493,15 +500,21 @@
       };
     };
 
+    const queryModule = QueryModule();
+
     window.TiLab = {
       version: "0.6 (alpha)",
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
-      query: QueryModule(),
+      query: queryModule,
       console: ConsoleModule(),
       lib: LibraryModule(),
       jsx: JSXModule().create,
     };
+
+    // Оборачиваем глобальные объекты в Proxy для реактивности
+    queryModule.createReactiveData("TiLab.console", "console-data");
+    queryModule.createReactiveData("TiLab.lib", "lib-data");
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("tilab") === "") {
