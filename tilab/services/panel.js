@@ -30,19 +30,19 @@
         const { data: tiLabData = window.TiLab } = useQuery({
           queryKey: ["tilab-data"],
           queryFn: async () => window.TiLab,
-          staleTime: 100, // Обновляем каждые 100мс для реактивности
+          staleTime: 1000 * 60 * 5,
         });
 
         const { data: consoleData = { storage: [] } } = useQuery({
           queryKey: ["console-data"],
           queryFn: async () => window.TiLab.console,
-          staleTime: 100,
+          staleTime: 1000 * 60 * 5,
         });
 
         const { data: libData = { storage: [] } } = useQuery({
           queryKey: ["lib-data"],
           queryFn: async () => window.TiLab.lib,
-          staleTime: 1000,
+          staleTime: 1000 * 60 * 5,
         });
 
         const handleToggle = () => {

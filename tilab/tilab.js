@@ -50,7 +50,7 @@
           error: null,
         };
         storage.push(libRecord);
-
+        window.TiLab.query.invalidateQueries("lib-data");
         window.TiLabExport = (functions) => {
           Object.assign(libRecord.exports, functions);
         };
@@ -101,6 +101,7 @@
           data,
         };
         storage.push(entry);
+        window.TiLab.query.invalidateQueries("console-data");
         return entry;
       };
 
@@ -444,10 +445,10 @@
       version: "0.6 (alpha)",
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
+      query: QueryModule(),
       console: ConsoleModule(),
       lib: LibraryModule(),
       jsx: JSXModule().create,
-      query: QueryModule(),
     };
 
     const urlParams = new URLSearchParams(window.location.search);
