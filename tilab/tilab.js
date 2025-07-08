@@ -178,6 +178,251 @@
       return jsx;
     };
 
+    const QueryModule = () => {
+      const queries = new Map();
+      const subscribers = new Map();
+
+      const createQueryKey = (key, params) => {
+        return typeof key === "string" ? key : JSON.stringify({ key, params });
+      };
+
+      const getQuery = (queryKey) => {
+        return queries.get(queryKey);
+      };
+
+      const setQuery = (queryKey, data) => {
+        queries.set(queryKey, {
+          data,
+          timestamp: Date.now(),
+          isLoading: false,
+          error: null,
+        });
+        notifySubscribers(queryKey);
+      };
+
+      const setQueryLoading = (queryKey, isLoading = true) => {
+        const query = queries.get(queryKey) || {};
+        queries.set(queryKey, {
+          ...query,
+          isLoading,
+          timestamp: Date.now(),
+        });
+        notifySubscribers(queryKey);
+      };
+
+      const setQueryError = (queryKey, error) => {
+        const query = queries.get(queryKey) || {};
+        queries.set(queryKey, {
+          ...query,
+          error,
+          isLoading: false,
+          timestamp: Date.now(),
+        });
+        notifySubscribers(queryKey);
+      };
+
+      const notifySubscribers = (queryKey) => {
+        const query = queries.get(queryKey);
+        const querySubscribers = subscribers.get(queryKey) || [];
+        querySubscribers.forEach((callback) => callback(query));
+      };
+
+      const subscribe = (queryKey, callback) => {
+        if (!subscribers.has(queryKey)) {
+          subscribers.set(queryKey, []);
+        }
+        subscribers.get(queryKey).push(callback);
+
+        // Вызываем callback сразу с текущими данными
+        const query = queries.get(queryKey);
+        if (query) {
+          callback(query);
+        }
+
+        return () => {
+          const querySubscribers = subscribers.get(queryKey) || [];
+          const index = querySubscribers.indexOf(callback);
+          if (index > -1) {
+            querySubscribers.splice(index, 1);
+          }
+        };
+      };
+
+      const invalidateQuery = (queryKey) => {
+        queries.delete(queryKey);
+        notifySubscribers(queryKey);
+      };
+
+      const invalidateQueries = (pattern) => {
+        const keysToDelete = [];
+        for (const [key] of queries) {
+          if (typeof pattern === "string" && key.includes(pattern)) {
+            keysToDelete.push(key);
+          } else if (pattern instanceof RegExp && pattern.test(key)) {
+            keysToDelete.push(key);
+          }
+        }
+        keysToDelete.forEach((key) => invalidateQuery(key));
+      };
+
+      const createUseQuery = (useState, useEffect, useCallback) => {
+        return (options) => {
+          const { queryKey, queryFn, staleTime = 0, enabled = true } = options;
+
+          const [state, setState] = useState({
+            data: undefined,
+            isLoading: false,
+            error: null,
+            isSuccess: false,
+            isError: false,
+            isFetching: false,
+          });
+
+          const fullQueryKey = createQueryKey(queryKey);
+
+          useEffect(() => {
+            if (!enabled) return;
+
+            const unsubscribe = subscribe(fullQueryKey, (query) => {
+              if (query) {
+                const isStale = Date.now() - query.timestamp > staleTime;
+
+                setState({
+                  data: query.data,
+                  isLoading: query.isLoading,
+                  error: query.error,
+                  isSuccess:
+                    !query.isLoading &&
+                    !query.error &&
+                    query.data !== undefined,
+                  isError: !!query.error,
+                  isFetching: query.isLoading,
+                });
+
+                // Если данные устарели, обновляем их
+                if (isStale && !query.isLoading) {
+                  setQueryLoading(fullQueryKey, true);
+                  Promise.resolve(queryFn())
+                    .then((data) => {
+                      setQuery(fullQueryKey, data);
+                    })
+                    .catch((error) => {
+                      setQueryError(fullQueryKey, error);
+                    });
+                }
+              }
+            });
+
+            // Если данных нет, запускаем запрос
+            const query = queries.get(fullQueryKey);
+            if (!query && !state.isLoading) {
+              setQueryLoading(fullQueryKey, true);
+
+              Promise.resolve(queryFn())
+                .then((data) => {
+                  setQuery(fullQueryKey, data);
+                })
+                .catch((error) => {
+                  setQueryError(fullQueryKey, error);
+                });
+            }
+
+            return unsubscribe;
+          }, [fullQueryKey, enabled]);
+
+          return state;
+        };
+      };
+
+      const createUseMutation = (useState, useCallback) => {
+        return (options) => {
+          const { mutationFn, onSuccess, onError, onSettled } = options;
+
+          const [state, setState] = useState({
+            data: undefined,
+            isLoading: false,
+            error: null,
+            isSuccess: false,
+            isError: false,
+          });
+
+          const mutate = useCallback(
+            async (variables) => {
+              setState((prev) => ({ ...prev, isLoading: true, error: null }));
+
+              try {
+                const data = await Promise.resolve(mutationFn(variables));
+                setState({
+                  data,
+                  isLoading: false,
+                  error: null,
+                  isSuccess: true,
+                  isError: false,
+                });
+
+                if (onSuccess) {
+                  onSuccess(data, variables);
+                }
+
+                return data;
+              } catch (error) {
+                setState({
+                  data: undefined,
+                  isLoading: false,
+                  error,
+                  isSuccess: false,
+                  isError: true,
+                });
+
+                if (onError) {
+                  onError(error, variables);
+                }
+
+                throw error;
+              } finally {
+                if (onSettled) {
+                  onSettled(state.data, error, variables);
+                }
+              }
+            },
+            [mutationFn, onSuccess, onError, onSettled]
+          );
+
+          const reset = useCallback(() => {
+            setState({
+              data: undefined,
+              isLoading: false,
+              error: null,
+              isSuccess: false,
+              isError: false,
+            });
+          }, []);
+
+          return {
+            ...state,
+            mutate,
+            reset,
+          };
+        };
+      };
+
+      const queryClient = {
+        queries,
+        subscribers,
+        getQuery,
+        setQuery,
+        setQueryLoading,
+        setQueryError,
+        subscribe,
+        invalidateQuery,
+        invalidateQueries,
+        createUseQuery,
+        createUseMutation,
+      };
+
+      return queryClient;
+    };
+
     window.TiLab = {
       version: "0.6 (alpha)",
       copyright: "© 2025 Daniel Abros",
@@ -185,6 +430,7 @@
       console: ConsoleModule(),
       lib: LibraryModule(),
       jsx: JSXModule().create,
+      query: QueryModule(),
     };
 
     const urlParams = new URLSearchParams(window.location.search);
