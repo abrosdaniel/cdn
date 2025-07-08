@@ -218,6 +218,15 @@
           const proxyCache = new WeakMap();
 
           const createProxy = (target) => {
+            // Проверяем, не является ли объект уже Proxy
+            if (
+              target &&
+              typeof target === "object" &&
+              target.constructor === Proxy
+            ) {
+              return target;
+            }
+
             if (proxyCache.has(target)) {
               return proxyCache.get(target);
             }
@@ -229,6 +238,7 @@
                 if (
                   value &&
                   typeof value === "object" &&
+                  value !== target && // Избегаем циклических ссылок
                   !proxyCache.has(value)
                 ) {
                   const nestedProxy = createProxy(value);
