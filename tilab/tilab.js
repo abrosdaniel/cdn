@@ -121,79 +121,53 @@
 
     const JSXModule = () => {
       const storage = [];
-      let preactLoaded = false;
 
-      const loadPreact = () => {
-        if (preactLoaded) return Promise.resolve();
-
+      const jsxWrapper = (callback) => {
         return import("https://unpkg.com/htm/preact/standalone.module.js")
           .then((module) => {
-            preactLoaded = true;
-            window.preact = module;
-            console.log("Preact загружен:", window.preact);
-            console.log("Доступные функции:", Object.keys(window.preact || {}));
-            return Promise.resolve();
+            const {
+              html,
+              render,
+              Component,
+              h,
+              useState,
+              useEffect,
+              useRef,
+              useMemo,
+              useCallback,
+              useContext,
+              createContext,
+            } = module;
+
+            if (!html || !render) {
+              throw new Error("htm/preact не загружен или функции недоступны");
+            }
+
+            callback(
+              html,
+              render,
+              Component,
+              h,
+              useState,
+              useEffect,
+              useRef,
+              useMemo,
+              useCallback,
+              useContext,
+              createContext
+            );
+
+            const componentRecord = {
+              id: Date.now() + Math.random(),
+              name: callback.name || "Anonymous",
+              createdAt: Date.now(),
+            };
+            storage.push(componentRecord);
           })
           .catch((error) => {
             console.error("Ошибка загрузки Preact:", error);
             throw error;
           });
-      };
-
-      const jsxWrapper = (componentFunction) => {
-        return loadPreact().then(() => {
-          const {
-            html,
-            render,
-            Component,
-            h,
-            useState,
-            useEffect,
-            useRef,
-            useMemo,
-            useCallback,
-            useContext,
-            createContext,
-          } = window.preact || {};
-
-          if (!html || !render) {
-            console.error("Preact объект:", window.preact);
-            console.error(
-              "Доступные функции:",
-              Object.keys(window.preact || {})
-            );
-            throw new Error("htm/preact не загружен или функции недоступны");
-          }
-
-          const context = {
-            h,
-            html,
-            render,
-            Component,
-            useState,
-            useEffect,
-            useRef,
-            useMemo,
-            useCallback,
-            useContext,
-            createContext,
-          };
-
-          const componentResult = componentFunction.call(context);
-
-          let container;
-
-          if (container && componentResult) {
-            render(componentResult, container);
-          }
-
-          const componentRecord = {
-            id: Date.now() + Math.random(),
-            name: componentFunction.name || "Anonymous",
-            createdAt: Date.now(),
-          };
-          storage.push(componentRecord);
-        });
       };
 
       const jsx = {
