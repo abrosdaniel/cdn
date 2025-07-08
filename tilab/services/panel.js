@@ -26,9 +26,9 @@
 
         const { useQuery } = window.TiLab.query;
 
-        const { data: tiLabData = window.TiLab } = useQuery({
-          queryKey: ["tilab"],
-          queryFn: async () => window.TiLab,
+        const { data: tiLabData = window.TiLab.version } = useQuery({
+          queryKey: ["tilab-version"],
+          queryFn: async () => window.TiLab.version,
           staleTime: 1000 * 60 * 60 * 24,
         });
 
@@ -252,7 +252,7 @@
               </button>
               <div class="tilab-section">
                 <div class="tilab-header">
-                  <${Logo} version=${tiLabData.version} />
+                  <${Logo} version=${tiLabData} />
                   <div class="tilab-status"></div>
                 </div>
                 <${Console} console=${consoleData} />
