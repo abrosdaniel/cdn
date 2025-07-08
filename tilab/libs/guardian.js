@@ -392,14 +392,10 @@
     }
   }
 
-  if (window.TiLab && window.TiLab.libs) {
-    window.TiLab.libs["guardian"] = window.TiLab.libs["guardian"] || {};
-    window.TiLab.libs["guardian"].version = "0.1";
-    window.TiLab.libs["guardian"].description =
-      "Утилита для защиты сайта от копирования контента";
-    window.TiLab.libs["guardian"].exports = {
-      protect: protect,
-    };
+  if (window.TiLabExport) {
+    window.TiLabExport({
+      protect,
+    });
     TiLab.console.info("Guardian.js", "Библиотека успешно иницифлизирована.");
   }
 })();
