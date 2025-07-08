@@ -50,7 +50,10 @@
           error: null,
         };
         storage.push(libRecord);
-        window.TiLab.query.invalidateQueries("lib-data");
+        // Уведомляем QueryModule об изменении данных библиотек
+        if (window.TiLab?.query?.invalidateQueries) {
+          window.TiLab.query.invalidateQueries("lib-data");
+        }
         window.TiLabExport = (functions) => {
           Object.assign(libRecord.exports, functions);
         };
@@ -62,6 +65,11 @@
             libRecord.isLoaded = true;
             libRecord.isLoading = false;
             libRecord.loadedAt = Date.now();
+
+            // Уведомляем QueryModule об изменении данных библиотек
+            if (window.TiLab?.query?.invalidateQueries) {
+              window.TiLab.query.invalidateQueries("lib-data");
+            }
 
             if (typeof callback === "function") {
               callback(...Object.values(libRecord.exports));
@@ -75,6 +83,11 @@
             libRecord.isLoaded = false;
             libRecord.isLoading = false;
             libRecord.error = error.message;
+
+            // Уведомляем QueryModule об изменении данных библиотек
+            if (window.TiLab?.query?.invalidateQueries) {
+              window.TiLab.query.invalidateQueries("lib-data");
+            }
 
             console.error(`Ошибка загрузки библиотеки ${libName}:`, error);
             throw error;
@@ -101,7 +114,10 @@
           data,
         };
         storage.push(entry);
-        window.TiLab.query.invalidateQueries("console-data");
+        // Уведомляем QueryModule об изменении данных консоли
+        if (window.TiLab?.query?.invalidateQueries) {
+          window.TiLab.query.invalidateQueries("console-data");
+        }
         return entry;
       };
 
@@ -109,6 +125,10 @@
         storage,
         clear: () => {
           storage.length = 0;
+          // Уведомляем QueryModule об изменении данных консоли
+          if (window.TiLab?.query?.invalidateQueries) {
+            window.TiLab.query.invalidateQueries("console-data");
+          }
         },
       };
 
@@ -280,7 +300,6 @@
         });
       };
 
-      // Готовые функции для использования в TiLab.jsx
       const useQuery = (options) => {
         const { queryKey, queryFn, staleTime = 0, enabled = true } = options;
 
