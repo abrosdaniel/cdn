@@ -296,6 +296,7 @@
         }
         keysToDelete.forEach((key) => {
           queries.delete(key);
+          // Уведомляем подписчиков с пустыми данными, чтобы вызвать ререндер
           notifySubscribers(key);
         });
       };
@@ -352,6 +353,16 @@
                     setQueryError(fullQueryKey, error);
                   });
               }
+            } else {
+              // Если данных нет в кэше, запускаем запрос
+              setQueryLoading(fullQueryKey, true);
+              Promise.resolve(queryFn())
+                .then((data) => {
+                  setQuery(fullQueryKey, data);
+                })
+                .catch((error) => {
+                  setQueryError(fullQueryKey, error);
+                });
             }
           });
 
