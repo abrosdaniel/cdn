@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>BIG SPACES</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        text-decoration: none;
+      }
+      .skeleton {
+        background-color: gray;
+        animation: pulse 1.6s infinite linear;
+        border-radius: 20px;
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.5;
+        }
+      }
+      .w-screen {
+        width: 100vw;
+      }
+      .h-screen {
+        height: 100vh;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .h-full {
+        height: 100%;
+      }
+      .flex {
+        display: flex;
+      }
+      .flex-center {
+        justify-content: center;
+        align-items: center;
+      }
+      .block {
+        display: block;
+      }
+      .hidden {
+        display: none;
+      }
+      .flex-1 {
+        flex: 1;
+      }
+
+      @import url("https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+      body {
+        background-color: #f6f6f6;
+      }
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 99;
+      }
+      .menu-btn {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      button {
+        padding: 2px 5px;
+      }
+      main.margin .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      main.not-margin .container {
+        padding: 40px;
+        max-width: 100%;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 56px;
+        height: 100vh;
+        box-sizing: border-box;
+      }
+      h2 {
+        font-size: 80px;
+        line-height: 120%;
+        flex-shrink: 0;
+      }
+      .btn-players {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: fit-content;
+        height: 60px;
+        padding: 0 44px;
+        margin-inline: auto;
+        flex-shrink: 0;
+      }
+
+      .players {
+        flex: 1;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        min-height: 0;
+      }
+      .card {
+        background-color: white;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .photo {
+        background-color: #dedce1;
+        width: 100%;
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: bottom;
+        position: absolute;
+        inset: 0;
+      }
+      .details {
+        padding: 20px 30px;
+        box-sizing: border-box;
+        flex-shrink: 0;
+      }
+      .d1 {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+      }
+      .name {
+        font-size: 24px;
+        line-height: 130%;
+        width: 100%;
+      }
+      .logo {
+        aspect-ratio: 1/1;
+        height: 40px;
+        border-radius: 0 !important;
+      }
+      .d2,
+      .d3 {
+        font-size: 14px;
+        line-height: 130%;
+        text-transform: uppercase;
+      }
+      .d3 {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+      @media screen and (max-width: 1024px) {
+        .container {
+          height: auto;
+        }
+        .players {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        img {
+          position: relative;
+        }
+      }
+    </style>
+  </head>
+  <body
+    style="
+      font-family: 'Golos Text', sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+    "
+  >
+    <header>
+      <h1>Моковый пример секции игроков на главной странице</h1>
+      <div class="menu-btn">
+        <button onclick="switchClass('margin')">
+          фиксированый размер с полями
+        </button>
+        <button onclick="switchClass('not-margin')">
+          адаптивный без полей
+        </button>
+        <script>
+          function switchClass(className) {
+            const main = document.querySelector("main");
+            main.classList.remove("margin", "not-margin");
+            main.classList.add(className);
+          }
+        </script>
+      </div>
+    </header>
+    <main class="margin">
+      <div class="skeleton w-screen h-screen flex flex-center">Блок № 1</div>
+      <div class="container">
+        <h2>ИГРОКИ FAF</h2>
+        <div class="players">
+          <script>
+            function createPlayersCard() {
+              let i = 8;
+              const section = document.querySelector(".players");
+              while (i > 0) {
+                const player = document.createElement("div");
+                player.classList.add("card");
+                player.innerHTML = `
+                <div class="photo">
+                  <img src="https://i.ibb.co/W478F29b/pic.png" alt="pic" border="0">
+                </div>
+                <div class="details">
+                  <div class="d1">
+                    <div class="name">
+                      <p>ДАНИИЛ</p>
+                      <p>КИРЯГИН</p>
+                    </div>
+                    <div>
+                      <div class="skeleton logo"></div>
+                    </div>
+                  </div>
+                  <div class="d2">
+                    <p>Рубин Казань 2</p>
+                  </div>
+                  <div class="d3">
+                    <p>Центр. защитник</p>
+                    <p>2006</p>
+                  </div>
+                </div>
+              `;
+                section.appendChild(player);
+                i = i - 1;
+              }
+            }
+            document.addEventListener("DOMContentLoaded", createPlayersCard);
+          </script>
+        </div>
+        <div class="skeleton btn-players">Все игроки</div>
+      </div>
+      <div class="skeleton w-screen h-screen flex flex-center">Блок № 3</div>
+    </main>
+    <footer></footer>
+  </body>
+</html>
