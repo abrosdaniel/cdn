@@ -375,10 +375,6 @@
             font-family: monospace;
             color: #a3a3a3;
             white-space: pre;
-            display: none;
-          }
-          .tilab-log-expanded .tilab-log-data {
-            display: block;
           }
           .tilab-toggle-btn {
             display: inline-flex;
@@ -402,11 +398,6 @@
           .tilab-log-content {
             flex: 1;
           }
-          .tilab-data-preview {
-            font-family: monospace;
-            color: #9ca3af;
-            cursor: pointer;
-          }
         </style>
         <div class="tilab-console">
           ${console.storage.length > 0
@@ -424,12 +415,10 @@
                   : "";
 
                 const dataContent = hasData
-                  ? html`<div class="tilab-log-data">
-                      ${JSON.stringify(item.data, null, 2).replace(
-                        /"([^"]+)":/g,
-                        "$1:"
-                      )}
-                    </div>`
+                  ? JSON.stringify(item.data, null, 2).replace(
+                      /"([^"]+)":/g,
+                      "$1:"
+                    )
                   : "";
 
                 return html`
@@ -470,18 +459,22 @@
                         : ""}
                       <div class="tilab-log-content">
                         <div>${item.message || ""}</div>
-                        ${hasData && !isExpanded
+                        ${hasData
                           ? html`
-                              <span
-                                class="tilab-data-preview"
-                                onclick=${() => toggleLogExpand(item.id)}
-                                >${dataPreview}</span
+                              <div
+                                class="tilab-log-data"
+                                ${isExpanded
+                                  ? `onclick=${() => toggleLogExpand(item.id)}`
+                                  : ""}
                               >
+                                ${isExpanded
+                                  ? `${dataPreview}`
+                                  : `${dataContent}`}
+                              </div>
                             `
                           : ""}
                       </div>
                     </div>
-                    ${dataContent}
                   </div>
                 `;
               })
