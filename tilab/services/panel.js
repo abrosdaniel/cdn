@@ -372,11 +372,9 @@
                 const dataContent =
                   item.data !== undefined
                     ? html`<div class="tilab-log-data">
-                        ${JSON.stringify(
-                          JSON.stringify(item.data, null, 2)
-                            .replace(/"([^"]+)":/g, "$1:")
-                            .replace(/\\"/g, '"')
-                        )}
+                        ${String(JSON.stringify(item.data, null, 2))
+                          .replace(/"([^"]+)":/g, "$1:")
+                          .replace(/\\"/g, '"')}
                       </div>`
                     : "";
 
