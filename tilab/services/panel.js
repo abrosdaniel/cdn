@@ -311,12 +311,22 @@
     };
 
     const Console = ({ console }) => {
+      const [expandedLogs, setExpandedLogs] = useState(new Set());
       useEffect(() => {
         const consoleElement = document.querySelector(".tilab-console");
         if (consoleElement && console.storage.length > 0) {
           consoleElement.scrollTop = consoleElement.scrollHeight;
         }
       }, [console.storage]);
+      const toggleLogExpand = (logId) => {
+        const newExpanded = new Set(expandedLogs);
+        if (newExpanded.has(logId)) {
+          newExpanded.delete(logId);
+        } else {
+          newExpanded.add(logId);
+        }
+        setExpandedLogs(newExpanded);
+      };
 
       return html`
         <style>
@@ -354,6 +364,8 @@
           .tilab-log-message {
             color: #d1d5db;
             margin-bottom: calc(var(--tlp-font-size) * 0.25);
+            display: flex;
+            align-items: flex-start;
           }
           .tilab-log-data {
             background-color: rgba(0, 0, 0, 0.2);
@@ -363,25 +375,66 @@
             font-family: monospace;
             color: #a3a3a3;
             white-space: pre;
+            display: none;
+          }
+          .tilab-log-expanded .tilab-log-data {
+            display: block;
+          }
+          .tilab-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: calc(var(--tlp-font-size) * 0.25);
+            width: calc(var(--tlp-font-size) * 0.75);
+            height: calc(var(--tlp-font-size) * 0.75);
+            cursor: pointer;
+            user-select: none;
+            transform: rotate(-90deg);
+            transition: transform 0.2s ease;
+          }
+          .tilab-log-expanded .tilab-toggle-btn {
+            transform: rotate(0deg);
+          }
+          .tilab-toggle-btn svg {
+            width: 100%;
+            height: 100%;
+          }
+          .tilab-log-content {
+            flex: 1;
+          }
+          .tilab-data-preview {
+            font-family: monospace;
+            color: #9ca3af;
+            cursor: pointer;
           }
         </style>
         <div class="tilab-console">
           ${console.storage.length > 0
             ? console.storage.map((item) => {
                 const logTypeClass = `tilab-log-${item.type || "info"}`;
-                const dataContent =
-                  item.data !== undefined
-                    ? html`<div class="tilab-log-data">
-                        ${JSON.stringify(item.data, null, 2).replace(
-                          /"([^"]+)":/g,
-                          "$1:"
-                        )}
-                      </div>`
-                    : "";
+                const isExpanded = expandedLogs.has(item.id);
+                const expandedClass = isExpanded ? "tilab-log-expanded" : "";
+
+                const hasData = item.data !== undefined;
+                const dataPreview = hasData
+                  ? typeof item.data === "object"
+                    ? `{...}`
+                    : String(item.data).substring(0, 50) +
+                      (String(item.data).length > 50 ? "..." : "")
+                  : "";
+
+                const dataContent = hasData
+                  ? html`<div class="tilab-log-data">
+                      ${JSON.stringify(item.data, null, 2).replace(
+                        /"([^"]+)":/g,
+                        "$1:"
+                      )}
+                    </div>`
+                  : "";
 
                 return html`
                   <div
-                    class="tilab-log ${logTypeClass}"
+                    class="tilab-log ${logTypeClass} ${expandedClass}"
                     data-log-id="${item.id}"
                   >
                     <div class="tilab-log-header">
@@ -392,20 +445,47 @@
                         >${item.time || "неизвестно"}</span
                       >
                     </div>
-                    <div class="tilab-log-message">${item.message || ""}</div>
+                    <div class="tilab-log-message">
+                      ${hasData
+                        ? html`
+                            <span
+                              class="tilab-toggle-btn"
+                              onclick=${() => toggleLogExpand(item.id)}
+                            >
+                              <svg
+                                viewBox="0 0 10 6"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M1 1L5 5L9 1"
+                                  stroke="currentColor"
+                                  stroke-width="1.66667"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                ></path>
+                              </svg>
+                            </span>
+                          `
+                        : ""}
+                      <div class="tilab-log-content">
+                        <div>${item.message || ""}</div>
+                        ${hasData && !isExpanded
+                          ? html`
+                              <span
+                                class="tilab-data-preview"
+                                onclick=${() => toggleLogExpand(item.id)}
+                                >${dataPreview}</span
+                              >
+                            `
+                          : ""}
+                      </div>
+                    </div>
                     ${dataContent}
                   </div>
                 `;
               })
-            : html`
-                <div class="tilab-log tilab-log-info">
-                  <div class="tilab-log-header">
-                    <span class="tilab-log-name">Информация</span>
-                    <span class="tilab-log-time">сейчас</span>
-                  </div>
-                  <div class="tilab-log-message">Нет доступных записей</div>
-                </div>
-              `}
+            : html``}
         </div>
       `;
     };
