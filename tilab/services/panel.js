@@ -361,21 +361,6 @@
             color: #9ca3af;
             font-size: calc(var(--tlp-font-size) * 0.75);
           }
-          .tilab-log-message {
-            color: #d1d5db;
-            margin-bottom: calc(var(--tlp-font-size) * 0.25);
-            display: flex;
-            align-items: flex-start;
-          }
-          .tilab-log-data {
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: calc(var(--tlp-font-size) * 0.25);
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: monospace;
-            color: #a3a3a3;
-            white-space: pre;
-          }
           .tilab-toggle-btn {
             display: inline-flex;
             align-items: center;
@@ -397,6 +382,26 @@
           }
           .tilab-log-content {
             flex: 1;
+          }
+          .tilab-log-message {
+            color: #d1d5db;
+            margin-bottom: calc(var(--tlp-font-size) * 0.25);
+            display: flex;
+            align-items: flex-start;
+          }
+          .tilab-log-data {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: calc(var(--tlp-font-size) * 0.25);
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            color: #a3a3a3;
+            white-space: pre;
+          }
+          .tilab-log-data span {
+            overflow-x: auto;
+            font-family: monospace;
+            color: #a3a3a3;
           }
         </style>
         <div class="tilab-console">
