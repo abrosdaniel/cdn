@@ -415,7 +415,7 @@
                 const hasData = item.data !== undefined;
                 const dataPreview = hasData
                   ? typeof item.data === "object"
-                    ? `{...}`
+                    ? `[Object]`
                     : String(item.data).substring(0, 50) +
                       (String(item.data).length > 50 ? "..." : "")
                   : "";
