@@ -402,6 +402,7 @@
             overflow-x: auto;
             font-family: monospace;
             color: #a3a3a3;
+            cursor: pointer;
           }
         </style>
         <div class="tilab-console">
