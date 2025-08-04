@@ -362,6 +362,7 @@
             overflow-x: auto;
             font-family: monospace;
             color: #a3a3a3;
+            white-space: pre;
           }
         </style>
         <div class="tilab-console">
@@ -371,7 +372,11 @@
                 const dataContent =
                   item.data !== undefined
                     ? html`<div class="tilab-log-data">
-                        ${JSON.stringify(item.data, null, 2)}
+                        ${JSON.stringify(
+                          JSON.stringify(item.data, null, 2)
+                            .replace(/"([^"]+)":/g, "$1:")
+                            .replace(/\\"/g, '"')
+                        )}
                       </div>`
                     : "";
 
