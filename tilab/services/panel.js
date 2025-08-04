@@ -461,15 +461,13 @@
                         <div>${item.message || ""}</div>
                         ${hasData
                           ? html`
-                              <div
-                                class="tilab-log-data"
+                              <div class="tilab-log-data">
                                 ${isExpanded
-                                  ? `onclick=${() => toggleLogExpand(item.id)}`
-                                  : ""}
-                              >
-                                ${isExpanded
-                                  ? `${dataPreview}`
-                                  : `${dataContent}`}
+                                  ? `${dataContent}`
+                                  : html`<span
+                                      onclick=${() => toggleLogExpand(item.id)}
+                                      >${dataPreview}</span
+                                    >`}
                               </div>
                             `
                           : ""}
