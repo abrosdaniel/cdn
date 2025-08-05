@@ -396,7 +396,7 @@
             overflow-x: auto;
             font-family: monospace;
             color: #a3a3a3;
-            white-space: pre;
+            white-space: pre-wrap;
           }
           .tilab-log-data span {
             overflow-x: auto;
