@@ -1,5 +1,5 @@
 /*!
- * TrackHunter.js v0.1
+ * Hunter.js v0.1
  * MIT License
  * (c) 2025 Daniel Abros
  * Сайт → https://abros.dev
