@@ -59,7 +59,7 @@
             name: libData.name,
             desc: libData.desc,
           };
-          Object.assign(libRecord.exports, functions);
+          Object.assign(libRecord.exports, libData.exports);
         };
 
         return loadScript(`${Constants.CDN}/tilab/libs/${libName}.js`)
