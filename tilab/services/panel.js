@@ -639,7 +639,7 @@
                         <div class="tilab-lib-info">
                           ${libItem.isLoaded && exportKeys.length > 0
                             ? html`<span class="tilab-lib-count"
-                                >${exportKeys.length}</span
+                                >( ${exportKeys.length} )</span
                               >`
                             : ""}
                           <span class="tilab-lib-status ${statusClass}"
