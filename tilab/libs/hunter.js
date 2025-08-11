@@ -168,7 +168,11 @@
   // Прямой экспорт функций через TiLabExport
   if (window.TiLabExport) {
     window.TiLabExport({
-      track,
+      name: "Hunter.js",
+      desc: "Библиотека для отслеживания элементов и их параметров.",
+      exports: {
+        track,
+      },
     });
   }
 

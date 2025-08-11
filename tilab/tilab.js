@@ -43,6 +43,10 @@
 
         const libRecord = {
           name: libName,
+          meta: {
+            name: "",
+            desc: "",
+          },
           isLoaded: false,
           isLoading: true,
           timestamp: Date.now(),
@@ -50,7 +54,11 @@
           error: null,
         };
         storage.push(libRecord);
-        window.TiLabExport = (functions) => {
+        window.TiLabExport = (libData) => {
+          libRecord.meta = {
+            name: libData.name,
+            desc: libData.desc,
+          };
           Object.assign(libRecord.exports, functions);
         };
 
