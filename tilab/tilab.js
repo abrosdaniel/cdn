@@ -83,7 +83,11 @@
             libRecord.isLoading = false;
             libRecord.error = error.message;
 
-            console.error(`Ошибка загрузки библиотеки ${libName}:`, error);
+            TiLab.console.error(
+              "TiLab",
+              `Ошибка загрузки библиотеки ${libName}:`,
+              error
+            );
             throw error;
           });
       };

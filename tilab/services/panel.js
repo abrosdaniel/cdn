@@ -603,7 +603,7 @@
           }
         </style>
         <div class="tilab-libraries">
-          <h3>Библиотеки (${lib.storage.length})</h3>
+          <h3>Библиотеки ( ${lib.storage.length} )</h3>
           ${lib.storage.length > 0
             ? lib.storage.map((libItem) => {
                 let statusClass = "tilab-lib-idle";
@@ -630,16 +630,21 @@
                       class="tilab-lib-header"
                       onclick=${() => toggleLib(libItem.name)}
                     >
-                      <span class="tilab-lib-name">${libItem.name}</span>
-                      <div class="tilab-lib-info">
-                        ${libItem.isLoaded && exportKeys.length > 0
-                          ? html`<span class="tilab-lib-count"
-                              >${exportKeys.length}</span
-                            >`
-                          : ""}
-                        <span class="tilab-lib-status ${statusClass}"
-                          >${statusText}</span
-                        >
+                      <div class="tilab-lib-header-top">
+                        <span class="tilab-lib-name">${libItem.meta.name}</span>
+                        <div class="tilab-lib-info">
+                          ${libItem.isLoaded && exportKeys.length > 0
+                            ? html`<span class="tilab-lib-count"
+                                >${exportKeys.length}</span
+                              >`
+                            : ""}
+                          <span class="tilab-lib-status ${statusClass}"
+                            >${statusText}</span
+                          >
+                        </div>
+                      </div>
+                      <div class="tilab-lib-header-bottom">
+                        <span class="tilab-lib-desc">${libItem.meta.desc}</span>
                       </div>
                     </div>
                     ${libItem.isLoaded && exportKeys.length > 0
