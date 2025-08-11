@@ -536,14 +536,18 @@
           }
           .tilab-lib-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             padding: calc(var(--tlp-font-size) * 0.25);
             cursor: pointer;
             user-select: none;
           }
           .tilab-lib-header:hover {
             background-color: rgba(255, 255, 255, 0.05);
+          }
+          .tilab-lib-header-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
           }
           .tilab-lib-name {
             color: #d1d5db;
@@ -630,7 +634,7 @@
                       class="tilab-lib-header"
                       onclick=${() => toggleLib(libItem.name)}
                     >
-                      <div class="tilab-lib-header-top">
+                      <div class="tilab-lib-header-title">
                         <span class="tilab-lib-name">${libItem.meta.name}</span>
                         <div class="tilab-lib-info">
                           ${libItem.isLoaded && exportKeys.length > 0
@@ -643,9 +647,7 @@
                           >
                         </div>
                       </div>
-                      <div class="tilab-lib-header-bottom">
-                        <span class="tilab-lib-desc">${libItem.meta.desc}</span>
-                      </div>
+                      <span class="tilab-lib-desc">${libItem.meta.desc}</span>
                     </div>
                     ${libItem.isLoaded && exportKeys.length > 0
                       ? html`
