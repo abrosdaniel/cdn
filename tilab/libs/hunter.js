@@ -177,6 +177,6 @@
   }
 
   if (window.TiLab && window.TiLab.console) {
-    window.TiLab.console.log("TrackHunter", "API успешно инициализирован");
+    window.TiLab.console.log("Hunter.js", "API успешно инициализирован");
   }
 })();
