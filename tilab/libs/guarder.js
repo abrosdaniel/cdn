@@ -1,13 +1,12 @@
 /*!
- * Guardian.js
+ * Guarder.js
  * MIT License
  * (c) 2025 Daniel Abros
  * Сайт → https://abros.dev
- * TiLab.lib('guardian');
  */
 
 (function () {
-  const Guardian = {
+  const Guarder = {
     template(options) {
       switch (options.template) {
         case "standart":
@@ -15,7 +14,7 @@
           document.body.innerHTML = `
           <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: Arial, sans-serif;">
             <h1 style="color: #e74c3c;">Доступ запрещен</h1>
-            <p>Действие заблокировано системой защиты Guardian.js</p>
+            <p>Действие заблокировано системой защиты Guarder.js</p>
           </div>
         `;
           break;
@@ -29,19 +28,19 @@
               allrecords.appendChild(clone);
             } else {
               TiLab.console.warn(
-                "Guardian.js",
+                "Guarder.js",
                 `Блок "${options.block}" не найден`
               );
             }
           } else {
-            TiLab.console.warn("Guardian.js", `Нет параметра "block"`);
+            TiLab.console.warn("Guarder.js", `Нет параметра "block"`);
           }
           break;
         case "custom":
           if (options.custom) {
             document.body.innerHTML = options.custom;
           } else {
-            TiLab.console.warn("Guardian.js", `Нет параметра "custom"`);
+            TiLab.console.warn("Guarder.js", `Нет параметра "custom"`);
           }
           break;
       }
@@ -103,7 +102,7 @@
       // Метод 4: Проверка через console.debug
       const checkConsoleDebug = () => {
         const startTime = new Date();
-        console.debug("Guardian.js DevTools Detection");
+        console.debug("Guarder.js DevTools Detection");
         const endTime = new Date();
         if (endTime - startTime > 100) {
           emitEvent();
@@ -203,7 +202,7 @@
 
       const checkCookies = () => {
         if (navigator.cookieEnabled) {
-          const testName = "guardian_test";
+          const testName = "guarder_test";
           document.cookie = `${testName}=1; path=/`;
           const hasCookie = document.cookie.indexOf(testName) !== -1;
           document.cookie = `${testName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
@@ -244,7 +243,7 @@
         selectors = options.media;
       } else {
         TiLab.console.warn(
-          "Guardian.js",
+          "Guarder.js",
           `Неверное значение параметра "media": ${options.media}`
         );
         return;
@@ -303,7 +302,7 @@
 
           protectedCount++;
         } catch (err) {
-          TiLab.console.warn("Guardian.js", `Ошибка при защите элемента`, err);
+          TiLab.console.warn("Guarder.js", `Ошибка при защите элемента`, err);
         }
       };
 
@@ -313,7 +312,7 @@
           elements.forEach(protectElement);
         } catch (err) {
           TiLab.console.warn(
-            "Guardian.js",
+            "Guarder.js",
             `Ошибка при выборе элементов по селектору "${selector}"`,
             err
           );
@@ -363,18 +362,18 @@
       //   });
       // } catch (err) {
       //   TiLab.console.warn(
-      //     "Guardian.js",
+      //     "Guarder.js",
       //     `Ошибка при настройке MutationObserver: ${err.message}`
       //   );
       // }
       TiLab.console.info(
-        "Guardian.js",
+        "Guarder.js",
         `Защита применена к ${protectedCount} элементам`
       );
     },
   };
 
-  function protect(options) {
+  function shield(options) {
     options = options || {};
     options.devtools = options.devtools || false;
     options.frame = options.frame || false;
@@ -382,19 +381,23 @@
     options.template = options.template || "standart";
 
     if (options.devtools) {
-      Guardian.devtools(options);
+      Guarder.devtools(options);
     }
     if (options.frame) {
-      Guardian.frame(options);
+      Guarder.frame(options);
     }
     if (options.media) {
-      Guardian.media(options);
+      Guarder.media(options);
     }
   }
 
   if (window.TiLabExport) {
     window.TiLabExport({
-      protect,
+      name: "Guarder.js",
+      desc: "Библиотека для защиты сайта от копирования.",
+      exports: {
+        shield,
+      },
     });
   }
 })();
