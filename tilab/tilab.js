@@ -134,7 +134,7 @@
       const storage = [];
 
       const jsxWrapper = (callback) => {
-        return import("https://unpkg.com/htm/preact/standalone.module.js")
+        return import(`${Constants.CDN}/tilab/services/preact.module.js`)
           .then((module) => {
             const {
               html,
