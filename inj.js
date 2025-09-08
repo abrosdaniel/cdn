@@ -1,3 +1,8 @@
+/*!
+ * <script src="https://cdn.abros.dev/inj.js"></script>
+ * <script type="module" src ="https://cdn.abros.dev/inj.js"></script>
+ */
+
 (function (window) {
   const blackList = [
     {
