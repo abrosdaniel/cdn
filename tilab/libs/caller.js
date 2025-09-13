@@ -69,7 +69,9 @@
         'type должен быть "modal" или "notify"'
       );
     }
-    templates.set(type, html);
+
+    const escapedHtml = html.replace(/\$\{([^}]+)\}/g, "\\${$1}");
+    templates.set(type, escapedHtml);
 
     if (type === "notify") {
       notifySettings.set(type, { duration, close });
@@ -102,16 +104,16 @@
 
     let processedHtml = template;
     if (type) {
-      processedHtml = processedHtml.replace(/\$\{typeclass\}/g, type);
+      processedHtml = processedHtml.replace(/\\\$\{typeclass\}/g, type);
     }
     if (btn) {
-      processedHtml = processedHtml.replace(/\$\{btns\}/g, btn);
+      processedHtml = processedHtml.replace(/\\\$\{btns\}/g, btn);
     } else {
-      processedHtml = processedHtml.replace(/\$\{btns\}/g, "");
+      processedHtml = processedHtml.replace(/\\\$\{btns\}/g, "");
     }
 
     Object.keys(content).forEach((key) => {
-      const regex = new RegExp(`\\$\\{${key}\\}`, "g");
+      const regex = new RegExp(`\\\\\\$\\{${key}\\}`, "g");
       processedHtml = processedHtml.replace(regex, content[key]);
     });
 
