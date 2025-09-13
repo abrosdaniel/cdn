@@ -1,0 +1,228 @@
+/*!
+ * Informer.js v0.2
+ * MIT License
+ * (c) 2025 Daniel Abros
+ * Сайт → https://abros.dev
+ * TiLab.lib.init('informer');
+ */
+
+(function () {
+  const templates = new Map();
+  const notifySettings = new Map();
+
+  function createNotifyContainer() {
+    if (!document.getElementById("tilab-notify-container")) {
+      const container = document.createElement("div");
+      container.id = "tilab-notify-container";
+      container.classList.add("tilab-notify-container");
+      const style = document.createElement("style");
+      style.id = "tilab-informer-styles";
+      style.textContent = `
+          .tilab-notify-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 300px;
+          }
+          
+          @media (max-width: 768px) {
+            .tilab-notify-container {
+              top: 50%;
+              right: 50%;
+              transform: translateX(50%);
+            }
+          }
+        `;
+      document.head.appendChild(style);
+      document.body.appendChild(container);
+    }
+  }
+
+  function fadeOut(element, duration = 3000) {
+    if (!element || !element.parentNode) return;
+
+    element.style.transition = `opacity ${duration}ms ease-out`;
+    element.style.opacity = "0";
+
+    setTimeout(() => {
+      if (element.parentNode) {
+        element.remove();
+      }
+    }, duration);
+  }
+
+  function create(options = {}) {
+    const { type, html, duration = 5000, close } = options;
+    if (!type || !html) {
+      window.TiLab.console.warn(
+        "Informer.js",
+        "Необходимо указать type и html для создания шаблона"
+      );
+    }
+    if (type !== "modal" && type !== "notify") {
+      window.TiLab.console.warn(
+        "Informer.js",
+        'type должен быть "modal" или "notify"'
+      );
+    }
+    templates.set(type, html);
+
+    if (type === "notify") {
+      notifySettings.set(type, { duration, close });
+      createNotifyContainer();
+    } else if (type === "modal") {
+      notifySettings.set(type, { close });
+    }
+
+    window.TiLab.console.warn("Informer.js", `Шаблон "${type}" создан успешно`);
+  }
+
+  function push(options = {}) {
+    const { to, type, content = {}, btn, duration } = options;
+
+    if (!to) {
+      window.TiLab.console.warn(
+        "Informer.js",
+        "Необходимо указать to: 'modal' или 'notify' для использования"
+      );
+    }
+
+    const template = templates.get(to);
+    if (!template) {
+      window.TiLab.console.warn(
+        "Informer.js",
+        `Шаблон "${to}" не найден. Сначала создайте его с помощью функции create`
+      );
+    }
+
+    let processedHtml = template;
+    if (type) {
+      processedHtml = processedHtml.replace(/\$\{typeclass\}/g, type);
+    }
+    if (btn) {
+      processedHtml = processedHtml.replace(/\$\{btns\}/g, btn);
+    } else {
+      processedHtml = processedHtml.replace(/\$\{btns\}/g, "");
+    }
+
+    Object.keys(content).forEach((key) => {
+      const regex = new RegExp(`\\$\\{${key}\\}`, "g");
+      processedHtml = processedHtml.replace(regex, content[key]);
+    });
+
+    const container = document.createElement("div");
+    container.innerHTML = processedHtml;
+    const element = container.firstElementChild;
+
+    if (btn) {
+      const buttons = element.querySelectorAll("button");
+      buttons.forEach((button) => {
+        const originalOnclick = button.getAttribute("onclick");
+        if (originalOnclick) {
+          const handler = new Function(originalOnclick);
+          button.onclick = handler;
+        }
+      });
+    }
+
+    if (to === "modal") {
+      element.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+      document.body.appendChild(element);
+
+      const settings = notifySettings.get(to);
+      const closeDuration = settings ? settings.close : null;
+
+      element.addEventListener("click", (e) => {
+        if (e.target === element) {
+          if (closeDuration) {
+            fadeOut(element, closeDuration);
+          } else {
+            element.remove();
+          }
+        }
+      });
+
+      const closeElements = element.querySelectorAll(".close");
+      closeElements.forEach((closeEl) => {
+        closeEl.addEventListener("click", () => {
+          if (closeDuration) {
+            fadeOut(element, closeDuration);
+          } else {
+            element.remove();
+          }
+        });
+      });
+    } else if (to === "notify") {
+      element.style.cssText = `
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                padding: 16px;
+                margin-bottom: 10px;
+            `;
+
+      const container = document.querySelector(".tilab-notify-container");
+      if (container) {
+        container.appendChild(element);
+      } else {
+        createNotifyContainer();
+        document.querySelector(".tilab-notify-container").appendChild(element);
+      }
+
+      const settings = notifySettings.get(to);
+      const finalDuration = duration || (settings ? settings.duration : 5000);
+      const closeDuration = settings ? settings.close : null;
+
+      setTimeout(() => {
+        if (element.parentNode) {
+          if (closeDuration) {
+            fadeOut(element, closeDuration);
+          } else {
+            element.remove();
+          }
+        }
+      }, finalDuration);
+
+      const closeElements = element.querySelectorAll(".close");
+      closeElements.forEach((closeEl) => {
+        closeEl.addEventListener("click", () => {
+          if (closeDuration) {
+            fadeOut(element, closeDuration);
+          } else {
+            element.remove();
+          }
+        });
+      });
+    }
+  }
+
+  if (window.TiLabExport) {
+    window.TiLabExport({
+      name: "Informer.js",
+      desc: "Библиотека для создания информеров (Модальные окна, уведомления)",
+      exports: {
+        create,
+        push,
+      },
+    });
+  }
+
+  if (window.TiLab && window.TiLab.console) {
+    window.TiLab.console.log("Informer.js", "API успешно инициализирован");
+  }
+})();
