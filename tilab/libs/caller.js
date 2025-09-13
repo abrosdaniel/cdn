@@ -56,7 +56,7 @@
   }
 
   function create(options = {}) {
-    const { type, html, duration = 5000, close } = options;
+    const { type, html, duration, out = 0 } = options;
     if (!type || !html) {
       window.TiLab.console.warn(
         "Caller.js",
@@ -73,17 +73,17 @@
     templates.set(type, html);
 
     if (type === "notify") {
-      notifySettings.set(type, { duration, close });
+      notifySettings.set(type, { duration, out });
       createNotifyContainer();
     } else if (type === "modal") {
-      notifySettings.set(type, { close });
+      notifySettings.set(type, { duration, out });
     }
 
     window.TiLab.console.warn("Caller.js", `Шаблон "${type}" создан успешно`);
   }
 
   function push(options = {}) {
-    const { to, type, content = {}, btn, duration } = options;
+    const { to, type, content = {}, btn, duration, out } = options;
 
     if (!to) {
       window.TiLab.console.warn(
@@ -148,12 +148,25 @@
       document.body.appendChild(element);
 
       const settings = notifySettings.get(to);
-      const closeDuration = settings ? settings.close : null;
+      const finalDuration = duration || (settings ? settings.duration : null);
+      const outDuration = out !== undefined ? out : settings ? settings.out : 0;
+
+      if (finalDuration) {
+        setTimeout(() => {
+          if (element.parentNode) {
+            if (outDuration > 0) {
+              fadeOut(element, outDuration);
+            } else {
+              element.remove();
+            }
+          }
+        }, finalDuration);
+      }
 
       element.addEventListener("click", (e) => {
         if (e.target === element) {
-          if (closeDuration) {
-            fadeOut(element, closeDuration);
+          if (outDuration > 0) {
+            fadeOut(element, outDuration);
           } else {
             element.remove();
           }
@@ -163,8 +176,8 @@
       const closeElements = element.querySelectorAll(".close");
       closeElements.forEach((closeEl) => {
         closeEl.addEventListener("click", () => {
-          if (closeDuration) {
-            fadeOut(element, closeDuration);
+          if (outDuration > 0) {
+            fadeOut(element, outDuration);
           } else {
             element.remove();
           }
@@ -189,12 +202,12 @@
 
       const settings = notifySettings.get(to);
       const finalDuration = duration || (settings ? settings.duration : 5000);
-      const closeDuration = settings ? settings.close : null;
+      const outDuration = out !== undefined ? out : settings ? settings.out : 0;
 
       setTimeout(() => {
         if (element.parentNode) {
-          if (closeDuration) {
-            fadeOut(element, closeDuration);
+          if (outDuration > 0) {
+            fadeOut(element, outDuration);
           } else {
             element.remove();
           }
@@ -204,8 +217,8 @@
       const closeElements = element.querySelectorAll(".close");
       closeElements.forEach((closeEl) => {
         closeEl.addEventListener("click", () => {
-          if (closeDuration) {
-            fadeOut(element, closeDuration);
+          if (outDuration > 0) {
+            fadeOut(element, outDuration);
           } else {
             element.remove();
           }
