@@ -10,13 +10,32 @@
   const templates = new Map();
   const notifySettings = new Map();
 
+  if (!document.getElementById("tilab-caller-body-styles")) {
+    const style = document.createElement("style");
+    style.id = "tilab-caller-body-styles";
+    style.textContent = `
+          .tilab-caller-body {
+            overflow: hidden;
+          }
+        `;
+    document.head.appendChild(style);
+  }
+
+  function toggleBodyClass(action) {
+    if (action === "add") {
+      document.body.classList.add("tilab-caller-body");
+    } else if (action === "remove") {
+      document.body.classList.remove("tilab-caller-body");
+    }
+  }
+
   function createNotifyContainer() {
     if (!document.getElementById("tilab-notify-container")) {
       const container = document.createElement("div");
       container.id = "tilab-notify-container";
       container.classList.add("tilab-notify-container");
       const style = document.createElement("style");
-      style.id = "tilab-informer-styles";
+      style.id = "tilab-notify-styles";
       style.textContent = `
           .tilab-notify-container {
             position: fixed;
@@ -49,10 +68,15 @@
     element.style.opacity = "0";
 
     setTimeout(() => {
-      if (element.parentNode) {
-        element.remove();
-      }
+      closeModal(element);
     }, duration);
+  }
+
+  function closeModal(element) {
+    if (element && element.parentNode) {
+      element.remove();
+      toggleBodyClass("remove");
+    }
   }
 
   function create(options = {}) {
@@ -147,6 +171,8 @@
             `;
       document.body.appendChild(element);
 
+      toggleBodyClass("add");
+
       const settings = notifySettings.get(to);
       const finalDuration = duration || (settings ? settings.duration : null);
       const outDuration = out !== undefined ? out : settings ? settings.out : 0;
@@ -157,7 +183,7 @@
             if (outDuration > 0) {
               fadeOut(element, outDuration);
             } else {
-              element.remove();
+              closeModal(element);
             }
           }
         }, finalDuration);
@@ -168,7 +194,7 @@
           if (outDuration > 0) {
             fadeOut(element, outDuration);
           } else {
-            element.remove();
+            closeModal(element);
           }
         }
       });
@@ -179,7 +205,7 @@
           if (outDuration > 0) {
             fadeOut(element, outDuration);
           } else {
-            element.remove();
+            closeModal(element);
           }
         });
       });
