@@ -70,8 +70,7 @@
       );
     }
 
-    const escapedHtml = html.replace(/\$\{([^}]+)\}/g, "\\${$1}");
-    templates.set(type, escapedHtml);
+    templates.set(type, html);
 
     if (type === "notify") {
       notifySettings.set(type, { duration, close });
@@ -103,23 +102,24 @@
     }
 
     let processedHtml = template;
-    if (type) {
-      processedHtml = processedHtml.replace(/\\\$\{typeclass\}/g, type);
-    }
     if (btn) {
-      processedHtml = processedHtml.replace(/\\\$\{btns\}/g, btn);
+      processedHtml = processedHtml.replace(/\$\{btns\}/g, btn);
     } else {
-      processedHtml = processedHtml.replace(/\\\$\{btns\}/g, "");
+      processedHtml = processedHtml.replace(/\$\{btns\}/g, "");
     }
 
     Object.keys(content).forEach((key) => {
-      const regex = new RegExp(`\\\\\\$\\{${key}\\}`, "g");
+      const regex = new RegExp(`\\$\\{${key}\\}`, "g");
       processedHtml = processedHtml.replace(regex, content[key]);
     });
 
     const container = document.createElement("div");
     container.innerHTML = processedHtml;
     const element = container.firstElementChild;
+
+    if (type && element) {
+      element.classList.add(type);
+    }
 
     if (btn) {
       const buttons = element.querySelectorAll("button");
