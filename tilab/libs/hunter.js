@@ -3,7 +3,7 @@
  * MIT License
  * (c) 2025 Daniel Abros
  * Сайт → https://abros.dev
- * TiLab.lib.init('trackhunter');
+ * TiLab.lib.init('hunter');
  */
 
 (function () {

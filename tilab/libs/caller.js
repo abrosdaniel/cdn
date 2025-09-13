@@ -1,9 +1,9 @@
 /*!
- * Informer.js v0.2
+ * Caller.js v0.2
  * MIT License
  * (c) 2025 Daniel Abros
  * Сайт → https://abros.dev
- * TiLab.lib.init('informer');
+ * TiLab.lib.init('caller');
  */
 
 (function () {
@@ -59,13 +59,13 @@
     const { type, html, duration = 5000, close } = options;
     if (!type || !html) {
       window.TiLab.console.warn(
-        "Informer.js",
+        "Caller.js",
         "Необходимо указать type и html для создания шаблона"
       );
     }
     if (type !== "modal" && type !== "notify") {
       window.TiLab.console.warn(
-        "Informer.js",
+        "Caller.js",
         'type должен быть "modal" или "notify"'
       );
     }
@@ -78,7 +78,7 @@
       notifySettings.set(type, { close });
     }
 
-    window.TiLab.console.warn("Informer.js", `Шаблон "${type}" создан успешно`);
+    window.TiLab.console.warn("Caller.js", `Шаблон "${type}" создан успешно`);
   }
 
   function push(options = {}) {
@@ -86,7 +86,7 @@
 
     if (!to) {
       window.TiLab.console.warn(
-        "Informer.js",
+        "Caller.js",
         "Необходимо указать to: 'modal' или 'notify' для использования"
       );
     }
@@ -94,7 +94,7 @@
     const template = templates.get(to);
     if (!template) {
       window.TiLab.console.warn(
-        "Informer.js",
+        "Caller.js",
         `Шаблон "${to}" не найден. Сначала создайте его с помощью функции create`
       );
     }
@@ -213,7 +213,7 @@
 
   if (window.TiLabExport) {
     window.TiLabExport({
-      name: "Informer.js",
+      name: "Caller.js",
       desc: "Библиотека для создания информеров (Модальные окна, уведомления)",
       exports: {
         create,
@@ -223,6 +223,6 @@
   }
 
   if (window.TiLab && window.TiLab.console) {
-    window.TiLab.console.log("Informer.js", "API успешно инициализирован");
+    window.TiLab.console.log("Caller.js", "API успешно инициализирован");
   }
 })();
