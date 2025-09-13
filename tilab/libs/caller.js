@@ -97,6 +97,7 @@
         "Caller.js",
         `Шаблон "${to}" не найден. Сначала создайте его с помощью функции create`
       );
+      return;
     }
 
     let processedHtml = template;
