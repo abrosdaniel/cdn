@@ -42,7 +42,7 @@
     }
   }
 
-  function fadeOut(element, duration = 3000) {
+  function fadeOut(element, duration) {
     if (!element || !element.parentNode) return;
 
     element.style.transition = `opacity ${duration}ms ease-out`;
