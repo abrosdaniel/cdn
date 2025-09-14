@@ -43,7 +43,7 @@
             right: 20px;
             z-index: 10000;
             display: flex;
-            flex-direction: column;
+            flex-direction: column-reverse;
             gap: 10px;
             max-width: 300px;
           }
@@ -214,7 +214,9 @@
                 border-radius: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 padding: 16px;
-                margin-bottom: 10px;
+                max-width: 300px;
+                width: 100%;
+                box-sizing: border-box;
             `;
 
       const container = document.querySelector(".tilab-notify-container");
