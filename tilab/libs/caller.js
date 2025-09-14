@@ -103,7 +103,7 @@
       notifySettings.set(type, { duration, out });
     }
 
-    window.TiLab.console.warn("Caller.js", `Шаблон "${type}" создан успешно`);
+    window.TiLab.console.info("Caller.js", `Шаблон "${type}" создан успешно`);
   }
 
   function push(options = {}) {
