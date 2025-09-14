@@ -217,6 +217,7 @@
                 max-width: 300px;
                 width: 100%;
                 box-sizing: border-box;
+                position: relative;
             `;
 
       const container = document.querySelector(".tilab-notify-container");
