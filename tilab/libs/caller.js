@@ -46,14 +46,7 @@
             flex-direction: column-reverse;
             gap: 10px;
             max-width: 300px;
-          }
-          
-          @media (max-width: 768px) {
-            .tilab-notify-container {
-              top: 50%;
-              right: 50%;
-              transform: translateX(50%);
-            }
+            align-items: flex-end;
           }
         `;
       document.head.appendChild(style);
@@ -215,7 +208,7 @@
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 padding: 16px;
                 max-width: 300px;
-                width: 100%;
+                width: fit-content;
                 box-sizing: border-box;
                 position: relative;
             `;
