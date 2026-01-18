@@ -11,6 +11,8 @@
         "baudinoffs.kz",
         "eraly-ayaulym.top",
         "lerazhalil.ru",
+        "event-card.ru",
+        "ouppconvites.com",
       ],
       fn: () => {
         window.location.href = "https://maryinvite.ru";
