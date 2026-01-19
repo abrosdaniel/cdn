@@ -1,207 +1,136 @@
-# TiLab.js v0.6a
+<p align="center">
+<img src="../.github/assets/tilab-logo.png" width="150px" alt="TiLab"/>
+</p>
+<div align="center">
 
-Компонентная система с реактивностью и JSX-подобным синтаксисом для веб-разработки.
+![Version](https://img.shields.io/badge/tilab.js-v_0.6a-2A8F3B)
+[![Tilda](https://img.shields.io/badge/Tilda-FFA282?logo=tildapublishing&logoColor=black)](https://nextjs.org)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://directus.io)
+
+</div>
+
+# TiLab.js
+
+Легкий набор модулей для разработки и отладки модификаций на платформе Tilda.
+Данный проект привносит новый подход в виде JSX синтаксиса.
 
 ## Установка
+
+В настройках проекта/сайта подключить библиотеку в секцию `HEAD`
 
 ```html
 <script src="https://cdn.abros.dev/tilab/tilab.js"></script>
 ```
 
-## Быстрый старт
+После подключения в `window` появляется объект `TiLab`.
 
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://cdn.abros.dev/tilab/tilab.js"></script>
-  </head>
-  <body>
-    <div id="app">
-      <div class="my-component"></div>
-    </div>
+## Модули и API
 
-    <script>
-      tlc.create(".my-component", function MyComponent() {
-        const data = tlc.get("user");
-        return `
-                <div class="user-card">
-                    <h2>${data.name}</h2>
-                    <p>Email: ${data.email}</p>
-                </div>
-            `;
-      });
+### Панель отладки
 
-      tlc.share("user", {
-        name: "Иван",
-        email: "ivan@example.com",
-      });
-    </script>
-  </body>
-</html>
+Для включения панели отладки добавьте параметр `?tilab` к URL:
+
+```
+https://example.com/?tilab
 ```
 
-## Основные возможности
+Панель отображает:
 
-### 1. Создание компонентов
+- Логи TiLab
+- Логи созданные через TiLab
+- Список подключенных библиотек через TiLab
+
+<img src="../.github/assets/tilab-panel.png" width="100%" alt="TiLab Panel"/>
+
+---
+
+### Cборщик логов
+
+Собственный сборщик логов для удобного просмотра.
+
+Формат вызова:
 
 ```javascript
-tlc.create(".target", function ComponentName() {
-  return `<div>Содержимое компонента</div>`;
+TiLab.console.<type>("name", "message", data)
+```
+
+- `<type>` (обязательный) - тип логирования. (`log`, `info`, `trace`, `warn`, `error`)
+- `name` (обязательный) - заголовок или источник события
+- `message` (обязательный) - текст сообщения
+- `data` (опционально) - любые дополнительные данные
+
+---
+
+### Загрузчик библиотек
+
+Каждая библиотека в TiLab загружается через собственный загрузчик, что делает точку входа легче и оптимизированее.
+
+Формат вызова:
+
+```javascript
+TiLab.lib.init("library", ({ func1, func2 }) => {
+  func1(param);
 });
 ```
 
-### 2. Реактивные данные
+- `library` (обязательный) - библиотека
+- `func` или `{func1, func2, ...}` (опционально) - какие функции из библиотеки хотите использовать.
+
+---
+
+### JSX
+
+Данный модуль основан на Preact/htm и передает утилиты в коллбэк `TiLab.jsx`.
+
+Поддерживаются:
+
+- DOM-слой
+  - `render` - монтирование дерева в DOM-узел
+  - `html` - шаблонные строки htm для JSX-подобной разметки
+  - `Component` - базовый класс компонентов Preact
+  - `h` - фабричный хелпер (аналог `React.createElement`)
+  - `useState` - локальное состояние компонента
+  - `useEffect` - побочные эффекты и подписки
+  - `useRef` - мутабельные ссылки на значения/DOM
+  - `useMemo` - мемоизация вычислений
+  - `useCallback` - мемоизация функций
+  - `useContext` - доступ к контексту
+  - `createContext` - создание контекста
+- Query-слой
+  - `useQuery({ queryKey, queryFn, enabled, staleTime, cacheTime, retry, retryDelay, refetchOnWindowFocus, refetchOnReconnect })`
+  - `useMutation({ mutationFn, onMutate, onSuccess, onError, onSettled, retry, retryDelay })`
+
+`useQuery` автоматически делает refetch при фокусе окна и восстановлении сети (можно отключить флагами).
+`useMutation` поддерживает оптимистические обновления через `onMutate` (можно вернуть `rollback`).
+
+Пример использования:
 
 ```javascript
-// Поделиться данными
-tlc.share("user", { name: "Иван", age: 25 });
+TiLab.jsx(({ html, render, useEffect, useState, useQuery }) => {
+  function App() {
+    const [time, setTime] = useState(new Date().toLocaleTimeString());
+    useEffect(() => {
+      const id = setInterval(
+        () => setTime(new Date().toLocaleTimeString()),
+        1000,
+      );
+      return () => clearInterval(id);
+    }, []);
 
-// Получить данные
-const user = tlc.get("user");
-```
+    const { data, isLoading } = useQuery({
+      queryKey: ["status"],
+      queryFn: () => Promise.resolve({ ok: true }),
+      staleTime: 10 * 1000,
+    });
 
-### 3. JSX-подобный синтаксис
-
-```javascript
-tlc.create(".component", function Component() {
-  const items = ["Один", "Два", "Три"];
-
-  return `
-        <div class="container">
-            <h2>Список</h2>
-            <ul>
-                ${items.map((item) => `<li>${item}</li>`).join("")}
-            </ul>
-        </div>
+    return html`
+      <div>
+        Время: ${time}
+        <div>Статус: ${isLoading ? "..." : data.ok ? "ok" : "fail"}</div>
+      </div>
     `;
+  }
+
+  render(html`<${App} />`, document.body);
 });
 ```
-
-### 4. Условная логика
-
-```javascript
-tlc.create(".component", function Component() {
-  const isVisible = tlc.get("isVisible");
-
-  return `
-        <div>
-            ${isVisible ? "<p>Видимый контент</p>" : "<p>Скрытый контент</p>"}
-        </div>
-    `;
-});
-```
-
-### 5. Загрузка внешних данных
-
-```javascript
-tlc.create(".component", function Component() {
-  const data = tlc.get("https://api.example.com/data");
-
-  return `
-        <div>
-            <h2>${data.title}</h2>
-            <p>${data.description}</p>
-        </div>
-    `;
-});
-```
-
-## API
-
-### tlc.create(target, component)
-
-Создает компонент и привязывает его к элементу.
-
-- `target` - CSS селектор элемента
-- `component` - функция компонента
-
-### tlc.share(name, data)
-
-Делится реактивными данными.
-
-- `name` - имя данных
-- `data` - данные для совместного использования
-
-### tlc.get(name, interval)
-
-Получает реактивные данные.
-
-- `name` - имя данных или URL
-- `interval` - интервал обновления в секундах (опционально)
-
-### jsx(tag, props, ...children)
-
-Создает JSX элементы программно.
-
-### Fragment(props, ...children)
-
-Создает фрагмент без обертки.
-
-## Примеры
-
-### Простой счетчик
-
-```javascript
-tlc.create(".counter", function Counter() {
-  const count = tlc.get("count") || 0;
-
-  return `
-        <div>
-            <h3>Счетчик: ${count}</h3>
-            <button onclick="increment()">+1</button>
-        </div>
-    `;
-});
-
-function increment() {
-  const current = tlc.get("count") || 0;
-  tlc.share("count", current + 1);
-}
-
-tlc.share("count", 0);
-```
-
-### Список с фильтрацией
-
-```javascript
-tlc.create(".list", function List() {
-  const items = tlc.get("items") || [];
-  const filter = tlc.get("filter") || "";
-
-  const filtered = items.filter((item) =>
-    item.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  return `
-        <div>
-            <input 
-                type="text" 
-                placeholder="Фильтр..."
-                oninput="updateFilter(this.value)"
-            />
-            <ul>
-                ${filtered.map((item) => `<li>${item}</li>`).join("")}
-            </ul>
-        </div>
-    `;
-});
-
-function updateFilter(value) {
-  tlc.share("filter", value);
-}
-
-tlc.share("items", ["Яблоко", "Банан", "Апельсин"]);
-```
-
-## Отладка
-
-Для включения панели отладки добавьте параметр `?tilab=` к URL:
-
-```
-http://localhost:3000/?tilab=
-```
-
-## Лицензия
-
-MIT License © 2025 Daniel Abros

@@ -13,6 +13,7 @@
       CONSOLE_TYPES: ["log", "info", "trace", "warn", "error"],
     };
 
+    // Загрузка скрипта
     function loadScript(src, async = true) {
       return new Promise((resolve, reject) => {
         const script = document.createElement("script");
@@ -28,6 +29,39 @@
       });
     }
 
+    // Сборщик логов
+    const ConsoleModule = () => {
+      const storage = [];
+
+      const addEntry = (type, name, message, data) => {
+        const entry = {
+          id: Date.now() + Math.random(),
+          time: new Date().toLocaleString(),
+          type: type || "info",
+          name: name || "Система",
+          message: message || "",
+          data,
+        };
+        storage.push(entry);
+        return entry;
+      };
+
+      const console = {
+        storage,
+        clear: () => {
+          storage.length = 0;
+        },
+      };
+
+      Constants.CONSOLE_TYPES.forEach((type) => {
+        console[type] = (name, message, data) =>
+          addEntry(type, name, message, data);
+      });
+
+      return console;
+    };
+
+    // Загрузчик библиотек
     const LibraryModule = () => {
       const storage = [];
 
@@ -86,7 +120,7 @@
             TiLab.console.error(
               "TiLab",
               `Ошибка загрузки библиотеки ${libName}:`,
-              error
+              error,
             );
             throw error;
           });
@@ -97,37 +131,6 @@
         init,
       };
       return lib;
-    };
-
-    const ConsoleModule = () => {
-      const storage = [];
-
-      const addEntry = (type, name, message, data) => {
-        const entry = {
-          id: Date.now() + Math.random(),
-          time: new Date().toLocaleString(),
-          type: type || "info",
-          name: name || "Система",
-          message: message || "",
-          data,
-        };
-        storage.push(entry);
-        return entry;
-      };
-
-      const console = {
-        storage,
-        clear: () => {
-          storage.length = 0;
-        },
-      };
-
-      Constants.CONSOLE_TYPES.forEach((type) => {
-        console[type] = (name, message, data) =>
-          addEntry(type, name, message, data);
-      });
-
-      return console;
     };
 
     const JSXModule = () => {
@@ -176,6 +179,8 @@
               useCallback,
               useContext,
               createContext,
+              useQuery: window.TiLab?.query?.useQuery,
+              useMutation: window.TiLab?.query?.useMutation,
             });
 
             const componentRecord = {
@@ -202,93 +207,25 @@
     const QueryModule = () => {
       const queries = new Map();
       const subscribers = new Map();
+      let listenersAttached = false;
 
-      const createReactiveData = (windowPath, queryKey) => {
-        const pathParts = windowPath.split(".");
-        let current = window;
-
-        for (let i = 0; i < pathParts.length - 1; i++) {
-          current = current[pathParts[i]];
-          if (!current) return null;
-        }
-
-        const targetKey = pathParts[pathParts.length - 1];
-        const originalData = current[targetKey];
-
-        if (!originalData || typeof originalData !== "object")
-          return originalData;
-
-        const reactiveData = {};
-        const notify = () => {
-          const query = queries.get(queryKey);
-          if (query) notifySubscribers(queryKey);
-        };
-
-        Object.keys(originalData).forEach((key) => {
-          if (typeof originalData[key] === "function") {
-            const originalMethod = originalData[key];
-            reactiveData[key] = (...args) => {
-              const result = originalMethod.apply(originalData, args);
-              notify();
-              return result;
-            };
-          } else {
-            Object.defineProperty(reactiveData, key, {
-              get() {
-                return originalData[key];
-              },
-              set(value) {
-                originalData[key] = value;
-                notify();
-              },
-              enumerable: true,
-              configurable: true,
-            });
-          }
-        });
-
-        current[targetKey] = reactiveData;
-        return reactiveData;
+      const defaultOptions = {
+        staleTime: 0,
+        cacheTime: 5 * 60 * 1000,
+        retry: 3,
+        retryDelay: (attempt) => Math.min(1000 * 2 ** (attempt - 1), 30000),
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
       };
 
       const createQueryKey = (key) => {
         return typeof key === "string" ? key : JSON.stringify(key);
       };
 
-      const getQuery = (queryKey) => {
-        return queries.get(queryKey);
-      };
-
-      const setQuery = (queryKey, data) => {
-        queries.set(queryKey, {
-          data,
-          timestamp: Date.now(),
-          isLoading: false,
-          error: null,
+      const delay = (ms) =>
+        new Promise((resolve) => {
+          setTimeout(resolve, ms);
         });
-        notifySubscribers(queryKey);
-      };
-
-      const setQueryLoading = (queryKey, isLoading = true) => {
-        const query = queries.get(queryKey) || {};
-        queries.set(queryKey, {
-          ...query,
-          isLoading,
-          timestamp: Date.now(),
-        });
-        notifySubscribers(queryKey);
-      };
-
-      const setQueryError = (queryKey, error) => {
-        const query = queries.get(queryKey) || {};
-        queries.set(queryKey, {
-          ...query,
-          error,
-          isLoading: false,
-          timestamp: Date.now(),
-        });
-        notifySubscribers(queryKey);
-      };
 
       const notifySubscribers = (queryKey) => {
         const query = queries.get(queryKey);
@@ -296,11 +233,152 @@
         querySubscribers.forEach((callback) => callback(query));
       };
 
+      const ensureEntry = (queryKey) => {
+        if (!queries.has(queryKey)) {
+          queries.set(queryKey, {
+            data: undefined,
+            error: null,
+            status: "idle",
+            isLoading: false,
+            isFetching: false,
+            updatedAt: 0,
+            options: null,
+            queryFn: null,
+            cacheTimeoutId: null,
+          });
+        }
+        return queries.get(queryKey);
+      };
+
+      const setQueryState = (queryKey, patch) => {
+        const current = ensureEntry(queryKey);
+        const next = { ...current, ...patch };
+        queries.set(queryKey, next);
+        notifySubscribers(queryKey);
+      };
+
+      const setQueryData = (queryKey, updater) => {
+        const current = ensureEntry(queryKey);
+        const nextData =
+          typeof updater === "function" ? updater(current.data) : updater;
+        setQueryState(queryKey, {
+          data: nextData,
+          error: null,
+          status: "success",
+          isLoading: false,
+          isFetching: false,
+          updatedAt: Date.now(),
+        });
+      };
+
+      const getQueryData = (queryKey) => {
+        return queries.get(queryKey)?.data;
+      };
+
+      const cancelCacheCleanup = (queryKey) => {
+        const entry = queries.get(queryKey);
+        if (entry?.cacheTimeoutId) {
+          clearTimeout(entry.cacheTimeoutId);
+          entry.cacheTimeoutId = null;
+        }
+      };
+
+      const scheduleCacheCleanup = (queryKey) => {
+        const entry = queries.get(queryKey);
+        if (!entry) return;
+
+        const cacheTime =
+          entry.options?.cacheTime ?? defaultOptions.cacheTime;
+        if (cacheTime === Infinity) return;
+
+        cancelCacheCleanup(queryKey);
+        if (cacheTime <= 0) {
+          queries.delete(queryKey);
+          notifySubscribers(queryKey);
+          return;
+        }
+
+        entry.cacheTimeoutId = setTimeout(() => {
+          queries.delete(queryKey);
+          notifySubscribers(queryKey);
+        }, cacheTime);
+      };
+
+      const shouldRetry = (retry, attempt, error) => {
+        if (retry === false || retry === 0) return false;
+        if (typeof retry === "function") return retry(attempt, error);
+        if (typeof retry === "number") return attempt <= retry;
+        return attempt <= defaultOptions.retry;
+      };
+
+      const getRetryDelay = (retryDelay, attempt) => {
+        if (typeof retryDelay === "function") return retryDelay(attempt);
+        if (typeof retryDelay === "number") return retryDelay;
+        return defaultOptions.retryDelay(attempt);
+      };
+
+      const fetchQuery = async (queryKey, options, force = false) => {
+        const entry = ensureEntry(queryKey);
+        const mergedOptions = { ...defaultOptions, ...options };
+
+        entry.options = mergedOptions;
+        entry.queryFn = options.queryFn;
+
+        const staleTime = mergedOptions.staleTime;
+        const isStale =
+          staleTime === Infinity
+            ? false
+            : Date.now() - entry.updatedAt > staleTime;
+        const hasData = entry.data !== undefined;
+
+        if (!force && hasData && !isStale && !entry.error) return entry.data;
+
+        setQueryState(queryKey, {
+          isFetching: true,
+          isLoading: !hasData,
+          status: !hasData ? "loading" : entry.status,
+          error: null,
+        });
+
+        const run = async (attempt = 1) => {
+          try {
+            const data = await Promise.resolve(entry.queryFn());
+            setQueryState(queryKey, {
+              data,
+              error: null,
+              status: "success",
+              isLoading: false,
+              isFetching: false,
+              updatedAt: Date.now(),
+            });
+            return data;
+          } catch (error) {
+            if (shouldRetry(mergedOptions.retry, attempt, error)) {
+              const wait = getRetryDelay(mergedOptions.retryDelay, attempt);
+              await delay(wait);
+              return run(attempt + 1);
+            }
+            setQueryState(queryKey, {
+              error,
+              status: "error",
+              isLoading: false,
+              isFetching: false,
+              updatedAt: Date.now(),
+            });
+            throw error;
+          }
+        };
+
+        return run();
+      };
+
       const subscribe = (queryKey, callback) => {
         if (!subscribers.has(queryKey)) {
           subscribers.set(queryKey, []);
         }
         subscribers.get(queryKey).push(callback);
+
+        cancelCacheCleanup(queryKey);
 
         const query = queries.get(queryKey);
         if (query) {
@@ -313,46 +391,70 @@
           if (index > -1) {
             querySubscribers.splice(index, 1);
           }
+          if (querySubscribers.length === 0) {
+            scheduleCacheCleanup(queryKey);
+          }
         };
       };
 
-      const invalidateQuery = (queryKey) => {
-        queries.delete(queryKey);
-        notifySubscribers(queryKey);
+      const refetchActiveQueries = (eventType) => {
+        for (const [key, entry] of queries) {
+          const active = (subscribers.get(key) || []).length > 0;
+          if (!active || entry.isFetching) continue;
+          if (entry.options?.enabled === false) continue;
+
+          if (
+            eventType === "focus" &&
+            entry.options?.refetchOnWindowFocus === false
+          ) {
+            continue;
+          }
+          if (
+            eventType === "reconnect" &&
+            entry.options?.refetchOnReconnect === false
+          ) {
+            continue;
+          }
+          fetchQuery(key, entry.options, true).catch(() => {});
+        }
       };
 
-      const invalidateQueries = (pattern) => {
-        const keysToDelete = [];
-        for (const [key] of queries) {
-          if (typeof pattern === "string" && key.includes(pattern)) {
-            keysToDelete.push(key);
-          } else if (pattern instanceof RegExp && pattern.test(key)) {
-            keysToDelete.push(key);
-          }
-        }
-        keysToDelete.forEach((key) => {
-          queries.delete(key);
-          notifySubscribers(key);
+      const attachListeners = () => {
+        if (listenersAttached) return;
+        listenersAttached = true;
+
+        window.addEventListener("focus", () => {
+          refetchActiveQueries("focus");
+        });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) refetchActiveQueries("focus");
+        });
+        window.addEventListener("online", () => {
+          refetchActiveQueries("reconnect");
         });
       };
 
       const useQuery = (options) => {
-        const { queryKey, queryFn, staleTime = 0, enabled = true } = options;
+        const {
+          queryKey,
+          queryFn,
+          enabled = true,
+          staleTime,
+          cacheTime,
+          retry,
+          retryDelay,
+          refetchOnWindowFocus,
+          refetchOnReconnect,
+        } = options;
 
         const { useState, useEffect } = window.TiLab.jsx._hooks || {};
 
         if (!useState || !useEffect) {
           console.error(
-            "useQuery: хуки недоступны. Используйте внутри TiLab.jsx"
+            "useQuery: хуки недоступны. Используйте внутри TiLab.jsx",
           );
           return { data: undefined, isLoading: false, error: null };
         }
-
-        const queryFnString = queryFn.toString();
-        const isGlobalDataQuery = queryFnString.includes("window.");
-        const globalPath = isGlobalDataQuery
-          ? queryFnString.match(/window\.([\w.]+)/)?.[1]
-          : null;
 
         const [state, setState] = useState({
           data: undefined,
@@ -361,84 +463,87 @@
           isSuccess: false,
           isError: false,
           isFetching: false,
+          status: "idle",
         });
 
         const fullQueryKey = createQueryKey(queryKey);
 
         useEffect(() => {
+          attachListeners();
           if (!enabled) return;
 
+          const mergedOptions = {
+            queryKey: fullQueryKey,
+            queryFn,
+            enabled,
+            staleTime,
+            cacheTime,
+            retry,
+            retryDelay,
+            refetchOnWindowFocus,
+            refetchOnReconnect,
+          };
+
           const unsubscribe = subscribe(fullQueryKey, (query) => {
-            if (query) {
-              const isStale = Date.now() - query.timestamp > staleTime;
+            if (!query) return;
 
-              setState({
-                data: query.data,
-                isLoading: query.isLoading,
-                error: query.error,
-                isSuccess:
-                  !query.isLoading && !query.error && query.data !== undefined,
-                isError: !!query.error,
-                isFetching: query.isLoading,
-              });
-
-              if (isStale && !query.isLoading) {
-                setQueryLoading(fullQueryKey, true);
-                Promise.resolve(queryFn())
-                  .then((data) => setQuery(fullQueryKey, data))
-                  .catch((error) => setQueryError(fullQueryKey, error));
-              }
-            } else {
-              setQueryLoading(fullQueryKey, true);
-              Promise.resolve(queryFn())
-                .then((data) => {
-                  let finalData = data;
-                  if (isGlobalDataQuery && globalPath) {
-                    const reactiveData = createReactiveData(
-                      `window.${globalPath}`,
-                      fullQueryKey
-                    );
-                    if (reactiveData) finalData = reactiveData;
-                  }
-                  setQuery(fullQueryKey, finalData);
-                })
-                .catch((error) => setQueryError(fullQueryKey, error));
-            }
+            setState({
+              data: query.data,
+              isLoading: query.isLoading,
+              error: query.error,
+              isSuccess: query.status === "success",
+              isError: query.status === "error",
+              isFetching: query.isFetching,
+              status: query.status,
+            });
           });
 
-          const query = queries.get(fullQueryKey);
-          if (!query && !state.isLoading) {
-            setQueryLoading(fullQueryKey, true);
+          const current = ensureEntry(fullQueryKey);
+          current.options = { ...defaultOptions, ...mergedOptions };
+          current.queryFn = queryFn;
 
-            Promise.resolve(queryFn())
-              .then((data) => {
-                let finalData = data;
-                if (isGlobalDataQuery && globalPath) {
-                  const reactiveData = createReactiveData(
-                    `window.${globalPath}`,
-                    fullQueryKey
-                  );
-                  if (reactiveData) finalData = reactiveData;
-                }
-                setQuery(fullQueryKey, finalData);
-              })
-              .catch((error) => setQueryError(fullQueryKey, error));
+          const staleTimeResolved =
+            current.options?.staleTime ?? defaultOptions.staleTime;
+          const isStale =
+            staleTimeResolved === Infinity
+              ? false
+              : Date.now() - current.updatedAt > staleTimeResolved;
+          if (!current.isFetching && (current.data === undefined || isStale)) {
+            fetchQuery(fullQueryKey, current.options).catch(() => {});
           }
 
           return unsubscribe;
-        }, [fullQueryKey, enabled, staleTime]);
+        }, [
+          fullQueryKey,
+          queryFn,
+          enabled,
+          staleTime,
+          cacheTime,
+          retry,
+          retryDelay,
+          refetchOnWindowFocus,
+          refetchOnReconnect,
+        ]);
 
         return state;
       };
 
       const useMutation = (options) => {
-        const { mutationFn, onSuccess, onError, onSettled } = options;
+        const {
+          mutationFn,
+          onMutate,
+          onSuccess,
+          onError,
+          onSettled,
+          retry,
+          retryDelay,
+        } = options;
 
         const { useState, useCallback } = window.TiLab.jsx._hooks || {};
 
         if (!useState || !useCallback) {
           console.error(
-            "useMutation: хуки недоступны. Используйте внутри TiLab.jsx"
+            "useMutation: хуки недоступны. Используйте внутри TiLab.jsx",
           );
           return { mutate: () => {}, isLoading: false, error: null };
         }
@@ -449,40 +554,74 @@
           error: null,
           isSuccess: false,
           isError: false,
+          status: "idle",
         });
 
         const mutate = useCallback(
           async (variables) => {
-            setState((prev) => ({ ...prev, isLoading: true, error: null }));
+            setState((prev) => ({
+              ...prev,
+              isLoading: true,
+              isError: false,
+              error: null,
+              status: "loading",
+            }));
 
-            try {
-              const data = await Promise.resolve(mutationFn(variables));
-              setState({
-                data,
-                isLoading: false,
-                error: null,
-                isSuccess: true,
-                isError: false,
+            let context;
+            if (onMutate) {
+              context = onMutate(variables, {
+                getQueryData: (key) => getQueryData(createQueryKey(key)),
+                setQueryData: (key, updater) =>
+                  setQueryData(createQueryKey(key), updater),
               });
-
-              if (onSuccess) onSuccess(data, variables);
-              return data;
-            } catch (error) {
-              setState({
-                data: undefined,
-                isLoading: false,
-                error,
-                isSuccess: false,
-                isError: true,
-              });
-
-              if (onError) onError(error, variables);
-              throw error;
-            } finally {
-              if (onSettled) onSettled(state.data, error, variables);
+              if (typeof context === "function") {
+                context = { rollback: context };
+              }
             }
+
+            const run = async (attempt = 1) => {
+              try {
+                const data = await Promise.resolve(mutationFn(variables));
+                setState({
+                  data,
+                  isLoading: false,
+                  error: null,
+                  isSuccess: true,
+                  isError: false,
+                  status: "success",
+                });
+                if (onSuccess) onSuccess(data, variables, context);
+                if (onSettled) onSettled(data, null, variables, context);
+                return data;
+              } catch (error) {
+                if (shouldRetry(retry ?? defaultOptions.retry, attempt, error)) {
+                  const wait = getRetryDelay(
+                    retryDelay ?? defaultOptions.retryDelay,
+                    attempt,
+                  );
+                  await delay(wait);
+                  return run(attempt + 1);
+                }
+                if (context?.rollback) {
+                  context.rollback();
+                }
+                setState({
+                  data: undefined,
+                  isLoading: false,
+                  error,
+                  isSuccess: false,
+                  isError: true,
+                  status: "error",
+                });
+                if (onError) onError(error, variables, context);
+                if (onSettled) onSettled(undefined, error, variables, context);
+                throw error;
+              }
+            };
+
+            return run();
           },
-          [mutationFn, onSuccess, onError, onSettled]
+          [mutationFn, onMutate, onSuccess, onError, onSettled, retry, retryDelay],
         );
 
         const reset = useCallback(() => {
@@ -492,6 +631,7 @@
             error: null,
             isSuccess: false,
             isError: false,
+            status: "idle",
           });
         }, []);
 
@@ -501,8 +641,6 @@
       return {
         useQuery,
         useMutation,
-        invalidateQuery,
-        invalidateQueries,
       };
     };
 
@@ -510,9 +648,9 @@
       version: "0.6 (alpha)",
       copyright: "© 2025 Daniel Abros",
       site: "https://abros.dev",
-      query: QueryModule(),
       console: ConsoleModule(),
       lib: LibraryModule(),
+      query: QueryModule(),
       jsx: JSXModule().create,
     };
 
