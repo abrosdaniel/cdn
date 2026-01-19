@@ -1,4 +1,8 @@
 (function (window) {
+  const createPanel = document.createElement("div");
+  createPanel.classList.add("tilab");
+  document.body.appendChild(createPanel);
+
   TiLab.jsx(({ html, render, useState, useEffect, useQuery }) => {
     const Panel = () => {
       const [isOpen, setIsOpen] = useState(false);
@@ -64,192 +68,185 @@
       }, [isDragging, startY, startHeight]);
 
       return html`
-        <div class="tilab">
-          <style>
-            .tilab {
-              display: block;
-              position: fixed;
-              z-index: 99999999;
-              left: 0;
-              bottom: 0;
-              margin: 0 !important;
-              padding: 0 !important;
-              font-size: 16px !important;
-              --tlp-panel-height: ${panelHeight}px;
-              --tlp-font-size: 16px;
-            }
-            .tilab * {
-              box-sizing: border-box !important;
-              text-transform: none !important;
-              font-family:
-                ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
-              color: #d0d5dd;
-              text-align: left;
-            }
-            .tilab-frame {
-              width: 100vw;
-              height: 0;
-              position: relative;
-              transition: ${isDragging ? "none" : "height 0.3s ease-in-out"};
-            }
-            .tilab-frame[data-state="true"] {
-              height: var(--tlp-panel-height);
-            }
-            .tilab aside {
-              width: 100%;
-              height: 100%;
-              flex-direction: row;
-              background-color: #0b0d10;
-              display: flex;
-              gap: calc(var(--tlp-font-size) * 0.125);
-            }
-            .tilab-drag-handle {
-              position: absolute;
-              transition: background-color 0.125s ease;
-              z-index: 4;
-              top: 0;
-              width: 100%;
-              height: 3px;
-              cursor: ns-resize;
-            }
-            .tilab-drag-handle:hover {
-              background-color: #9b8afbe5;
-            }
-            .tilab-close {
-              position: absolute;
-              cursor: pointer;
-              z-index: 5;
-              display: none;
-              align-items: center;
-              justify-content: center;
-              outline: none;
-              background-color: #191c24;
-              top: 0;
-              right: calc(var(--tlp-font-size) * 0.5);
-              transform: translate(0, -100%);
-              border-right: #394056 1px solid;
-              border-left: #394056 1px solid;
-              border-top: #394056 1px solid;
-              border-bottom: none;
-              border-radius: calc(var(--tlp-font-size) * 0.25)
-                calc(var(--tlp-font-size) * 0.25) 0px 0px;
-              padding: calc(var(--tlp-font-size) * 0.25)
-                calc(var(--tlp-font-size) * 0.375)
-                calc(var(--tlp-font-size) * 0.125)
-                calc(var(--tlp-font-size) * 0.375);
-            }
-            .tilab-frame[data-state="true"] .tilab-close {
-              display: flex;
-            }
-            .tilab-close:hover {
-              background-color: #292e3d;
-            }
-            .tilab-close::after {
-              content: " ";
-              position: absolute;
-              top: 100%;
-              left: -calc(var(--tlp-font-size) * 0.625);
-              height: calc(var(--tlp-font-size) * 0.375);
-              width: calc(100% + calc(var(--tlp-font-size) * 1.25));
-            }
-            .tilab-close svg {
-              color: #98a2b3;
-              width: calc(var(--tlp-font-size) * 0.5);
-              height: calc(var(--tlp-font-size) * 0.5);
-            }
-            .tilab-section {
-              flex: 1 1 700px;
-              background-color: #191c24;
-              display: flex;
-              flex-direction: column;
-            }
-            .tilab-header {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding: calc(var(--tlp-font-size) * 0.5)
-                calc(var(--tlp-font-size) * 0.625);
-              gap: calc(var(--tlp-font-size) * 0.625);
-              border-bottom: #292e3d 1px solid;
-            }
-            .tilab-console {
-              flex: 1;
-              overflow-y: auto;
-              padding: calc(var(--tlp-font-size) * 0.5);
-              font-family: monospace;
-              font-size: calc(var(--tlp-font-size) * 0.875);
-            }
-            .tilab-open {
-              position: fixed;
-              bottom: 0;
-              right: 0;
-              margin: calc(var(--tlp-font-size) * 0.5);
-              height: calc(var(--tlp-font-size) * 3.5);
-              width: calc(var(--tlp-font-size) * 3.5);
-              padding: 0;
-              cursor: pointer;
-              background-color: transparent;
-              border: 2px solid #494949;
-              border-radius: 500px;
-              transition: all 0.5s ease-in-out;
-            }
-            .tilab-frame[data-state="true"] .tilab-open {
-              bottom: calc(var(--tlp-font-size) * -7);
-            }
-            .tilab-open img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              aspect-ratio: 1 / 1;
-              border-radius: 500px;
-            }
-          </style>
+        <style>
+          .tilab {
+            display: block;
+            position: fixed;
+            z-index: 99999999;
+            left: 0;
+            bottom: 0;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 16px !important;
+            --tlp-panel-height: ${panelHeight}px;
+            --tlp-font-size: 16px;
+          }
+          .tilab * {
+            box-sizing: border-box !important;
+            text-transform: none !important;
+            font-family:
+              ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
+            color: #d0d5dd;
+            text-align: left;
+          }
+          .tilab-frame {
+            width: 100vw;
+            height: 0;
+            position: relative;
+            transition: ${isDragging ? "none" : "height 0.3s ease-in-out"};
+          }
+          .tilab-frame[data-state="true"] {
+            height: var(--tlp-panel-height);
+          }
+          .tilab aside {
+            width: 100%;
+            height: 100%;
+            flex-direction: row;
+            background-color: #0b0d10;
+            display: flex;
+            gap: calc(var(--tlp-font-size) * 0.125);
+          }
+          .tilab-drag-handle {
+            position: absolute;
+            transition: background-color 0.125s ease;
+            z-index: 4;
+            top: 0;
+            width: 100%;
+            height: 3px;
+            cursor: ns-resize;
+          }
+          .tilab-drag-handle:hover {
+            background-color: #9b8afbe5;
+          }
+          .tilab-close {
+            position: absolute;
+            cursor: pointer;
+            z-index: 5;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            background-color: #191c24;
+            top: 0;
+            right: calc(var(--tlp-font-size) * 0.5);
+            transform: translate(0, -100%);
+            border-right: #394056 1px solid;
+            border-left: #394056 1px solid;
+            border-top: #394056 1px solid;
+            border-bottom: none;
+            border-radius: calc(var(--tlp-font-size) * 0.25)
+              calc(var(--tlp-font-size) * 0.25) 0px 0px;
+            padding: calc(var(--tlp-font-size) * 0.25)
+              calc(var(--tlp-font-size) * 0.375)
+              calc(var(--tlp-font-size) * 0.125)
+              calc(var(--tlp-font-size) * 0.375);
+          }
+          .tilab-frame[data-state="true"] .tilab-close {
+            display: flex;
+          }
+          .tilab-close:hover {
+            background-color: #292e3d;
+          }
+          .tilab-close::after {
+            content: " ";
+            position: absolute;
+            top: 100%;
+            left: -calc(var(--tlp-font-size) * 0.625);
+            height: calc(var(--tlp-font-size) * 0.375);
+            width: calc(100% + calc(var(--tlp-font-size) * 1.25));
+          }
+          .tilab-close svg {
+            color: #98a2b3;
+            width: calc(var(--tlp-font-size) * 0.5);
+            height: calc(var(--tlp-font-size) * 0.5);
+          }
+          .tilab-section {
+            flex: 1 1 700px;
+            background-color: #191c24;
+            display: flex;
+            flex-direction: column;
+          }
+          .tilab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: calc(var(--tlp-font-size) * 0.5)
+              calc(var(--tlp-font-size) * 0.625);
+            gap: calc(var(--tlp-font-size) * 0.625);
+            border-bottom: #292e3d 1px solid;
+          }
+          .tilab-console {
+            flex: 1;
+            overflow-y: auto;
+            padding: calc(var(--tlp-font-size) * 0.5);
+            font-family: monospace;
+            font-size: calc(var(--tlp-font-size) * 0.875);
+          }
+          .tilab-open {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            margin: calc(var(--tlp-font-size) * 0.5);
+            height: calc(var(--tlp-font-size) * 3.5);
+            width: calc(var(--tlp-font-size) * 3.5);
+            padding: 0;
+            cursor: pointer;
+            background-color: transparent;
+            border: 2px solid #494949;
+            border-radius: 500px;
+            transition: all 0.5s ease-in-out;
+          }
+          .tilab-frame[data-state="true"] .tilab-open {
+            bottom: calc(var(--tlp-font-size) * -7);
+          }
+          .tilab-open img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            border-radius: 500px;
+          }
+        </style>
 
-          <div class="tilab-frame" data-state="${isOpen}">
-            <aside aria-label="TiLab panel">
-              <div
-                class="tilab-drag-handle"
-                onmousedown=${handleDragStart}
-              ></div>
-              <button
-                aria-label="Close TiLab panel"
-                class="tilab-close"
-                onclick=${handleToggle}
+        <div class="tilab-frame" data-state="${isOpen}">
+          <aside aria-label="TiLab panel">
+            <div class="tilab-drag-handle" onmousedown=${handleDragStart}></div>
+            <button
+              aria-label="Close TiLab panel"
+              class="tilab-close"
+              onclick=${handleToggle}
+            >
+              <svg
+                width="10"
+                height="6"
+                viewBox="0 0 10 6"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  width="10"
-                  height="6"
-                  viewBox="0 0 10 6"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M1 1L5 5L9 1"
-                    stroke="currentColor"
-                    stroke-width="1.66667"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                </svg>
-              </button>
-              <div class="tilab-section">
-                <div class="tilab-header">
-                  <${Logo} version=${tiLabData} />
-                  <div class="tilab-status"></div>
-                </div>
-                <${Console} console=${consoleData} />
-              </div>
-              <div class="tilab-section">
-                <${Libraries} lib=${libData} />
-              </div>
-            </aside>
-            <button class="tilab-open" onclick=${handleToggle}>
-              <${Notification} count=${consoleData.storage.length} />
-              <img
-                src="https://cdn.abros.dev/tilab/services/assets/tilab.png"
-              />
+                <path
+                  d="M1 1L5 5L9 1"
+                  stroke="currentColor"
+                  stroke-width="1.66667"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
             </button>
-          </div>
+            <div class="tilab-section">
+              <div class="tilab-header">
+                <${Logo} version=${tiLabData} />
+                <div class="tilab-status"></div>
+              </div>
+              <${Console} console=${consoleData} />
+            </div>
+            <div class="tilab-section">
+              <${Libraries} lib=${libData} />
+            </div>
+          </aside>
+          <button class="tilab-open" onclick=${handleToggle}>
+            <${Notification} count=${consoleData.storage.length} />
+            <img src="https://cdn.abros.dev/tilab/services/assets/tilab.png" />
+          </button>
         </div>
       `;
     };
@@ -681,6 +678,6 @@
       `;
     };
 
-    render(html`<${Panel} />`, document.body);
+    render(html`<${Panel} />`, createPanel);
   });
 })(window);
