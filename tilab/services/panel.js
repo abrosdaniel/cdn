@@ -3,15 +3,13 @@
   createPanel.classList.add("tilab");
   document.body.appendChild(createPanel);
 
-  TiLab.jsx(({ html, render, useState, useEffect }) => {
+  TiLab.jsx(({ html, render, useState, useEffect, useQuery }) => {
     const Panel = () => {
       const [isOpen, setIsOpen] = useState(false);
       const [panelHeight, setPanelHeight] = useState(500);
       const [isDragging, setIsDragging] = useState(false);
       const [startY, setStartY] = useState(0);
       const [startHeight, setStartHeight] = useState(0);
-
-      const { useQuery } = window.TiLab.query;
 
       const { data: tiLabData = window.TiLab.version } = useQuery({
         queryKey: ["tilab-version"],

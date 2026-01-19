@@ -13,7 +13,8 @@
       CONSOLE_TYPES: ["log", "info", "trace", "warn", "error"],
     };
 
-    // Загрузка скрипта
+    const now = () => Date.now();
+
     function loadScript(src, async = true) {
       return new Promise((resolve, reject) => {
         const script = document.createElement("script");
@@ -29,13 +30,12 @@
       });
     }
 
-    // Сборщик логов
     const ConsoleModule = () => {
       const storage = [];
 
       const addEntry = (type, name, message, data) => {
         const entry = {
-          id: Date.now() + Math.random(),
+          id: now() + Math.random(),
           time: new Date().toLocaleString(),
           type: type || "info",
           name: name || "Система",
@@ -61,7 +61,6 @@
       return console;
     };
 
-    // Загрузчик библиотек
     const LibraryModule = () => {
       const storage = [];
 
@@ -83,7 +82,7 @@
           },
           isLoaded: false,
           isLoading: true,
-          timestamp: Date.now(),
+          timestamp: now(),
           exports: {},
           error: null,
         };
@@ -102,7 +101,7 @@
 
             libRecord.isLoaded = true;
             libRecord.isLoading = false;
-            libRecord.loadedAt = Date.now();
+            libRecord.loadedAt = now();
 
             if (typeof callback === "function") {
               callback(...Object.values(libRecord.exports));
@@ -133,7 +132,7 @@
       return lib;
     };
 
-    const JSXModule = () => {
+    const JSXModule = (queryModule) => {
       const storage = [];
 
       const jsxWrapper = (callback) => {
@@ -179,14 +178,14 @@
               useCallback,
               useContext,
               createContext,
-              useQuery: window.TiLab?.query?.useQuery,
-              useMutation: window.TiLab?.query?.useMutation,
+              useQuery: queryModule?.useQuery,
+              useMutation: queryModule?.useMutation,
             });
 
             const componentRecord = {
-              id: Date.now() + Math.random(),
+              id: now() + Math.random(),
               name: callback.name || "Anonymous",
-              createdAt: Date.now(),
+              createdAt: now(),
             };
             storage.push(componentRecord);
           })
@@ -226,6 +225,11 @@
         new Promise((resolve) => {
           setTimeout(resolve, ms);
         });
+
+      const resolveOptions = (options) => ({
+        ...defaultOptions,
+        ...options,
+      });
 
       const notifySubscribers = (queryKey) => {
         const query = queries.get(queryKey);
@@ -267,7 +271,7 @@
           status: "success",
           isLoading: false,
           isFetching: false,
-          updatedAt: Date.now(),
+          updatedAt: now(),
         });
       };
 
@@ -287,8 +291,7 @@
         const entry = queries.get(queryKey);
         if (!entry) return;
 
-        const cacheTime =
-          entry.options?.cacheTime ?? defaultOptions.cacheTime;
+        const cacheTime = entry.options?.cacheTime ?? defaultOptions.cacheTime;
         if (cacheTime === Infinity) return;
 
         cancelCacheCleanup(queryKey);
@@ -302,6 +305,12 @@
           queries.delete(queryKey);
           notifySubscribers(queryKey);
         }, cacheTime);
+      };
+
+      const isStale = (entry, options) => {
+        const staleTime = options?.staleTime ?? defaultOptions.staleTime;
+        if (staleTime === Infinity) return false;
+        return now() - entry.updatedAt > staleTime;
       };
 
       const shouldRetry = (retry, attempt, error) => {
@@ -319,19 +328,15 @@
 
       const fetchQuery = async (queryKey, options, force = false) => {
         const entry = ensureEntry(queryKey);
-        const mergedOptions = { ...defaultOptions, ...options };
+        const mergedOptions = resolveOptions(options);
 
         entry.options = mergedOptions;
         entry.queryFn = options.queryFn;
 
-        const staleTime = mergedOptions.staleTime;
-        const isStale =
-          staleTime === Infinity
-            ? false
-            : Date.now() - entry.updatedAt > staleTime;
         const hasData = entry.data !== undefined;
 
-        if (!force && hasData && !isStale && !entry.error) return entry.data;
+        if (!force && hasData && !isStale(entry, mergedOptions) && !entry.error)
+          return entry.data;
 
         setQueryState(queryKey, {
           isFetching: true,
@@ -349,7 +354,7 @@
               status: "success",
               isLoading: false,
               isFetching: false,
-              updatedAt: Date.now(),
+              updatedAt: now(),
             });
             return data;
           } catch (error) {
@@ -363,7 +368,7 @@
               status: "error",
               isLoading: false,
               isFetching: false,
-              updatedAt: Date.now(),
+              updatedAt: now(),
             });
             throw error;
           }
@@ -472,7 +477,7 @@
           attachListeners();
           if (!enabled) return;
 
-          const mergedOptions = {
+          const mergedOptions = resolveOptions({
             queryKey: fullQueryKey,
             queryFn,
             enabled,
@@ -482,7 +487,7 @@
             retryDelay,
             refetchOnWindowFocus,
             refetchOnReconnect,
-          };
+          });
 
           const unsubscribe = subscribe(fullQueryKey, (query) => {
             if (!query) return;
@@ -499,16 +504,13 @@
           });
 
           const current = ensureEntry(fullQueryKey);
-          current.options = { ...defaultOptions, ...mergedOptions };
+          current.options = mergedOptions;
           current.queryFn = queryFn;
 
-          const staleTimeResolved =
-            current.options?.staleTime ?? defaultOptions.staleTime;
-          const isStale =
-            staleTimeResolved === Infinity
-              ? false
-              : Date.now() - current.updatedAt > staleTimeResolved;
-          if (!current.isFetching && (current.data === undefined || isStale)) {
+          if (
+            !current.isFetching &&
+            (current.data === undefined || isStale(current, mergedOptions))
+          ) {
             fetchQuery(fullQueryKey, current.options).catch(() => {});
           }
 
@@ -579,6 +581,9 @@
               }
             }
 
+            const retryOption = retry ?? defaultOptions.retry;
+            const retryDelayOption = retryDelay ?? defaultOptions.retryDelay;
+
             const run = async (attempt = 1) => {
               try {
                 const data = await Promise.resolve(mutationFn(variables));
@@ -594,11 +599,8 @@
                 if (onSettled) onSettled(data, null, variables, context);
                 return data;
               } catch (error) {
-                if (shouldRetry(retry ?? defaultOptions.retry, attempt, error)) {
-                  const wait = getRetryDelay(
-                    retryDelay ?? defaultOptions.retryDelay,
-                    attempt,
-                  );
+                if (shouldRetry(retryOption, attempt, error)) {
+                  const wait = getRetryDelay(retryDelayOption, attempt);
                   await delay(wait);
                   return run(attempt + 1);
                 }
@@ -621,7 +623,15 @@
 
             return run();
           },
-          [mutationFn, onMutate, onSuccess, onError, onSettled, retry, retryDelay],
+          [
+            mutationFn,
+            onMutate,
+            onSuccess,
+            onError,
+            onSettled,
+            retry,
+            retryDelay,
+          ],
         );
 
         const reset = useCallback(() => {
@@ -644,15 +654,19 @@
       };
     };
 
-    window.TiLab = {
-      version: "0.6 (alpha)",
-      copyright: "© 2025 Daniel Abros",
-      site: "https://abros.dev",
-      console: ConsoleModule(),
-      lib: LibraryModule(),
-      query: QueryModule(),
-      jsx: JSXModule().create,
+    const createTiLab = () => {
+      const query = QueryModule();
+      return {
+        version: "0.6 (alpha)",
+        copyright: "© 2025 Daniel Abros",
+        site: "https://abros.dev",
+        console: ConsoleModule(),
+        lib: LibraryModule(),
+        jsx: JSXModule(query).create,
+      };
     };
+
+    window.TiLab = createTiLab();
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("tilab") === "") {
