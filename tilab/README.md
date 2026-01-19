@@ -87,8 +87,6 @@ TiLab.lib.init("library", ({ func1, func2 }) => {
 - DOM-слой
   - `render` - монтирование дерева в DOM-узел
   - `html` - шаблонные строки htm для JSX-подобной разметки
-  - `Component` - базовый класс компонентов Preact
-  - `h` - фабричный хелпер (аналог `React.createElement`)
   - `useState` - локальное состояние компонента
   - `useEffect` - побочные эффекты и подписки
   - `useRef` - мутабельные ссылки на значения/DOM
@@ -97,11 +95,8 @@ TiLab.lib.init("library", ({ func1, func2 }) => {
   - `useContext` - доступ к контексту
   - `createContext` - создание контекста
 - Query-слой
-  - `useQuery({ queryKey, queryFn, enabled, staleTime, cacheTime, retry, retryDelay, refetchOnWindowFocus, refetchOnReconnect })`
-  - `useMutation({ mutationFn, onMutate, onSuccess, onError, onSettled, retry, retryDelay })`
-
-`useQuery` автоматически делает refetch при фокусе окна и восстановлении сети (можно отключить флагами).
-`useMutation` поддерживает оптимистические обновления через `onMutate` (можно вернуть `rollback`).
+  - `useQuery({ queryKey, queryFn, enabled, staleTime, cacheTime, retry, retryDelay, refetchOnWindowFocus, refetchOnReconnect })` автоматически делает refetch при фокусе окна и восстановлении сети (можно отключить флагами).
+  - `useMutation({ mutationFn, onMutate, onSuccess, onError, onSettled, retry, retryDelay })` поддерживает оптимистические обновления через `onMutate` (можно вернуть `rollback`).
 
 Пример использования:
 

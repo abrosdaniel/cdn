@@ -14,7 +14,7 @@
       const { data: tiLabData = window.TiLab.version } = useQuery({
         queryKey: ["tilab-version"],
         queryFn: async () => window.TiLab.version,
-        staleTime: 1000 * 60 * 60 * 24,
+        staleTime: 1000,
       });
 
       const { data: consoleData = { storage: [] } } = useQuery({
@@ -49,7 +49,7 @@
           const deltaY = startY - e.clientY;
           const newHeight = Math.max(
             minHeight,
-            Math.min(startHeight + deltaY, maxHeight)
+            Math.min(startHeight + deltaY, maxHeight),
           );
           setPanelHeight(newHeight);
         };
@@ -84,7 +84,8 @@
           .tilab * {
             box-sizing: border-box !important;
             text-transform: none !important;
-            font-family: ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
+            font-family:
+              ui-sans-serif, Inter, system-ui, sans-serif, sans-serif;
             color: #d0d5dd;
             text-align: left;
           }
@@ -421,7 +422,7 @@
                 const dataContent = hasData
                   ? JSON.stringify(item.data, null, 2).replace(
                       /"([^"]+)":/g,
-                      "$1:"
+                      "$1:",
                     )
                   : "";
 
