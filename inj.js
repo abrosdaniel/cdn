@@ -13,6 +13,7 @@
         "lerazhalil.ru",
         "event-card.ru",
         "ouppconvites.com",
+        "click2invite.ru",
       ],
       fn: () => {
         window.location.href = "https://maryinvite.ru";

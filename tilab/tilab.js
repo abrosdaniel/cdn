@@ -1,8 +1,7 @@
 /*!
  * TiLab.js v0.6a
- * MIT License
  * (c) 2025 Daniel Abros
- * Сайт → https://abros.dev
+ * Сайт → https://cdn.abros.dev/
  * <script src="https://cdn.abros.dev/tilab/tilab.js"></script>
  */
 
@@ -659,7 +658,7 @@
       return {
         version: "0.6 (alpha)",
         copyright: "© 2025 Daniel Abros",
-        site: "https://abros.dev",
+        site: "https://cdn.abros.dev/",
         console: ConsoleModule(),
         lib: LibraryModule(),
         jsx: JSXModule(query).create,

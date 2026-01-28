@@ -1,11 +1,3 @@
-/*!
- * Hunter.js v0.1
- * MIT License
- * (c) 2025 Daniel Abros
- * Сайт → https://abros.dev
- * TiLab.lib.init('hunter');
- */
-
 (function () {
   function track(selector, callback, options = {}) {
     const defaultOptions = {
