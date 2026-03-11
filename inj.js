@@ -14,6 +14,8 @@
         "event-card.ru",
         "ouppconvites.com",
         "click2invite.ru",
+        "mrkuchkarov.github.io",
+        "danil-i-karina.ru",
       ],
       fn: () => {
         window.location.href = "https://maryinvite.ru";
