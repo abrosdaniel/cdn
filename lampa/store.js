@@ -383,6 +383,15 @@
     return head;
   }
 
+  function protoIcon() {
+    return (
+      '<svg width="21" height="30" viewBox="0 0 21 30" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+      '<circle cx="10.5" cy="8.5" r="7" stroke="currentColor" stroke-width="3"/>' +
+      '<rect y="9" width="21" height="21" rx="4" fill="currentColor"/>' +
+      "</svg>"
+    );
+  }
+
   function injectStoreStyles() {
     if ($("#skull-store-style").length) return;
 
@@ -475,7 +484,6 @@
         if (item.action == "check") {
           delete availability[plugin.url];
           checkAvailability(plugin);
-          rerender();
           Lampa.Controller.toggle("skull_store_center");
         }
       },
@@ -580,7 +588,7 @@
             '<div class="extensions__item-proto protocol-' +
             protocol +
             '">' +
-            protocol.toUpperCase() +
+            protoIcon() +
             "</div>" +
             '<div class="extensions__item-code skull-store__availability hide yellow">Проверка</div>' +
             '<div class="extensions__item-status hide">Проверка</div>' +
