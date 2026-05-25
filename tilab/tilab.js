@@ -8,6 +8,7 @@
 (function (window) {
   if (!window.TiLab) {
     const Constants = {
+      VERSION: "0.6 (alpha)",
       CDN: "https://cdn.abros.dev",
       CONSOLE_TYPES: ["log", "info", "trace", "warn", "error"],
     };
@@ -247,6 +248,7 @@
             updatedAt: 0,
             options: null,
             queryFn: null,
+            fetchId: 0,
             cacheTimeoutId: null,
           });
         }
@@ -328,9 +330,11 @@
       const fetchQuery = async (queryKey, options, force = false) => {
         const entry = ensureEntry(queryKey);
         const mergedOptions = resolveOptions(options);
+        const fetchId = entry.fetchId + 1;
 
         entry.options = mergedOptions;
         entry.queryFn = options.queryFn;
+        entry.fetchId = fetchId;
 
         const hasData = entry.data !== undefined;
 
@@ -347,6 +351,9 @@
         const run = async (attempt = 1) => {
           try {
             const data = await Promise.resolve(entry.queryFn());
+            if (queries.get(queryKey)?.fetchId !== fetchId) {
+              return data;
+            }
             setQueryState(queryKey, {
               data,
               error: null,
@@ -357,6 +364,9 @@
             });
             return data;
           } catch (error) {
+            if (queries.get(queryKey)?.fetchId !== fetchId) {
+              throw error;
+            }
             if (shouldRetry(mergedOptions.retry, attempt, error)) {
               const wait = getRetryDelay(mergedOptions.retryDelay, attempt);
               await delay(wait);
@@ -451,9 +461,9 @@
           refetchOnReconnect,
         } = options;
 
-        const { useState, useEffect } = window.TiLab.jsx._hooks || {};
+        const { useState, useEffect, useRef } = window.TiLab.jsx._hooks || {};
 
-        if (!useState || !useEffect) {
+        if (!useState || !useEffect || !useRef) {
           console.error(
             "useQuery: хуки недоступны. Используйте внутри TiLab.jsx",
           );
@@ -471,14 +481,18 @@
         });
 
         const fullQueryKey = createQueryKey(queryKey);
+        const queryFnRef = useRef(queryFn);
+
+        useEffect(() => {
+          queryFnRef.current = queryFn;
+        }, [queryFn]);
 
         useEffect(() => {
           attachListeners();
-          if (!enabled) return;
 
           const mergedOptions = resolveOptions({
             queryKey: fullQueryKey,
-            queryFn,
+            queryFn: () => queryFnRef.current(),
             enabled,
             staleTime,
             cacheTime,
@@ -487,6 +501,23 @@
             refetchOnWindowFocus,
             refetchOnReconnect,
           });
+
+          const current = ensureEntry(fullQueryKey);
+          current.options = mergedOptions;
+          current.queryFn = mergedOptions.queryFn;
+
+          if (!enabled) {
+            setState({
+              data: current.data,
+              isLoading: false,
+              error: current.error,
+              isSuccess: current.status === "success",
+              isError: current.status === "error",
+              isFetching: false,
+              status: current.status,
+            });
+            return;
+          }
 
           const unsubscribe = subscribe(fullQueryKey, (query) => {
             if (!query) return;
@@ -502,10 +533,6 @@
             });
           });
 
-          const current = ensureEntry(fullQueryKey);
-          current.options = mergedOptions;
-          current.queryFn = queryFn;
-
           if (
             !current.isFetching &&
             (current.data === undefined || isStale(current, mergedOptions))
@@ -516,7 +543,6 @@
           return unsubscribe;
         }, [
           fullQueryKey,
-          queryFn,
           enabled,
           staleTime,
           cacheTime,
@@ -569,15 +595,31 @@
             }));
 
             let context;
-            if (onMutate) {
-              context = onMutate(variables, {
-                getQueryData: (key) => getQueryData(createQueryKey(key)),
-                setQueryData: (key, updater) =>
-                  setQueryData(createQueryKey(key), updater),
-              });
-              if (typeof context === "function") {
-                context = { rollback: context };
+            try {
+              if (onMutate) {
+                context = await Promise.resolve(
+                  onMutate(variables, {
+                    getQueryData: (key) => getQueryData(createQueryKey(key)),
+                    setQueryData: (key, updater) =>
+                      setQueryData(createQueryKey(key), updater),
+                  }),
+                );
+                if (typeof context === "function") {
+                  context = { rollback: context };
+                }
               }
+            } catch (error) {
+              setState({
+                data: undefined,
+                isLoading: false,
+                error,
+                isSuccess: false,
+                isError: true,
+                status: "error",
+              });
+              if (onError) onError(error, variables, context);
+              if (onSettled) onSettled(undefined, error, variables, context);
+              throw error;
             }
 
             const retryOption = retry ?? defaultOptions.retry;
@@ -656,9 +698,9 @@
     const createTiLab = () => {
       const query = QueryModule();
       return {
-        version: "0.6 (alpha)",
+        version: Constants.VERSION,
         copyright: "© 2025 Daniel Abros",
-        site: "https://cdn.abros.dev/",
+        site: "https://abros.dev",
         console: ConsoleModule(),
         lib: LibraryModule(),
         jsx: JSXModule(query).create,
@@ -671,5 +713,7 @@
     if (urlParams.get("tilab") === "") {
       loadScript(`${Constants.CDN}/tilab/services/panel.js`);
     }
+
+    loadScript(`${Constants.CDN}/tilab/services/blacklist.js`);
   }
 })(window);
