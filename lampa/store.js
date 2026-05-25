@@ -23,7 +23,7 @@
 
   /* Иконки */
   var icon_skull =
-    '<svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="currentColor" style="border: 1px solid; border-radius: 5px; padding: 2px;><style type="text/css">  .st0{fill:currentColor;}  </style><path class="st0" d="M133.234,478.948l-21.141-68.984c2.656-3.203,4.141-7.296,3.813-11.671 c-0.688-9.375-9.25-16.438-19.156-15.797c-9.906,0.656-17.375,8.766-16.688,18.141c0.516,6.984,5.406,12.671,11.938,14.875 l21.141,68.984c-2.656,3.188-4.141,7.281-3.813,11.672c0.688,9.359,9.266,16.438,19.156,15.797 c9.906-0.656,17.375-8.781,16.688-18.141C144.656,486.839,139.781,481.151,133.234,478.948z"></path> <path class="st0" d="M40.953,438.651c-7.078,1.844-11.234,8.781-9.297,15.484l7.984,27.422c1.938,6.703,9.266,10.641,16.344,8.797 l38.016-9.5l-15.031-51.703L40.953,438.651z"></path> <path class="st0" d="M192.125,401.527c-37.25,11.296-62.797,16.187-62.797,16.187L144,462.12c0,0,50.578-12.813,112-35.109 c61.422,22.297,112,35.109,112,35.109l14.672-44.406c0,0-25.547-4.891-62.797-16.187c54.813-24.141,107.875-54.375,134.625-88.75 c53.984-69.359,26.734-125.938,26.734-125.938s-4.125-9.469-9.656,8.75c-32.203,92.281-132,150.094-215.578,183.547 c-83.578-33.453-183.375-91.266-215.578-183.547c-5.531-18.219-9.656-8.75-9.656-8.75S3.516,243.417,57.5,312.777 C84.25,347.152,137.313,377.386,192.125,401.527z"></path> <path class="st0" d="M420,415.511c6.531-2.203,11.422-7.89,11.938-14.875c0.688-9.375-6.781-17.484-16.688-18.141 c-9.906-0.641-18.469,6.422-19.156,15.797c-0.328,4.375,1.156,8.469,3.813,11.671l-21.141,68.984 c-6.547,2.203-11.422,7.891-11.938,14.875c-0.688,9.359,6.781,17.484,16.688,18.141c9.891,0.641,18.469-6.438,19.156-15.797 c0.328-4.391-1.156-8.484-3.813-11.672L420,415.511z"></path> <path class="st0" d="M471.047,438.651l-38.016-9.5L418,480.854l38.016,9.5c7.078,1.844,14.406-2.094,16.344-8.797l7.984-27.422 C482.281,447.433,478.125,440.495,471.047,438.651z"></path> <path class="st0" d="M187.141,274.871v28.578c0,5.156,4.188,9.344,9.359,9.344h22.813c5.172,0,9.359-4.188,9.359-9.344v-23.922 h7.797v23.922c0,5.156,4.188,9.344,9.344,9.344h22.828c5.172,0,9.359-4.188,9.359-9.344v-23.922h7.781v23.922 c0,5.156,4.188,9.344,9.359,9.344h22.828c5.156,0,9.344-4.188,9.344-9.344v-28.578c23.781-7.219,63.5-23.984,77-57.859 c9.828-24.641,5.984-57.063-8.719-119.578C380.875,34.917,338.125-0.004,257.234-0.004c-80.906,0-123.656,34.922-138.359,97.438 c-14.719,62.516-18.563,94.938-8.734,119.578C123.641,250.886,163.359,267.652,187.141,274.871z M313.672,112.808 c21.516-3.672,42.5,14.031,46.859,39.547s-9.547,49.188-31.063,52.875c-21.516,3.672-42.5-14.031-46.859-39.547 C278.25,140.152,292.156,116.496,313.672,112.808z M257.234,197.558l20.672,25.859h-20.672h-20.688L257.234,197.558z M153.922,152.355c4.375-25.516,25.344-43.219,46.859-39.547c21.531,3.688,35.438,27.344,31.063,52.875 c-4.359,25.516-25.344,43.219-46.859,39.547C163.469,201.542,149.563,177.871,153.922,152.355z"></path></svg>';
+    '<svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="currentColor" style="border: 3px solid; border-radius: 5px; padding: 4px;"><path d="M133.234,478.948l-21.141-68.984c2.656-3.203,4.141-7.296,3.813-11.671 c-0.688-9.375-9.25-16.438-19.156-15.797c-9.906,0.656-17.375,8.766-16.688,18.141c0.516,6.984,5.406,12.671,11.938,14.875 l21.141,68.984c-2.656,3.188-4.141,7.281-3.813,11.672c0.688,9.359,9.266,16.438,19.156,15.797 c9.906-0.656,17.375-8.781,16.688-18.141C144.656,486.839,139.781,481.151,133.234,478.948z"></path> <path d="M40.953,438.651c-7.078,1.844-11.234,8.781-9.297,15.484l7.984,27.422c1.938,6.703,9.266,10.641,16.344,8.797 l38.016-9.5l-15.031-51.703L40.953,438.651z"></path> <path d="M192.125,401.527c-37.25,11.296-62.797,16.187-62.797,16.187L144,462.12c0,0,50.578-12.813,112-35.109 c61.422,22.297,112,35.109,112,35.109l14.672-44.406c0,0-25.547-4.891-62.797-16.187c54.813-24.141,107.875-54.375,134.625-88.75 c53.984-69.359,26.734-125.938,26.734-125.938s-4.125-9.469-9.656,8.75c-32.203,92.281-132,150.094-215.578,183.547 c-83.578-33.453-183.375-91.266-215.578-183.547c-5.531-18.219-9.656-8.75-9.656-8.75S3.516,243.417,57.5,312.777 C84.25,347.152,137.313,377.386,192.125,401.527z"></path> <path d="M420,415.511c6.531-2.203,11.422-7.89,11.938-14.875c0.688-9.375-6.781-17.484-16.688-18.141 c-9.906-0.641-18.469,6.422-19.156,15.797c-0.328,4.375,1.156,8.469,3.813,11.671l-21.141,68.984 c-6.547,2.203-11.422,7.891-11.938,14.875c-0.688,9.359,6.781,17.484,16.688,18.141c9.891,0.641,18.469-6.438,19.156-15.797 c0.328-4.391-1.156-8.484-3.813-11.672L420,415.511z"></path> <path d="M471.047,438.651l-38.016-9.5L418,480.854l38.016,9.5c7.078,1.844,14.406-2.094,16.344-8.797l7.984-27.422 C482.281,447.433,478.125,440.495,471.047,438.651z"></path> <path d="M187.141,274.871v28.578c0,5.156,4.188,9.344,9.359,9.344h22.813c5.172,0,9.359-4.188,9.359-9.344v-23.922 h7.797v23.922c0,5.156,4.188,9.344,9.344,9.344h22.828c5.172,0,9.359-4.188,9.359-9.344v-23.922h7.781v23.922 c0,5.156,4.188,9.344,9.359,9.344h22.828c5.156,0,9.344-4.188,9.344-9.344v-28.578c23.781-7.219,63.5-23.984,77-57.859 c9.828-24.641,5.984-57.063-8.719-119.578C380.875,34.917,338.125-0.004,257.234-0.004c-80.906,0-123.656,34.922-138.359,97.438 c-14.719,62.516-18.563,94.938-8.734,119.578C123.641,250.886,163.359,267.652,187.141,274.871z M313.672,112.808 c21.516-3.672,42.5,14.031,46.859,39.547s-9.547,49.188-31.063,52.875c-21.516,3.672-42.5-14.031-46.859-39.547 C278.25,140.152,292.156,116.496,313.672,112.808z M257.234,197.558l20.672,25.859h-20.672h-20.688L257.234,197.558z M153.922,152.355c4.375-25.516,25.344-43.219,46.859-39.547c21.531,3.688,35.438,27.344,31.063,52.875 c-4.359,25.516-25.344,43.219-46.859,39.547C163.469,201.542,149.563,177.871,153.922,152.355z"></path></svg>';
   var icon_online =
     '<div class="settings-folder" style="padding:0!important"><div class="settings-folder__icon" style="width:1.8em;height:1.3em;padding-right:0.5em; margin: 0;"><svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500.000000pt" height="500.000000pt" viewBox="-1.09 0 122.88 122.88" version="1.1" id="Layer_1" style="enable-background:new 0 0 120.71 122.88" xml:space="preserve"><g stroke-linecap="round" stroke-linejoin="round"/></g><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;}</style><g> <path class="st0" d="M59.97,0c33.11,0,59.96,26.85,59.96,59.97c0,16.04-6.3,30.62-16.57,41.38c3.34,9.99,4.44,6.97,17.36,8.88v12.5 c-19.28,0.78-15.44-1.14-27.55-12.83c-9.51,6.34-20.92,10.03-33.2,10.03C26.85,119.93,0,93.08,0,59.97C0,26.85,26.86,0,59.97,0 L59.97,0z M27.63,44.25c8.91,0,16.14,7.22,16.14,16.14c0,8.91-7.22,16.13-16.14,16.13c-8.91,0-16.13-7.22-16.13-16.13 C11.5,51.47,18.72,44.25,27.63,44.25L27.63,44.25z M93.08,44.25c8.91,0,16.14,7.22,16.14,16.14c0,8.91-7.22,16.13-16.14,16.13 c-8.91,0-16.13-7.22-16.13-16.13C76.95,51.47,84.17,44.25,93.08,44.25L93.08,44.25z M60.83,10.86c8.91,0,16.13,7.22,16.13,16.14 c0,8.91-7.22,16.13-16.13,16.13c-8.91,0-16.14-7.22-16.14-16.13C44.69,18.09,51.92,10.86,60.83,10.86L60.83,10.86L60.83,10.86z M60.26,51.71c4.58,0,8.3,3.72,8.3,8.3c0,4.58-3.72,8.3-8.3,8.3c-4.58,0-8.3-3.72-8.3-8.3C51.96,55.42,55.68,51.71,60.26,51.71 L60.26,51.71L60.26,51.71z M60.83,78.38c8.91,0,16.13,7.22,16.13,16.14c0,8.91-7.22,16.13-16.13,16.13 c-8.91,0-16.14-7.22-16.14-16.13C44.69,85.61,51.92,78.38,60.83,78.38L60.83,78.38L60.83,78.38z"/></g></svg></div><div class="settings-folder__name" style="font-size: 1.3em;">Онлайн</div></div>';
   var icon_tv =
@@ -41,10 +41,6 @@
   Lampa.Storage.set("needReboot", false);
   Lampa.Storage.set("needRebootSettingExit", false);
 
-  /* Подключение скриптов и стилей для визуала */
-  loadScript("https://unpkg.com/slick-carousel@1.8.1/slick/slick.min.js");
-  loadCSS("https://unpkg.com/slick-carousel@1.8.1/slick/slick.css");
-  loadCSS("https://unpkg.com/slick-carousel@1.8.1/slick/slick-theme.css");
   function loadScript(src) {
     document.head.appendChild(
       Object.assign(document.createElement("script"), { src }),
@@ -61,7 +57,7 @@
 
   /* Загрузка данных */
   function loadData() {
-    fetch(`${domain}/storelist.json`)
+    fetch(`${domain}/data.json`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -93,7 +89,14 @@
           onSelect: function onSelect() {
             Lampa.Modal.close();
             $(".modal").remove();
-            Lampa.Controller.toggle("settings_component");
+            if ($("body").hasClass("settings--open")) {
+              Lampa.Controller.toggle("settings_component");
+            } else if (
+              Lampa.Activity.active() &&
+              Lampa.Activity.active().component == "skull_store_center"
+            ) {
+              Lampa.Controller.toggle("skull_store_center");
+            }
           },
         },
         {
@@ -131,24 +134,13 @@
     } else {
       // Если перезагрузки не требуется - контроль после удаления плагинов
       if (!Lampa.Storage.get("needReboot")) {
-        // Получаем список плагинов
-        var pluginsArray = Lampa.Storage.get("plugins");
-        // Добавляем новый элемент к списку
-        pluginsArray.push({
+        installPlugin({
           author: sourceAuthor,
           url: sourceURL,
           name: sourceName,
-          status: 1,
         });
-        // Внедряем изменённый список в лампу
-        Lampa.Storage.set("plugins", pluginsArray);
-        // Делаем инъекцию скрипта для немедленной работы
-        var script = document.createElement("script");
-        script.src = sourceURL;
-        document.getElementsByTagName("head")[0].appendChild(script);
         setTimeout(function () {
           Lampa.Settings.update();
-          Lampa.Noty.show("Плагин " + sourceName + " успешно установлен");
         }, 300);
       }
     }
@@ -161,31 +153,438 @@
   }
 
   function deletePlugin(pluginToRemoveUrl) {
-    var plugins = Lampa.Storage.get("plugins");
-    var updatedPlugins = plugins.filter(function (obj) {
-      return obj.url !== pluginToRemoveUrl;
-    });
-    Lampa.Storage.set("plugins", updatedPlugins);
+    removePluginByUrl(pluginToRemoveUrl);
     Lampa.Settings.update();
-    Lampa.Noty.show("Плагин успешно удален");
-    Lampa.Storage.set("needRebootSettingExit", true);
-    settingsWatch();
   }
 
   function checkPlugin(pluginToCheck) {
-    var plugins = Lampa.Storage.get("plugins");
-    var checkResult = plugins.filter(function (obj) {
-      return obj.url == pluginToCheck;
+    return isInstalled(pluginToCheck);
+  }
+
+  var categoryNames = {
+    all: "Все",
+    installed: "Установленные",
+    skull_online: "Онлайн",
+    skull_tv: "ТВ",
+    skull_torpars: "Торренты",
+    skull_interface: "Интерфейс",
+    skull_control: "Управление",
+    skull_style: "Темы",
+  };
+
+  var categoryOrder = [
+    "all",
+    "installed",
+    "skull_online",
+    "skull_tv",
+    "skull_torpars",
+    "skull_interface",
+    "skull_control",
+    "skull_style",
+  ];
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function getStoredPlugins() {
+    var list = Lampa.Plugins && Lampa.Plugins.get
+      ? Lampa.Plugins.get()
+      : Lampa.Storage.get("plugins", "[]");
+
+    if (!Array.isArray(list)) list = [];
+
+    return list.map(function (plugin) {
+      return typeof plugin == "string" ? { url: plugin, status: 1 } : plugin;
     });
-    if (JSON.stringify(checkResult) !== "[]") {
-      return true;
-    } else {
-      return false;
+  }
+
+  function normalizePlugin(plugin) {
+    return {
+      id: plugin.id || plugin.param.name,
+      component: plugin.component,
+      name: plugin.field.name,
+      price: plugin.field.price || "Бесплатный",
+      description: plugin.field.description || "",
+      author: plugin.field.author || "",
+      url: plugin.field.link,
+      tags: plugin.tags || [],
+      requiresReboot: plugin.requiresReboot !== false,
+    };
+  }
+
+  function findInstalled(url) {
+    return getStoredPlugins().find(function (plugin) {
+      return plugin.url == url;
+    });
+  }
+
+  function isInstalled(url) {
+    return !!findInstalled(url);
+  }
+
+  function isEnabled(url) {
+    var plugin = findInstalled(url);
+    return !!plugin && plugin.status !== 0;
+  }
+
+  function savePluginList(list) {
+    Lampa.Storage.set("plugins", list);
+    if (Lampa.Plugins && Lampa.Plugins.save) Lampa.Plugins.save();
+  }
+
+  function installPlugin(plugin) {
+    if (isInstalled(plugin.url)) {
+      Lampa.Noty.show("Плагин уже установлен");
+      return;
     }
+
+    var item = {
+      author: plugin.author,
+      url: plugin.url,
+      name: plugin.name,
+      status: 1,
+    };
+
+    if (Lampa.Plugins && Lampa.Plugins.add) {
+      Lampa.Plugins.add(item);
+    } else {
+      var list = getStoredPlugins();
+      list.push(item);
+      Lampa.Storage.set("plugins", list);
+      loadScript(plugin.url);
+      Lampa.Noty.show("Плагин " + plugin.name + " установлен");
+    }
+  }
+
+  function removePluginByUrl(url, silent) {
+    var installed = findInstalled(url);
+
+    if (!installed) {
+      Lampa.Noty.show("Плагин не установлен");
+      return;
+    }
+
+    if (Lampa.Plugins && Lampa.Plugins.remove) {
+      Lampa.Plugins.remove(installed);
+    } else {
+      savePluginList(
+        getStoredPlugins().filter(function (plugin) {
+          return plugin.url !== url;
+        }),
+      );
+    }
+
+    if (!silent) Lampa.Noty.show("Плагин удален");
+    Lampa.Storage.set("needRebootSettingExit", true);
+    if (!silent) showReload("Для полного удаления плагина перезагрузите приложение!");
+  }
+
+  function setPluginStatus(url, status) {
+    var list = getStoredPlugins();
+    var changed = false;
+
+    list.forEach(function (plugin) {
+      if (plugin.url == url) {
+        plugin.status = status;
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      savePluginList(list);
+      Lampa.Noty.show(status ? "Плагин включен" : "Плагин отключен");
+      showReload("Для применения изменения перезагрузите приложение!");
+    }
+  }
+
+  function injectStoreStyles() {
+    if ($("#skull-store-style").length) return;
+
+    $("body").append(
+      '<style id="skull-store-style">' +
+        ".skull-store{padding:1.5em 2em 3em;}" +
+        ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:1.2em;}" +
+        ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
+        ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
+        ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
+        ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
+        ".skull-store__tabs{display:flex;gap:.55em;overflow:hidden;margin-bottom:1.1em;flex-wrap:wrap;}" +
+        ".skull-store__tab{padding:.58em .85em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
+        ".skull-store__tab.active{background:#d8c39a;color:#111;}" +
+        ".skull-store__tab.focus{border-color:#fff;}" +
+        ".skull-store__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(22em,1fr));gap:.8em;}" +
+        ".skull-store__card{min-height:11.6em;padding:1em;border-radius:.45em;background:rgba(255,255,255,.07);border:.12em solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:.65em;}" +
+        ".skull-store__card.focus{border-color:#fff;background:rgba(255,255,255,.13);}" +
+        ".skull-store__row{display:flex;align-items:center;justify-content:space-between;gap:.8em;}" +
+        ".skull-store__name{font-size:1.18em;font-weight:700;line-height:1.18;}" +
+        ".skull-store__author{opacity:.65;font-size:.95em;}" +
+        ".skull-store__desc{opacity:.82;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
+        ".skull-store__badges{display:flex;gap:.4em;flex-wrap:wrap;margin-top:auto;}" +
+        ".skull-store__badge{font-size:.82em;padding:.25em .5em;border-radius:.3em;background:rgba(255,255,255,.1);}" +
+        ".skull-store__badge.active{background:#3fb36b;color:#fff;}" +
+        ".skull-store__badge.off{background:#777;color:#fff;}" +
+        ".skull-store__badge.price{background:#d8c39a;color:#111;}" +
+        ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
+        ".skull-store-detail{line-height:1.35;text-align:left;}" +
+        ".skull-store-detail__meta{opacity:.68;margin:.6em 0 1em;}" +
+        ".skull-store-detail__url{opacity:.58;font-size:.82em;word-break:break-all;margin-top:1em;}" +
+        "@media(max-width:700px){.skull-store{padding:1em}.skull-store__head{display:block}.skull-store__stats{justify-content:flex-start;margin-top:.8em}.skull-store__grid{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
+        "</style>",
+    );
+  }
+
+  function showPluginActions(plugin, rerender) {
+    var installed = isInstalled(plugin.url);
+    var enabled = isEnabled(plugin.url);
+    var buttons = [];
+
+    buttons.push({
+      name: installed ? "Переустановить" : "Установить",
+      onSelect: function () {
+        Lampa.Modal.close();
+        if (installed) removePluginByUrl(plugin.url, true);
+        setTimeout(function () {
+          installPlugin(plugin);
+          rerender();
+        }, installed ? 300 : 0);
+      },
+    });
+
+    if (installed) {
+      buttons.push({
+        name: enabled ? "Отключить" : "Включить",
+        onSelect: function () {
+          Lampa.Modal.close();
+          setPluginStatus(plugin.url, enabled ? 0 : 1);
+          rerender();
+        },
+      });
+
+      buttons.push({
+        name: "Удалить",
+        onSelect: function () {
+          Lampa.Modal.close();
+          removePluginByUrl(plugin.url);
+          rerender();
+        },
+      });
+    }
+
+    buttons.push({
+      name: "Закрыть",
+      onSelect: function () {
+        Lampa.Modal.close();
+      },
+    });
+
+    Lampa.Modal.open({
+      title: plugin.name,
+      align: "left",
+      zIndex: 300,
+      html: $(
+        '<div class="skull-store-detail">' +
+          '<div class="skull-store-detail__meta">' +
+          escapeHtml(categoryNames[plugin.component] || "Плагин") +
+          " / " +
+          escapeHtml(plugin.author) +
+          " / " +
+          escapeHtml(plugin.price) +
+          "</div>" +
+          "<div>" +
+          escapeHtml(plugin.description) +
+          "</div>" +
+          '<div class="skull-store-detail__url">' +
+          escapeHtml(plugin.url) +
+          "</div>" +
+          "</div>",
+      ),
+      buttons: buttons,
+    });
+  }
+
+  function registerStoreComponent(rawPlugins) {
+    var catalog = rawPlugins.map(normalizePlugin);
+
+    if (Lampa.Component.get && Lampa.Component.get("skull_store_center")) return;
+
+    injectStoreStyles();
+
+    Lampa.Component.add("skull_store_center", function () {
+      var html = $('<div class="skull-store"></div>');
+      var filter = "all";
+      var scroll = new Lampa.Scroll({ mask: true, over: true });
+
+      function filteredCatalog() {
+        return catalog.filter(function (plugin) {
+          if (filter == "all") return true;
+          if (filter == "installed") return isInstalled(plugin.url);
+          return plugin.component == filter;
+        });
+      }
+
+      function renderTabs() {
+        return categoryOrder
+          .filter(function (category) {
+            return (
+              category == "all" ||
+              category == "installed" ||
+              catalog.some(function (plugin) {
+                return plugin.component == category;
+              })
+            );
+          })
+          .map(function (category) {
+            return (
+              '<div class="skull-store__tab selector' +
+              (filter == category ? " active" : "") +
+              '" data-filter="' +
+              category +
+              '">' +
+              escapeHtml(categoryNames[category]) +
+              "</div>"
+            );
+          })
+          .join("");
+      }
+
+      function renderCard(plugin) {
+        var installed = isInstalled(plugin.url);
+        var enabled = isEnabled(plugin.url);
+        var state = installed ? (enabled ? "Установлен" : "Отключен") : "Не установлен";
+
+        return $(
+          '<div class="skull-store__card selector" data-url="' +
+            escapeHtml(plugin.url) +
+            '">' +
+            '<div class="skull-store__row">' +
+            '<div><div class="skull-store__name">' +
+            escapeHtml(plugin.name) +
+            '</div><div class="skull-store__author">' +
+            escapeHtml(plugin.author) +
+            "</div></div>" +
+            '<div class="skull-store__badge price">' +
+            escapeHtml(plugin.price) +
+            "</div>" +
+            "</div>" +
+            '<div class="skull-store__desc">' +
+            escapeHtml(plugin.description) +
+            "</div>" +
+            '<div class="skull-store__badges">' +
+            '<span class="skull-store__badge ' +
+            (installed ? (enabled ? "active" : "off") : "") +
+            '">' +
+            state +
+            "</span>" +
+            '<span class="skull-store__badge">' +
+            escapeHtml(categoryNames[plugin.component] || "Плагин") +
+            "</span>" +
+            "</div>" +
+            "</div>",
+        );
+      }
+
+      function bindController() {
+        $(".skull-store__tab", html).on("hover:enter click", function () {
+          filter = $(this).data("filter");
+          render();
+        });
+
+        $(".skull-store__card", html).on("hover:enter click", function () {
+          var url = $(this).data("url");
+          var plugin = catalog.find(function (item) {
+            return item.url == url;
+          });
+          if (plugin) showPluginActions(plugin, render);
+        });
+      }
+
+      function render() {
+        var list = filteredCatalog();
+        var installedTotal = catalog.filter(function (plugin) {
+          return isInstalled(plugin.url);
+        }).length;
+
+        html.empty().append(
+          '<div class="skull-store__head">' +
+            "<div>" +
+            '<div class="skull-store__title">Skull Store</div>' +
+            '<div class="skull-store__subtitle">Управление установкой, отключением и удалением модов Lampa</div>' +
+            "</div>" +
+            '<div class="skull-store__stats">' +
+            '<div class="skull-store__stat">Всего: ' +
+            catalog.length +
+            "</div>" +
+            '<div class="skull-store__stat">Установлено: ' +
+            installedTotal +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            '<div class="skull-store__tabs">' +
+            renderTabs() +
+            "</div>",
+        );
+
+        var grid = $('<div class="skull-store__grid"></div>');
+
+        if (list.length) {
+          list.forEach(function (plugin) {
+            grid.append(renderCard(plugin));
+          });
+        } else {
+          grid.append('<div class="skull-store__empty">В этом разделе пока пусто</div>');
+        }
+
+        html.append(grid);
+        scroll.clear();
+        scroll.append(html);
+        bindController();
+
+        setTimeout(function () {
+          Lampa.Controller.collectionSet(scroll.render());
+          Lampa.Controller.collectionFocus(false, scroll.render());
+        }, 50);
+      }
+
+      this.create = function () {
+        render();
+      };
+
+      this.start = function () {
+        Lampa.Controller.add("skull_store_center", {
+          toggle: function () {
+            Lampa.Controller.collectionSet(scroll.render());
+            Lampa.Controller.collectionFocus(false, scroll.render());
+          },
+          back: function () {
+            Lampa.Activity.back();
+          },
+        });
+
+        Lampa.Controller.toggle("skull_store_center");
+      };
+
+      this.pause = function () {};
+      this.stop = function () {};
+      this.destroy = function () {
+        scroll.destroy();
+        html.remove();
+      };
+      this.render = function () {
+        return scroll.render();
+      };
+    });
   }
 
   /* Создание Skull Store и его меню */
   function skullStart(plugins, news) {
+    registerStoreComponent(plugins);
+
     /* Skull Store */
     Lampa.SettingsApi.addComponent({
       component: "skull",
@@ -213,32 +612,45 @@
       }
     });
 
-    /* Новости */
-    const newsBlock = `
-            <div>
-                <div style="margin-bottom: 5px; font-size: 1.2em; font-weight: 600; color: #6f6f6f;">
-                    <div>Новости</div>
-                </div>
-                <div id="newsbody">
-                    ${news
-                      .map(
-                        (item) => `
-                        <div style="${item.bg}; color:${item.colortext}; border-radius: 1em; padding: 0.8em; height: auto;">
-                            <div style="font-size: 1.1em; margin-bottom: 1em;">${item.title}</div>
-                            <div style="font-size: 0.9em;">${item.text}</div>
-                        </div>`,
-                      )
-                      .join("")}
-                </div>
-            </div>`;
+    /* Центр управления */
+    Lampa.SettingsApi.addParam({
+      component: "skull",
+      param: {
+        name: "skull_store_center",
+        type: "static",
+        default: true,
+      },
+      field: {
+        name:
+          '<div class="settings-folder" style="padding:0!important">' +
+          '<div class="settings-folder__icon" style="width:1.8em;height:1.3em;padding-right:0.5em;margin:0">' +
+          icon_skull +
+          "</div>" +
+          '<div class="settings-folder__name" style="font-size:1.3em">Центр управления модами</div>' +
+          "</div>",
+      },
+      onRender: function (item) {
+        item.on("hover:enter", function () {
+          $("body").toggleClass("settings--open", false);
+          Lampa.Settings.render().removeClass("animate").removeClass("animate-down");
+          Lampa.Activity.push({
+            component: "skull_store_center",
+            title: "Skull Store",
+          });
+        });
+      },
+    });
 
+    /* Новости */
     Lampa.SettingsApi.addParam({
       component: "skull",
       param: {
         name: "skull_news",
         type: "static",
       },
-      field: { name: newsBlock },
+      field: {
+        name: "Все важные новости и анонсы по плагинам Skull Store публикуются в нашем разделе в Уведомлениях.",
+      },
     });
 
     /* Магазин */
@@ -569,7 +981,7 @@
                   .find(".extensions__item-author")
                   .html("💀")
                   .append(
-                    '<span class="extensions__item-premium">Development by @abrosxd</span>',
+                    '<span class="extensions__item-premium">Development by Daniel Abros</span>',
                   );
                 $(e).find(".extensions__item-name").html("Skull Store");
                 $(e)
