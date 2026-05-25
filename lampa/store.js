@@ -1,9 +1,8 @@
 /*!
- * Scull Store v1.0
- * (c) 2024-2024
+ * Scull Store v1.1
+ * (c) 2024-2026
  * by Daniel Abros
  * Site → https://abros.dev
- * Telegram → https://t.me/abrosxd
  * Магазин сторонних плагинов для Lampa
  */
 
@@ -13,11 +12,8 @@
   window.skull = true;
 
   console.groupCollapsed(
-    `%c👨🏻‍💻 Development by ABROS`,
-    "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;"
-  );
-  console.log(
-    "✨ Сторонний магазин плагинов Scull Store разработан Daniel Abros"
+    `%c✨ Сторонний магазин плагинов Scull Store разработан Daniel Abros`,
+    "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;",
   );
   console.log(`💻 Site: https://abros.dev`);
   console.groupEnd();
@@ -46,17 +42,20 @@
   Lampa.Storage.set("needRebootSettingExit", false);
 
   /* Подключение скриптов и стилей для визуала */
-  loadScript(`${domain}/main/slick/slick.min.js`);
-  loadCSS(`${domain}/main/slick/slick.css`);
-  loadCSS(`${domain}/main/slick/slick-theme.css`);
+  loadScript("https://unpkg.com/slick-carousel@1.8.1/slick/slick.min.js");
+  loadCSS("https://unpkg.com/slick-carousel@1.8.1/slick/slick.css");
+  loadCSS("https://unpkg.com/slick-carousel@1.8.1/slick/slick-theme.css");
   function loadScript(src) {
     document.head.appendChild(
-      Object.assign(document.createElement("script"), { src })
+      Object.assign(document.createElement("script"), { src }),
     );
   }
   function loadCSS(href) {
     document.head.appendChild(
-      Object.assign(document.createElement("link"), { rel: "stylesheet", href })
+      Object.assign(document.createElement("link"), {
+        rel: "stylesheet",
+        href,
+      }),
     );
   }
 
@@ -76,7 +75,7 @@
       .catch((error) => {
         console.error(
           "There has been a problem with your fetch operation:",
-          error
+          error,
         );
       });
   }
@@ -112,7 +111,7 @@
     if (Lampa.Storage.get("needRebootSettingExit")) {
       var intervalSettings = setInterval(function () {
         var elementSettings = $(
-          "#app > div.settings > div.settings__content.layer--height > div.settings__body > div"
+          "#app > div.settings > div.settings__content.layer--height > div.settings__body > div",
         );
         if (!elementSettings.length > 0) {
           clearInterval(intervalSettings);
@@ -157,7 +156,7 @@
   function hideInstall() {
     $("#hideInstall").remove();
     $("body").append(
-      '<div id="hideInstall"><style>div.settings-param__value{opacity: 0%!important;display: none;}</style><div>'
+      '<div id="hideInstall"><style>div.settings-param__value{opacity: 0%!important;display: none;}</style><div>',
     );
   }
 
@@ -208,7 +207,7 @@
         /* Сдвигаем раздел выше */
         setTimeout(function () {
           $("div[data-component=plugins]").before(
-            $("div[data-component=skull]")
+            $("div[data-component=skull]"),
           );
         }, 30);
       }
@@ -227,7 +226,7 @@
                         <div style="${item.bg}; color:${item.colortext}; border-radius: 1em; padding: 0.8em; height: auto;">
                             <div style="font-size: 1.1em; margin-bottom: 1em;">${item.title}</div>
                             <div style="font-size: 0.9em;">${item.text}</div>
-                        </div>`
+                        </div>`,
                       )
                       .join("")}
                 </div>
@@ -484,7 +483,7 @@
               plugin.field.link,
               plugin.field.name,
               plugin.field.author,
-              plugin.param.name
+              plugin.param.name,
             );
           }
           if (value == "2") {
@@ -498,7 +497,7 @@
           var myResult = checkPlugin(plugin.field.link);
           setTimeout(function () {
             $('div[data-name="' + plugin.param.name + '"]').append(
-              '<div class="settings-param__status one" style="border: 0.1em solid #D8C39A;"></div>'
+              '<div class="settings-param__status one" style="border: 0.1em solid #D8C39A;"></div>',
             );
             if (myResult) {
               $('div[data-name="' + plugin.param.name + '"]')
@@ -561,27 +560,26 @@
       .on("hover:enter", function () {
         Lampa.Extensions.show();
         setTimeout(function () {
-          $(".extensions__item", Lampa.Extensions.render()).each(function (
-            i,
-            e
-          ) {
-            var descr = $(e).find(".extensions__item-descr").text();
-            var regex = /https:\/\/cdn\.abros\.dev\/lampa\/store\.js/;
-            if (regex.test(descr)) {
-              $(e)
-                .find(".extensions__item-author")
-                .html("💀")
-                .append(
-                  '<span class="extensions__item-premium">Development by @abrosxd</span>'
-                );
-              $(e).find(".extensions__item-name").html("Skull Store");
-              $(e)
-                .find(".extensions__item-descr")
-                .html(
-                  "Альтернативный магазин плагинов. Включает множество платных и бесплатных плагинов для Lampa."
-                );
-            }
-          });
+          $(".extensions__item", Lampa.Extensions.render()).each(
+            function (i, e) {
+              var descr = $(e).find(".extensions__item-descr").text();
+              var regex = /https:\/\/cdn\.abros\.dev\/lampa\/store\.js/;
+              if (regex.test(descr)) {
+                $(e)
+                  .find(".extensions__item-author")
+                  .html("💀")
+                  .append(
+                    '<span class="extensions__item-premium">Development by @abrosxd</span>',
+                  );
+                $(e).find(".extensions__item-name").html("Skull Store");
+                $(e)
+                  .find(".extensions__item-descr")
+                  .html(
+                    "Альтернативный магазин плагинов. Включает множество платных и бесплатных плагинов для Lampa.",
+                  );
+              }
+            },
+          );
         }, 500);
       });
 
