@@ -397,8 +397,7 @@
 
     $("body").append(
       '<style id="skull-store-style">' +
-        ".skull-store-page{z-index:20;background-color:#232425;}" +
-        ".skull-store-page .extensions__body{padding:1.5em 2em 0;}" +
+        ".skull-store-page .extensions__body{padding:2.5em 0;}" +
         ".skull-store{padding-bottom:3em;}" +
         ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:1.2em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
@@ -407,7 +406,7 @@
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
         ".skull-store__layout{display:grid;grid-template-columns:15em minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
         ".skull-store__column{min-width:0;}" +
-        ".skull-store__column>.scroll{height:calc(100vh - 10em);}" +
+        ".skull-store__column>.scroll{height:calc(100vh - 15em);}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65em;}" +
         ".skull-store__category-list{display:grid;grid-template-columns:1fr;gap:.45em;}" +
         ".skull-store__category{padding:.75em .9em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
@@ -792,6 +791,21 @@
         return items.first()[0];
       }
 
+      function fitScrolls() {
+        var fontSize = parseFloat($("body").css("font-size")) || 16;
+        var bottom = fontSize * 2.5;
+
+        scrolls.forEach(function (scroll) {
+          var element = scroll.render()[0];
+          var top = element.getBoundingClientRect().top;
+
+          if (top > 0) {
+            element.style.height =
+              Math.max(fontSize * 12, window.innerHeight - top - bottom) + "px";
+          }
+        });
+      }
+
       function render() {
         var list = filteredCatalog();
         var installedTotal = catalog.filter(function (plugin) {
@@ -832,6 +846,8 @@
         bindController();
 
         setTimeout(function () {
+          fitScrolls();
+
           var active = $(
             ".skull-store__category.active",
             categoryScroll.render(),
@@ -902,6 +918,7 @@
       this.start = function () {
         var page = this;
 
+        fitScrolls();
         checkCatalogAvailability(catalog, true);
 
         Lampa.Controller.add("skull_store_center", {
