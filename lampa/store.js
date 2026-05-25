@@ -322,19 +322,17 @@
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
         ".skull-store__layout{display:grid;grid-template-columns:minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
-        ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55em;}" +
+        ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65em;}" +
         ".skull-store__tabs{display:flex;gap:.55em;overflow:hidden;margin-bottom:1.1em;flex-wrap:wrap;}" +
         ".skull-store__tab{padding:.58em .85em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
         ".skull-store__tab.active{background:#d8c39a;color:#111;}" +
         ".skull-store__tab.focus{border-color:#fff;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
         ".skull-store__section-title:first-child{margin-top:0;}" +
-        ".skull-store .extensions__item{position:relative;min-height:5.4em;padding:1em 5.2em 1em 1em;border-radius:.45em;background:rgba(255,255,255,.07);border:.12em solid rgba(255,255,255,.08);}" +
-        ".skull-store .extensions__item.focus{border-color:#fff;background:rgba(255,255,255,.13);}" +
-        ".skull-store .extensions__item-name{font-size:1.15em;font-weight:700;line-height:1.18;padding-right:4em;}" +
-        ".skull-store .extensions__item-author{opacity:.78;margin-top:.25em;font-size:.92em;}" +
-        ".skull-store .extensions__item-descr{opacity:.78;margin-top:.45em;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}" +
-        ".skull-store .extensions__item-premium{display:inline-block;margin-left:.5em;padding:.15em .45em;border-radius:.25em;background:#d8c39a;color:#111;font-size:.86em;}" +
+        ".skull-store .extensions__item{position:relative;min-height:5.4em;padding-right:5.2em;}" +
+        ".skull-store .extensions__item-name{padding-right:4em;}" +
+        ".skull-store .extensions__item-descr{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}" +
+        ".skull-store .extensions__item-premium{margin-left:.5em;}" +
         ".skull-store .extensions__item-proto{position:absolute;right:1em;bottom:1em;font-size:.75em;opacity:.72;}" +
         ".skull-store .extensions__item-disabled{position:absolute;right:5.2em;top:1em;padding:.22em .5em;border-radius:.25em;background:rgba(255,255,255,.18);font-size:.8em;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
@@ -346,9 +344,9 @@
         ".skull-store__price{margin-left:.5em;opacity:.72;}" +
         ".skull-store__news{position:sticky;top:1em;}" +
         ".skull-store__news-title{font-size:1.25em;font-weight:700;margin-bottom:.55em;}" +
-        ".skull-store__news-item{position:relative;border-radius:.35em;padding:.85em .9em .9em 1em;margin-bottom:.65em;background:rgba(255,255,255,.08);border-left:.25em solid #d8c39a;box-shadow:inset 0 0 0 .08em rgba(255,255,255,.05);}" +
-        ".skull-store__news-name{font-size:1.05em;font-weight:700;margin-bottom:.55em;}" +
-        ".skull-store__news-text{font-size:.92em;line-height:1.35;opacity:.86;}" +
+        ".skull-store__news-item{position:relative;margin-bottom:.65em;}" +
+        ".skull-store__news-name{font-weight:700;margin-bottom:.45em;}" +
+        ".skull-store__news-text{line-height:1.35;opacity:.86;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
         "@media(max-width:900px){.skull-store{padding:1em}.skull-store__layout{grid-template-columns:1fr}.skull-store__section-list{grid-template-columns:1fr}.skull-store__news{position:static}.skull-store__title{font-size:1.65em}}" +
         "</style>",
@@ -524,7 +522,7 @@
         });
 
         item.on("hover:focus", function () {
-          scroll.update(item, true);
+          scroll.update(item[0], true);
         });
 
         updateAvailabilityView(plugin, item);
@@ -533,6 +531,10 @@
       }
 
       function bindController() {
+        $(".selector", html).on("hover:focus", function () {
+          scroll.update(this, true);
+        });
+
         $(".skull-store__tab", html).on("hover:enter click", function () {
           filter = $(this).data("filter");
           render();
@@ -544,6 +546,29 @@
             return item.url == url;
           });
           if (plugin) showPluginActions(plugin, render);
+        });
+
+        $(".skull-store__news-item", html).on("hover:enter click", function () {
+          var index = Number($(this).data("news"));
+          var item = (news || [])[index];
+
+          if (!item) return;
+
+          Lampa.Modal.open({
+            title: item.title,
+            align: "left",
+            zIndex: 300,
+            html: $('<div class="about">' + escapeHtml(item.text) + "</div>"),
+            buttons: [
+              {
+                name: "Закрыть",
+                onSelect: function () {
+                  Lampa.Modal.close();
+                  Lampa.Controller.toggle("skull_store_center");
+                },
+              },
+            ],
+          });
         });
       }
 
@@ -570,9 +595,11 @@
 
         panel.append('<div class="skull-store__news-title">Новости</div>');
 
-        (news || []).forEach(function (item) {
+        (news || []).forEach(function (item, index) {
           panel.append(
-            '<div class="skull-store__news-item" style="' +
+            '<div class="notice__item selector skull-store__news-item" data-news="' +
+              index +
+              '" style="' +
               escapeHtml(item.background || item.bg || "") +
               ";color:" +
               escapeHtml(item.textColor || item.colortext || "#fff") +
@@ -638,7 +665,17 @@
           var first = $(".selector", html).first()[0];
           Lampa.Controller.collectionSet(scroll.render());
           Lampa.Controller.collectionFocus(first || false, scroll.render());
+          if (first) scroll.update(first, true);
         }, 50);
+      }
+
+      function move(direction) {
+        Navigator.move(direction);
+
+        setTimeout(function () {
+          var focused = $(".selector.focus", html);
+          if (focused.length) scroll.update(focused[0], true);
+        }, 0);
       }
 
       this.create = function () {
@@ -656,16 +693,16 @@
             Lampa.Controller.collectionFocus(focused || first || false, scroll.render());
           },
           up: function () {
-            Navigator.move("up");
+            move("up");
           },
           down: function () {
-            Navigator.move("down");
+            move("down");
           },
           left: function () {
-            Navigator.move("left");
+            move("left");
           },
           right: function () {
-            Navigator.move("right");
+            move("right");
           },
           back: function () {
             Lampa.Activity.backward();
@@ -758,36 +795,6 @@
       }
     });
 
-    /* Авторство и замена CubPremium */
-    Lampa.Settings.main()
-      .render()
-      .find('[data-component="plugins"]')
-      .unbind("hover:enter")
-      .on("hover:enter", function () {
-        Lampa.Extensions.show();
-        setTimeout(function () {
-          $(".extensions__item", Lampa.Extensions.render()).each(
-            function (i, e) {
-              var descr = $(e).find(".extensions__item-descr").text();
-              var regex = /https:\/\/cdn\.abros\.dev\/lampa\/store\.js/;
-              if (regex.test(descr)) {
-                $(e)
-                  .find(".extensions__item-author")
-                  .html("💀")
-                  .append(
-                    '<span class="extensions__item-premium">Development by Daniel Abros</span>',
-                  );
-                $(e).find(".extensions__item-name").html("Skull Store");
-                $(e)
-                  .find(".extensions__item-descr")
-                  .html(
-                    "Альтернативный магазин плагинов. Включает множество платных и бесплатных плагинов для Lampa.",
-                  );
-              }
-            },
-          );
-        }, 500);
-      });
   }
 
   if (window.appready) {
