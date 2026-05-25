@@ -263,8 +263,8 @@
   function storeStatusClass(plugin) {
     var status = availability[plugin.url];
 
-    if (!status || status.loading) return "wait";
-    if (Number(status.code) >= 200 && Number(status.code) < 400) return "ready";
+    if (!status || status.loading) return "yellow";
+    if (Number(status.code) >= 200 && Number(status.code) < 400) return "success";
 
     return "error";
   }
@@ -298,13 +298,17 @@
   }
 
   function updateAvailabilityView(plugin, item) {
-    var items = item || $('.skull-store__item[data-url="' + plugin.url + '"]');
+    var items =
+      item ||
+      $(".skull-store__item").filter(function () {
+        return $(this).data("url") == plugin.url;
+      });
 
     items.each(function () {
       var status = $(this).find(".skull-store__availability");
 
       status
-        .removeClass("ready error wait")
+        .removeClass("success error yellow")
         .addClass(storeStatusClass(plugin))
         .text(storeStatusText(plugin));
     });
@@ -315,40 +319,28 @@
 
     $("body").append(
       '<style id="skull-store-style">' +
-        ".skull-store{padding:1.5em 2em 3em;}" +
+        ".skull-store-page{padding:1.5em 2em 0;}" +
+        ".skull-store{padding-bottom:3em;}" +
         ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:1.2em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
         ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
-        ".skull-store__layout{display:grid;grid-template-columns:minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
+        ".skull-store__layout{display:grid;grid-template-columns:15em minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65em;}" +
-        ".skull-store__tabs{display:flex;gap:.55em;overflow:hidden;margin-bottom:1.1em;flex-wrap:wrap;}" +
-        ".skull-store__tab{padding:.58em .85em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
-        ".skull-store__tab.active{background:#d8c39a;color:#111;}" +
-        ".skull-store__tab.focus{border-color:#fff;}" +
+        ".skull-store__category-list{display:grid;grid-template-columns:1fr;gap:.45em;}" +
+        ".skull-store__category{padding:.75em .9em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
+        ".skull-store__category.active{background:#d8c39a;color:#111;}" +
+        ".skull-store__category.focus{border-color:#fff;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
         ".skull-store__section-title:first-child{margin-top:0;}" +
-        ".skull-store .extensions__item{position:relative;min-height:5.4em;padding-right:5.2em;}" +
-        ".skull-store .extensions__item-name{padding-right:4em;}" +
+        ".skull-store .extensions__item{width:auto;min-height:10em;}" +
         ".skull-store .extensions__item-descr{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store .extensions__item-premium{margin-left:.5em;}" +
-        ".skull-store .extensions__item-proto{position:absolute;right:1em;bottom:1em;font-size:.75em;opacity:.72;}" +
-        ".skull-store .extensions__item-disabled{position:absolute;right:5.2em;top:1em;padding:.22em .5em;border-radius:.25em;background:rgba(255,255,255,.18);font-size:.8em;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
-        ".skull-store__item{position:relative;}" +
-        ".skull-store__availability{position:absolute;right:1em;top:1em;padding:.22em .5em;border-radius:.25em;background:rgba(255,255,255,.12);font-size:.8em;}" +
-        ".skull-store__availability.ready{background:#3fb36b;color:#fff;}" +
-        ".skull-store__availability.error{background:#b34444;color:#fff;}" +
-        ".skull-store__availability.wait{background:#777;color:#fff;}" +
         ".skull-store__price{margin-left:.5em;opacity:.72;}" +
-        ".skull-store__news{position:sticky;top:1em;}" +
-        ".skull-store__news-title{font-size:1.25em;font-weight:700;margin-bottom:.55em;}" +
-        ".skull-store__news-item{position:relative;margin-bottom:.65em;}" +
-        ".skull-store__news-name{font-weight:700;margin-bottom:.45em;}" +
-        ".skull-store__news-text{line-height:1.35;opacity:.86;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
-        "@media(max-width:900px){.skull-store{padding:1em}.skull-store__layout{grid-template-columns:1fr}.skull-store__section-list{grid-template-columns:1fr}.skull-store__news{position:static}.skull-store__title{font-size:1.65em}}" +
+        "@media(max-width:900px){.skull-store-page{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
         "</style>",
     );
   }
@@ -358,10 +350,12 @@
     var enabled = isEnabled(plugin.url);
     var items = [];
 
-    items.push({
-      title: installed ? "Переустановить" : "Установить",
-      action: "install",
-    });
+    if (!installed) {
+      items.push({
+        title: "Установить",
+        action: "install",
+      });
+    }
 
     if (installed) {
       items.push({
@@ -385,12 +379,9 @@
       items: items,
       onSelect: function (item) {
         if (item.action == "install") {
-          if (installed) removePluginByUrl(plugin.url, true);
-          setTimeout(function () {
-            installPlugin(plugin);
-            rerender();
-            Lampa.Controller.toggle("skull_store_center");
-          }, installed ? 300 : 0);
+          installPlugin(plugin);
+          rerender();
+          Lampa.Controller.toggle("skull_store_center");
         }
 
         if (item.action == "toggle") {
@@ -441,7 +432,9 @@
     injectStoreStyles();
 
     Lampa.Component.add("skull_store_center", function () {
-      var html = $('<div class="skull-store"></div>');
+      var html = $('<div class="skull-store-page"></div>');
+      var head = $('<div class="skull-store__head"></div>');
+      var body = $('<div class="skull-store"></div>');
       var filter = "all";
       var scroll = new Lampa.Scroll({ mask: true, over: true });
 
@@ -453,29 +446,22 @@
         });
       }
 
-      function renderTabs() {
-        return categoryOrder
-          .filter(function (category) {
-            return (
-              category == "all" ||
-              category == "installed" ||
-              catalog.some(function (plugin) {
-                return plugin.category == category;
-              })
-            );
-          })
-          .map(function (category) {
-            return (
-              '<div class="skull-store__tab selector' +
-              (filter == category ? " active" : "") +
-              '" data-filter="' +
-              category +
-              '">' +
-              escapeHtml(category == "all" ? "Все" : category == "installed" ? "Установленные" : categoryNames[category]) +
-              "</div>"
-            );
-          })
-          .join("");
+      function visibleCategories() {
+        return categoryOrder.filter(function (category) {
+          return (
+            category == "all" ||
+            category == "installed" ||
+            catalog.some(function (plugin) {
+              return plugin.category == category;
+            })
+          );
+        });
+      }
+
+      function categoryTitle(category) {
+        if (category == "all") return "Все";
+        if (category == "installed") return "Установленные";
+        return categoryNames[category] || category;
       }
 
       function renderItem(plugin) {
@@ -486,34 +472,40 @@
           Lampa.Lang && Lampa.Lang.translate
             ? Lampa.Lang.translate("player_disabled")
             : "Отключено";
+        var statusText = installed ? (enabled ? "Установлен" : disabledText) : "Не установлен";
 
         var item = $(
           '<div class="extensions__item selector skull-store__item" data-url="' +
             escapeHtml(plugin.url) +
             '">' +
-            '<div class="extensions__item-name">' +
-            escapeHtml(plugin.name) +
-            "</div>" +
             '<div class="extensions__item-author">' +
             escapeHtml(plugin.author) +
             '<span class="extensions__item-premium skull-store__price">' +
             escapeHtml(plugin.price) +
             "</span></div>" +
+            '<div class="extensions__item-name">' +
+            escapeHtml(plugin.name) +
+            "</div>" +
             '<div class="extensions__item-descr">' +
             escapeHtml(plugin.description) +
             "</div>" +
+            '<div class="extensions__item-footer">' +
+            '<div class="extensions__item-code skull-store__availability yellow">Проверка</div>' +
+            '<div class="extensions__item-error hide"></div>' +
             '<div class="extensions__item-proto protocol-' +
             protocol +
             '">' +
             protocol.toUpperCase() +
+            "</div>" +
+            '<div class="extensions__item-status">' +
+            escapeHtml(statusText) +
             "</div>" +
             '<div class="extensions__item-disabled' +
             (installed && !enabled ? "" : " hide") +
             '">' +
             disabledText +
             "</div>" +
-            '<div class="extensions__item-error hide">Ошибка</div>' +
-            '<div class="skull-store__availability wait">Проверка</div>' +
+            "</div>" +
             "</div>",
         );
 
@@ -531,16 +523,16 @@
       }
 
       function bindController() {
-        $(".selector", html).on("hover:focus", function () {
+        $(".selector", body).on("hover:focus", function () {
           scroll.update(this, true);
         });
 
-        $(".skull-store__tab", html).on("hover:enter click", function () {
+        $(".skull-store__category", body).on("hover:enter click", function () {
           filter = $(this).data("filter");
           render();
         });
 
-        $(".skull-store__item", html).on("hover:enter click", function () {
+        $(".skull-store__item", body).on("hover:enter click", function () {
           var url = $(this).data("url");
           var plugin = catalog.find(function (item) {
             return item.url == url;
@@ -548,7 +540,7 @@
           if (plugin) showPluginActions(plugin, render);
         });
 
-        $(".skull-store__news-item", html).on("hover:enter click", function () {
+        $(".skull-store__news-item", body).on("hover:enter click", function () {
           var index = Number($(this).data("news"));
           var item = (news || [])[index];
 
@@ -572,11 +564,34 @@
         });
       }
 
-      function renderSection(title, list) {
+      function renderCategories() {
+        var section = $('<div class="skull-store__section skull-store__categories"></div>');
+        var list = $('<div class="skull-store__category-list"></div>');
+
+        section.append('<div class="skull-store__section-title">Категории</div>');
+
+        visibleCategories().forEach(function (category) {
+          list.append(
+            '<div class="skull-store__category selector' +
+              (filter == category ? " active" : "") +
+              '" data-filter="' +
+              category +
+              '">' +
+              escapeHtml(categoryTitle(category)) +
+              "</div>",
+          );
+        });
+
+        section.append(list);
+
+        return section;
+      }
+
+      function renderPlugins(list) {
         var section = $('<div class="skull-store__section"></div>');
         var body = $('<div class="skull-store__section-list"></div>');
 
-        section.append('<div class="skull-store__section-title">' + title + "</div>");
+        section.append('<div class="skull-store__section-title">Плагины</div>');
 
         if (list.length) {
           list.forEach(function (plugin) {
@@ -593,21 +608,22 @@
       function renderNews() {
         var panel = $('<div class="skull-store__news"></div>');
 
-        panel.append('<div class="skull-store__news-title">Новости</div>');
+        panel.append('<div class="skull-store__section-title">Новости</div>');
 
         (news || []).forEach(function (item, index) {
           panel.append(
-            '<div class="notice__item selector skull-store__news-item" data-news="' +
+            '<div class="notice selector skull-store__news-item image--none" data-news="' +
               index +
-              '" style="' +
-              escapeHtml(item.background || item.bg || "") +
-              ";color:" +
-              escapeHtml(item.textColor || item.colortext || "#fff") +
               '">' +
-              '<div class="skull-store__news-name">' +
+              '<div class="notice__head">' +
+              '<div class="notice__title">' +
               escapeHtml(item.title) +
               "</div>" +
-              '<div class="skull-store__news-text">' +
+              '<div class="notice__time">' +
+              escapeHtml(item.date || "") +
+              "</div>" +
+              "</div>" +
+              '<div class="notice__descr">' +
               escapeHtml(item.text) +
               "</div>" +
               "</div>",
@@ -622,16 +638,9 @@
         var installedTotal = catalog.filter(function (plugin) {
           return isInstalled(plugin.url);
         }).length;
-        var plugins = list.filter(function (plugin) {
-          return plugin.type == "plugin";
-        });
-        var extensions = list.filter(function (plugin) {
-          return plugin.type != "plugin";
-        });
 
-        html.empty().append(
-          '<div class="skull-store__head">' +
-            "<div>" +
+        head.empty().append(
+          "<div>" +
             '<div class="skull-store__title">Skull Store</div>' +
             '<div class="skull-store__subtitle">Управление установкой, отключением и удалением модов Lampa</div>' +
             "</div>" +
@@ -642,38 +651,35 @@
             '<div class="skull-store__stat">Установлено: ' +
             installedTotal +
             "</div>" +
-            "</div>" +
-            "</div>" +
-            '<div class="skull-store__tabs">' +
-            renderTabs() +
             "</div>",
         );
 
         var layout = $('<div class="skull-store__layout"></div>');
-        var left = $('<div class="skull-store__left"></div>');
 
-        left.append(renderSection("Расширения", extensions));
-        left.append(renderSection("Плагины", plugins));
-        layout.append(left);
+        layout.append(renderCategories());
+        layout.append(renderPlugins(list));
         layout.append(renderNews());
-        html.append(layout);
+        body.empty().append(layout);
         scroll.clear();
-        scroll.append(html);
+        scroll.append(body);
         bindController();
 
         setTimeout(function () {
-          var first = $(".selector", html).first()[0];
+          var active = $(".skull-store__category.active", body)[0];
+          var first = $(".selector", body).first()[0];
           Lampa.Controller.collectionSet(scroll.render());
-          Lampa.Controller.collectionFocus(first || false, scroll.render());
-          if (first) scroll.update(first, true);
+          Lampa.Controller.collectionFocus(active || first || false, scroll.render());
+          if (active || first) scroll.immediate(active || first, true);
         }, 50);
       }
 
       function move(direction) {
-        Navigator.move(direction);
+        if (!Navigator.canmove || Navigator.canmove(direction)) {
+          Navigator.move(direction);
+        }
 
         setTimeout(function () {
-          var focused = $(".selector.focus", html);
+          var focused = $(".selector.focus", body);
           if (focused.length) scroll.update(focused[0], true);
         }, 0);
       }
@@ -687,8 +693,8 @@
 
         Lampa.Controller.add("skull_store_center", {
           toggle: function () {
-            var focused = $(".selector.focus", html)[0];
-            var first = $(".selector", html).first()[0];
+            var focused = $(".selector.focus", body)[0];
+            var first = $(".selector", body).first()[0];
             Lampa.Controller.collectionSet(scroll.render());
             Lampa.Controller.collectionFocus(focused || first || false, scroll.render());
           },
@@ -719,7 +725,13 @@
         html.remove();
       };
       this.render = function () {
-        return scroll.render();
+        if (!html.children().length) {
+          scroll.minus(head);
+          html.append(head);
+          html.append(scroll.render());
+        }
+
+        return html;
       };
     });
   }
