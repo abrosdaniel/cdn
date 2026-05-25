@@ -408,10 +408,8 @@
         ".skull-store__column{min-width:0;}" +
         ".skull-store__column>.scroll{height:calc(100vh - 15em);}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65em;}" +
-        ".skull-store__category-list{display:grid;grid-template-columns:1fr;gap:.45em;}" +
-        ".skull-store__category{padding:.75em .9em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
-        ".skull-store__category.active{background:#d8c39a;color:#111;}" +
-        ".skull-store__category.focus{border-color:#fff;}" +
+        ".skull-store__category-list.menu__list{padding-left:0;margin-left:-.6em;}" +
+        ".skull-store__category.active:not(.focus){background:rgba(255,255,255,.12);}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
         ".skull-store__section-title:first-child{margin-top:0;}" +
         ".skull-store .extensions__item{width:auto;min-height:10em;}" +
@@ -553,6 +551,22 @@
         if (category == "all") return "Все";
         if (category == "installed") return "Установленные";
         return categoryNames[category] || category;
+      }
+
+      function categoryIcon(category) {
+        var icons = {
+          all: "folder",
+          installed: "check",
+          online: "movie",
+          tv: "tv",
+          torrents: "cloud",
+          interface: "settings",
+          control: "settings",
+          themes: "palette",
+        };
+        var sprite = icons[category] || "folder";
+
+        return '<svg><use xlink:href="#sprite-' + sprite + '"></use></svg>';
       }
 
       function renderItem(plugin) {
@@ -709,17 +723,22 @@
       }
 
       function renderCategories() {
-        var list = $('<div class="skull-store__category-list"></div>');
+        var list = $('<ul class="skull-store__category-list menu__list"></ul>');
 
         visibleCategories().forEach(function (category) {
           list.append(
-            '<div class="skull-store__category selector' +
+            '<li class="skull-store__category menu__item selector' +
               (filter == category ? " active" : "") +
               '" data-filter="' +
               category +
               '">' +
+              '<div class="menu__ico">' +
+              categoryIcon(category) +
+              "</div>" +
+              '<div class="menu__text">' +
               escapeHtml(categoryTitle(category)) +
-              "</div>",
+              "</div>" +
+              "</li>",
           );
         });
 
