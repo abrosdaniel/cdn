@@ -70,6 +70,11 @@
             if ($("body").hasClass("settings--open")) {
               Lampa.Controller.toggle("settings_component");
             } else if (
+              Lampa.Controller.enabled &&
+              Lampa.Controller.enabled().name == "skull_store_center"
+            ) {
+              Lampa.Controller.toggle("skull_store_center");
+            } else if (
               Lampa.Activity.active() &&
               Lampa.Activity.active().component == "skull_store_center"
             ) {
@@ -105,6 +110,7 @@
   };
 
   var availability = {};
+  var showStoreCenter = null;
 
   function escapeHtml(value) {
     return String(value || "")
@@ -244,10 +250,8 @@
   function openStoreCenter() {
     $("body").toggleClass("settings--open", false);
     Lampa.Settings.render().removeClass("animate").removeClass("animate-down");
-    Lampa.Activity.push({
-      component: "skull_store_center",
-      title: "Skull Store",
-    });
+
+    if (showStoreCenter) showStoreCenter();
   }
 
   function storeStatusText(plugin) {
@@ -319,9 +323,8 @@
 
     $("body").append(
       '<style id="skull-store-style">' +
-        ".skull-store-page{position:fixed;z-index:80;top:0;left:0;right:0;bottom:0;padding:1.5em 2em 0;background:#262626;color:#fff;box-sizing:border-box;}" +
-        "body.skull-store--open .wrap__left{visibility:hidden;pointer-events:none;}" +
-        "body.skull-store--open.menu--open:not(.light--version) .wrap__left{transform:none;background:transparent;}" +
+        ".skull-store-page{z-index:20;background-color:#232425;}" +
+        ".skull-store-page .extensions__body{padding:1.5em 2em 0;}" +
         ".skull-store{padding-bottom:3em;}" +
         ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:1.2em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
@@ -347,7 +350,7 @@
         ".skull-store .notice__img img{opacity:1;}" +
         ".skull-store .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
-        "@media(max-width:900px){.skull-store-page{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__column>.scroll{height:auto}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
+        "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__column>.scroll{height:auto}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
         "</style>",
     );
   }
@@ -434,14 +437,15 @@
       return normalizePlugin(plugin, categories);
     });
 
-    if (Lampa.Component.get && Lampa.Component.get("skull_store_center")) return;
+    var instance = null;
 
     injectStoreStyles();
 
-    Lampa.Component.add("skull_store_center", function () {
-      var html = $('<div class="skull-store-page"></div>');
+    function SkullStorePage() {
+      var html = $('<div class="extensions skull-store-page"></div>');
       var head = $('<div class="skull-store__head"></div>');
       var body = $('<div class="skull-store"></div>');
+      var content = $('<div class="extensions__body"></div>');
       var filter = "all";
       var categoryScroll = new Lampa.Scroll({ mask: true, over: true });
       var pluginScroll = new Lampa.Scroll({ mask: true, over: true });
@@ -797,7 +801,8 @@
       };
 
       this.start = function () {
-        $("body").addClass("skull-store--open");
+        var page = this;
+
         checkCatalogAvailability(catalog, true);
 
         Lampa.Controller.add("skull_store_center", {
@@ -824,8 +829,7 @@
             moveHorizontal("right");
           },
           back: function () {
-            releaseController();
-            Lampa.Activity.backward();
+            if (page.onBack) page.onBack();
           },
         });
 
@@ -834,11 +838,9 @@
 
       this.pause = function () {};
       this.stop = function () {
-        $("body").removeClass("skull-store--open");
         releaseController();
       };
       this.destroy = function () {
-        $("body").removeClass("skull-store--open");
         releaseController();
         categoryScroll.destroy();
         pluginScroll.destroy();
@@ -850,13 +852,37 @@
           categoryScroll.minus(head);
           pluginScroll.minus(head);
           newsScroll.minus(head);
-          html.append(head);
-          html.append(body);
+          content.append(head);
+          content.append(body);
+          html.append(content);
         }
 
         return html;
       };
-    });
+    }
+
+    showStoreCenter = function () {
+      if (instance) return;
+
+      var controller = Lampa.Controller.enabled && Lampa.Controller.enabled().name;
+
+      instance = new SkullStorePage();
+      instance.onBack = function () {
+        instance.destroy();
+        instance = null;
+
+        document.body.classList.toggle("ambience--enable", false);
+
+        if (controller) Lampa.Controller.toggle(controller);
+      };
+
+      instance.create();
+
+      document.body.classList.toggle("ambience--enable", true);
+      document.body.appendChild(instance.render()[0]);
+
+      instance.start();
+    };
   }
 
   /* Создание Skull Store и его меню */
