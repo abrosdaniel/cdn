@@ -122,9 +122,10 @@
   }
 
   function getStoredPlugins() {
-    var list = Lampa.Plugins && Lampa.Plugins.get
-      ? Lampa.Plugins.get()
-      : Lampa.Storage.get("plugins", "[]");
+    var list =
+      Lampa.Plugins && Lampa.Plugins.get
+        ? Lampa.Plugins.get()
+        : Lampa.Storage.get("plugins", "[]");
 
     if (!Array.isArray(list)) list = [];
 
@@ -141,24 +142,36 @@
 
   function normalizePlugin(plugin, categories) {
     var legacy = plugin.field ? plugin : false;
-    var categoryId = plugin.category || legacyCategories[plugin.component] || plugin.component || "other";
+    var categoryId =
+      plugin.category ||
+      legacyCategories[plugin.component] ||
+      plugin.component ||
+      "other";
     var category = getCategory(categories, categoryId) || {};
-    var price = legacy ? plugin.field.price : plugin.price && plugin.price.label;
+    var price = legacy
+      ? plugin.field.price
+      : plugin.price && plugin.price.label;
 
     return {
       id: plugin.id || (plugin.param && plugin.param.name) || categoryId,
       type: plugin.type || category.section || "plugin",
       category: categoryId,
-      component: plugin.component || (plugin.legacy && plugin.legacy.component) || categoryId,
+      component:
+        plugin.component ||
+        (plugin.legacy && plugin.legacy.component) ||
+        categoryId,
       name: legacy ? plugin.field.name : plugin.name,
       price: price || "Бесплатный",
-      description: legacy ? plugin.field.description || "" : plugin.description || "",
+      description: legacy
+        ? plugin.field.description || ""
+        : plugin.description || "",
       author: legacy ? plugin.field.author || "" : plugin.author || "",
       url: legacy ? plugin.field.link : plugin.install && plugin.install.url,
       tags: plugin.tags || [],
       requiresReboot:
         plugin.requiresReboot !== false &&
-        (!plugin.compatibility || plugin.compatibility.requiresReboot !== false),
+        (!plugin.compatibility ||
+          plugin.compatibility.requiresReboot !== false),
     };
   }
 
@@ -226,7 +239,8 @@
 
     if (!silent) Lampa.Noty.show("Плагин удален");
     Lampa.Storage.set("needRebootSettingExit", true);
-    if (!silent) showReload("Для полного удаления плагина перезагрузите приложение!");
+    if (!silent)
+      showReload("Для полного удаления плагина перезагрузите приложение!");
   }
 
   function setPluginStatus(url, status) {
@@ -257,18 +271,29 @@
   function storeStatusText(plugin) {
     var status = availability[plugin.url];
 
-    if (!status) return "Проверка";
+    if (!status || status.loading) return "Проверка";
     if (status.code) return status.code;
-    if (status.loading) return "...";
 
-    return "ERR";
+    return "404";
+  }
+
+  function storeStatusDescription(plugin) {
+    var status = availability[plugin.url];
+
+    if (!status || status.loading) return "Проверка";
+    if (status.text) return status.text;
+
+    return Number(status.code) >= 200 && Number(status.code) < 400
+      ? "Работает"
+      : "Ошибка";
   }
 
   function storeStatusClass(plugin) {
     var status = availability[plugin.url];
 
     if (!status || status.loading) return "yellow";
-    if (Number(status.code) >= 200 && Number(status.code) < 400) return "success";
+    if (Number(status.code) >= 200 && Number(status.code) < 400)
+      return "success";
 
     return "error";
   }
@@ -286,9 +311,22 @@
       timeout: 6000,
       cache: false,
       complete: function (xhr) {
+        var code = xhr && xhr.status ? Number(xhr.status) : 404;
+        var response = xhr && xhr.responseText ? xhr.responseText : "";
+        var valid = code >= 200 && code < 400 && /Lampa\./.test(response);
+
         availability[plugin.url] = {
           loading: false,
-          code: xhr && xhr.status ? String(xhr.status) : "",
+          code: valid
+            ? "200"
+            : code >= 200 && code < 400
+              ? "500"
+              : String(code || 404),
+          text: valid
+            ? "Работает"
+            : code >= 200 && code < 400
+              ? "Не плагин"
+              : "Ошибка",
         };
         updateAvailabilityView(plugin);
       },
@@ -309,13 +347,40 @@
       });
 
     items.each(function () {
-      var status = $(this).find(".skull-store__availability");
+      var item = $(this);
+      var check = item.find(".extensions__item-check");
+      var code = item.find(".skull-store__availability");
+      var status = item.find(".extensions__item-status");
+      var loading =
+        !availability[plugin.url] || availability[plugin.url].loading;
 
-      status
+      check.toggleClass("hide", !loading);
+
+      code
+        .toggleClass("hide", loading)
         .removeClass("success error yellow")
         .addClass(storeStatusClass(plugin))
         .text(storeStatusText(plugin));
+
+      status.toggleClass("hide", loading).text(storeStatusDescription(plugin));
     });
+  }
+
+  function headBackward(title) {
+    var head = $(
+      '<div class="head-backward selector">' +
+        '<div class="head-backward__button"><svg><use xlink:href="#sprite-backward"></use></svg></div>' +
+        '<div class="head-backward__title">' +
+        escapeHtml(title) +
+        "</div>" +
+        "</div>",
+    );
+
+    head.find(".head-backward__button").on("click", function () {
+      Lampa.Controller.back();
+    });
+
+    return head;
   }
 
   function injectStoreStyles() {
@@ -344,6 +409,7 @@
         ".skull-store .extensions__item{width:auto;min-height:10em;}" +
         ".skull-store .extensions__item-descr{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store .extensions__item-premium{margin-left:.5em;}" +
+        ".skull-store .extensions__item-code{margin-right:.5em;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
         ".skull-store__price{margin-left:.5em;opacity:.72;}" +
         ".skull-store .notice--card{margin-bottom:1em;}" +
@@ -420,7 +486,8 @@
   }
 
   function registerStoreComponent(rawPlugins, news, categories) {
-    categories = categories && categories.length ? categories : defaultCategories;
+    categories =
+      categories && categories.length ? categories : defaultCategories;
 
     var categoryNames = categories.reduce(function (result, category) {
       result[category.id] = category.title;
@@ -489,7 +556,8 @@
           Lampa.Lang && Lampa.Lang.translate
             ? Lampa.Lang.translate("player_disabled")
             : "Отключено";
-        var statusText = installed ? (enabled ? "Установлен" : disabledText) : "Не установлен";
+        var installText = installed ? "Установлен" : "Не установлен";
+        var installClass = installed ? "success" : "yellow";
 
         var item = $(
           '<div class="extensions__item selector skull-store__item" data-url="' +
@@ -507,15 +575,19 @@
             escapeHtml(plugin.description) +
             "</div>" +
             '<div class="extensions__item-footer">' +
-            '<div class="extensions__item-code skull-store__availability yellow">Проверка</div>' +
             '<div class="extensions__item-error hide"></div>' +
+            '<div class="extensions__item-check"></div>' +
             '<div class="extensions__item-proto protocol-' +
             protocol +
             '">' +
             protocol.toUpperCase() +
             "</div>" +
-            '<div class="extensions__item-status">' +
-            escapeHtml(statusText) +
+            '<div class="extensions__item-code skull-store__availability hide yellow">Проверка</div>' +
+            '<div class="extensions__item-status hide">Проверка</div>' +
+            '<div class="extensions__item-code skull-store__install-state ' +
+            installClass +
+            '">' +
+            escapeHtml(installText) +
             "</div>" +
             '<div class="extensions__item-disabled' +
             (installed && !enabled ? "" : " hide") +
@@ -530,10 +602,6 @@
           checkAvailability(plugin, item);
         });
 
-        item.on("hover:focus", function () {
-          pluginScroll.update(item[0], true);
-        });
-
         updateAvailabilityView(plugin, item);
 
         return item;
@@ -541,7 +609,9 @@
 
       function bindController() {
         $(".selector", body).on("hover:focus", function () {
-          var index = Number($(this).closest(".skull-store__column").data("section"));
+          var index = Number(
+            $(this).closest(".skull-store__column").data("section"),
+          );
 
           if (!isNaN(index)) {
             activeSection = index;
@@ -598,7 +668,9 @@
           '<div class="notice__title">' +
           escapeHtml(item.title) +
           "</div>" +
-          (item.date ? '<div class="notice__time">' + escapeHtml(item.date) + "</div>" : "") +
+          (item.date
+            ? '<div class="notice__time">' + escapeHtml(item.date) + "</div>"
+            : "") +
           "</div>" +
           '<div class="notice__descr">' +
           escapeHtml(item.text) +
@@ -656,7 +728,9 @@
           });
           return body;
         } else {
-          return $('<div class="skull-store__empty">В этом разделе пока пусто</div>');
+          return $(
+            '<div class="skull-store__empty">В этом разделе пока пусто</div>',
+          );
         }
       }
 
@@ -671,7 +745,11 @@
       }
 
       function makeColumn(index, title, scroll) {
-        return $('<div class="skull-store__column" data-section="' + index + '"></div>')
+        return $(
+          '<div class="skull-store__column" data-section="' +
+            index +
+            '"></div>',
+        )
           .append('<div class="skull-store__section-title">' + title + "</div>")
           .append(scroll.render());
       }
@@ -700,7 +778,8 @@
         var items = $(".selector", render);
 
         if (!items.length) return null;
-        if (lastFocus[index] && $.contains(render[0], lastFocus[index])) return lastFocus[index];
+        if (lastFocus[index] && $.contains(render[0], lastFocus[index]))
+          return lastFocus[index];
 
         return items.first()[0];
       }
@@ -711,20 +790,22 @@
           return isInstalled(plugin.url);
         }).length;
 
-        head.empty().append(
-          "<div>" +
-            '<div class="skull-store__title">Skull Store</div>' +
-            '<div class="skull-store__subtitle">Управление установкой, отключением и удалением модов Lampa</div>' +
-            "</div>" +
-            '<div class="skull-store__stats">' +
-            '<div class="skull-store__stat">Всего: ' +
-            catalog.length +
-            "</div>" +
-            '<div class="skull-store__stat">Установлено: ' +
-            installedTotal +
-            "</div>" +
-            "</div>",
-        );
+        head
+          .empty()
+          .append(
+            "<div>" +
+              '<div class="skull-store__title">Skull Store</div>' +
+              '<div class="skull-store__subtitle">Управление установкой, отключением и удалением модов Lampa</div>' +
+              "</div>" +
+              '<div class="skull-store__stats">' +
+              '<div class="skull-store__stat">Всего: ' +
+              catalog.length +
+              "</div>" +
+              '<div class="skull-store__stat">Установлено: ' +
+              installedTotal +
+              "</div>" +
+              "</div>",
+          );
 
         categoryScroll.clear();
         categoryScroll.append(renderCategories());
@@ -743,8 +824,14 @@
         bindController();
 
         setTimeout(function () {
-          var active = $(".skull-store__category.active", categoryScroll.render()).first()[0];
-          setCollection(activeSection, activeSection === 0 ? active : nearestFromSection(activeSection));
+          var active = $(
+            ".skull-store__category.active",
+            categoryScroll.render(),
+          ).first()[0];
+          setCollection(
+            activeSection,
+            activeSection === 0 ? active : nearestFromSection(activeSection),
+          );
         }, 50);
       }
 
@@ -768,7 +855,11 @@
         var scroll = scrolls[activeSection];
         var next = activeSection + (direction == "right" ? 1 : -1);
 
-        if (activeSection == 1 && Navigator.canmove && Navigator.canmove(direction)) {
+        if (
+          activeSection == 1 &&
+          Navigator.canmove &&
+          Navigator.canmove(direction)
+        ) {
           Navigator.move(direction);
 
           setTimeout(function () {
@@ -809,7 +900,9 @@
           toggle: function () {
             var focused = $(".selector.focus", body)[0];
             var section = focused
-              ? Number($(focused).closest(".skull-store__column").data("section"))
+              ? Number(
+                  $(focused).closest(".skull-store__column").data("section"),
+                )
               : activeSection;
 
             if (isNaN(section)) section = activeSection;
@@ -852,6 +945,7 @@
           categoryScroll.minus(head);
           pluginScroll.minus(head);
           newsScroll.minus(head);
+          content.append(headBackward("Skull Store"));
           content.append(head);
           content.append(body);
           html.append(content);
@@ -864,7 +958,8 @@
     showStoreCenter = function () {
       if (instance) return;
 
-      var controller = Lampa.Controller.enabled && Lampa.Controller.enabled().name;
+      var controller =
+        Lampa.Controller.enabled && Lampa.Controller.enabled().name;
 
       instance = new SkullStorePage();
       instance.onBack = function () {
@@ -955,7 +1050,6 @@
         $(".settings__title").text("💀 Skull Store");
       }
     });
-
   }
 
   if (window.appready) {
