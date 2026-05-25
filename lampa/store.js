@@ -398,7 +398,6 @@
     $("body").append(
       '<style id="skull-store-style">' +
         ".skull-store-page .extensions__body{padding:2.5em 0;}" +
-        ".skull-store{padding-bottom:3em;}" +
         ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:2.4em;padding:0 1.5em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
         ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
@@ -841,15 +840,13 @@
         head
           .empty()
           .append(
-            "<div>" +
-              '<div class="skull-store__subtitle">Сторонний магазин расширений Lampa.</div>' +
+            '<div class="skull-store__subtitle">Сторонний магазин расширений Lampa.</div>' +
               '<div class="skull-store__stats">' +
               '<div class="skull-store__stat">Всего: ' +
               catalog.length +
               "</div>" +
               '<div class="skull-store__stat">Установлено: ' +
               installedTotal +
-              "</div>" +
               "</div>",
           );
 
