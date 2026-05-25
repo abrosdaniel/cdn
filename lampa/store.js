@@ -65,8 +65,8 @@
         return response.json();
       })
       .then((data) => {
-        var { plugins, news } = data;
-        skullStart(plugins, news);
+        var { plugins, news, categories } = data;
+        skullStart(plugins, news, categories);
       })
       .catch((error) => {
         console.error(
@@ -108,80 +108,25 @@
       ],
     });
   }
-  /* Следим за настройками */
-  function settingsWatch() {
-    /* проверяем флаг перезагрузки и ждём выхода из настроек */
-    if (Lampa.Storage.get("needRebootSettingExit")) {
-      var intervalSettings = setInterval(function () {
-        var elementSettings = $(
-          "#app > div.settings > div.settings__content.layer--height > div.settings__body > div",
-        );
-        if (!elementSettings.length > 0) {
-          clearInterval(intervalSettings);
-          showReload("Для полного удаления плагина перезагрузите приложение!");
-        }
-      }, 1000);
-    }
-  }
+  var defaultCategories = [
+    { id: "online", title: "Онлайн", section: "plugins" },
+    { id: "tv", title: "ТВ", section: "plugins" },
+    { id: "torrents", title: "Торренты", section: "plugins" },
+    { id: "interface", title: "Интерфейс", section: "extensions" },
+    { id: "control", title: "Управление", section: "extensions" },
+    { id: "themes", title: "Темы", section: "extensions" },
+  ];
 
-  function itemON(sourceURL, sourceName, sourceAuthor, itemName) {
-    if (
-      $('DIV[data-name="' + itemName + '"]')
-        .find(".settings-param__status")
-        .hasClass("active")
-    ) {
-      Lampa.Noty.show("Плагин уже установлен!");
-    } else {
-      // Если перезагрузки не требуется - контроль после удаления плагинов
-      if (!Lampa.Storage.get("needReboot")) {
-        installPlugin({
-          author: sourceAuthor,
-          url: sourceURL,
-          name: sourceName,
-        });
-        setTimeout(function () {
-          Lampa.Settings.update();
-        }, 300);
-      }
-    }
-  }
-  function hideInstall() {
-    $("#hideInstall").remove();
-    $("body").append(
-      '<div id="hideInstall"><style>div.settings-param__value{opacity: 0%!important;display: none;}</style><div>',
-    );
-  }
-
-  function deletePlugin(pluginToRemoveUrl) {
-    removePluginByUrl(pluginToRemoveUrl);
-    Lampa.Settings.update();
-  }
-
-  function checkPlugin(pluginToCheck) {
-    return isInstalled(pluginToCheck);
-  }
-
-  var categoryNames = {
-    all: "Все",
-    installed: "Установленные",
-    skull_online: "Онлайн",
-    skull_tv: "ТВ",
-    skull_torpars: "Торренты",
-    skull_interface: "Интерфейс",
-    skull_control: "Управление",
-    skull_style: "Темы",
+  var legacyCategories = {
+    skull_online: "online",
+    skull_tv: "tv",
+    skull_torpars: "torrents",
+    skull_interface: "interface",
+    skull_control: "control",
+    skull_style: "themes",
   };
 
-  var categoryOrder = [
-    "all",
-    "installed",
-    "skull_online",
-    "skull_tv",
-    "skull_torpars",
-    "skull_interface",
-    "skull_control",
-    "skull_style",
-  ];
+  var availability = {};
 
   function escapeHtml(value) {
     return String(value || "")
@@ -204,17 +149,32 @@
     });
   }
 
-  function normalizePlugin(plugin) {
+  function getCategory(categories, id) {
+    return categories.find(function (category) {
+      return category.id == id;
+    });
+  }
+
+  function normalizePlugin(plugin, categories) {
+    var legacy = plugin.field ? plugin : false;
+    var categoryId = plugin.category || legacyCategories[plugin.component] || plugin.component || "other";
+    var category = getCategory(categories, categoryId) || {};
+    var price = legacy ? plugin.field.price : plugin.price && plugin.price.label;
+
     return {
-      id: plugin.id || plugin.param.name,
-      component: plugin.component,
-      name: plugin.field.name,
-      price: plugin.field.price || "Бесплатный",
-      description: plugin.field.description || "",
-      author: plugin.field.author || "",
-      url: plugin.field.link,
+      id: plugin.id || (plugin.param && plugin.param.name) || categoryId,
+      type: plugin.type || category.section || "plugin",
+      category: categoryId,
+      component: plugin.component || (plugin.legacy && plugin.legacy.component) || categoryId,
+      name: legacy ? plugin.field.name : plugin.name,
+      price: price || "Бесплатный",
+      description: legacy ? plugin.field.description || "" : plugin.description || "",
+      author: legacy ? plugin.field.author || "" : plugin.author || "",
+      url: legacy ? plugin.field.link : plugin.install && plugin.install.url,
       tags: plugin.tags || [],
-      requiresReboot: plugin.requiresReboot !== false,
+      requiresReboot:
+        plugin.requiresReboot !== false &&
+        (!plugin.compatibility || plugin.compatibility.requiresReboot !== false),
     };
   }
 
@@ -303,6 +263,68 @@
     }
   }
 
+  function openStoreCenter() {
+    $("body").toggleClass("settings--open", false);
+    Lampa.Settings.render().removeClass("animate").removeClass("animate-down");
+    Lampa.Activity.push({
+      component: "skull_store_center",
+      title: "Skull Store",
+    });
+  }
+
+  function storeStatusText(plugin) {
+    var status = availability[plugin.url];
+
+    if (!status) return "Проверка";
+    if (status.code) return status.code;
+    if (status.loading) return "...";
+
+    return "ERR";
+  }
+
+  function storeStatusClass(plugin) {
+    var status = availability[plugin.url];
+
+    if (!status || status.loading) return "wait";
+    if (Number(status.code) >= 200 && Number(status.code) < 400) return "ready";
+
+    return "error";
+  }
+
+  function checkAvailability(plugin, item) {
+    if (!plugin.url || availability[plugin.url]) return;
+
+    availability[plugin.url] = { loading: true };
+    updateAvailabilityView(plugin, item);
+
+    $.ajax({
+      url: plugin.url,
+      dataType: "text",
+      timeout: 6000,
+      cache: false,
+      complete: function (xhr) {
+        availability[plugin.url] = {
+          loading: false,
+          code: xhr && xhr.status ? String(xhr.status) : "",
+        };
+        updateAvailabilityView(plugin);
+      },
+    });
+  }
+
+  function updateAvailabilityView(plugin, item) {
+    var items = item || $('.skull-store__item[data-url="' + plugin.url + '"]');
+
+    items.each(function () {
+      var status = $(this).find(".skull-store__availability");
+
+      status
+        .removeClass("ready error wait")
+        .addClass(storeStatusClass(plugin))
+        .text(storeStatusText(plugin));
+    });
+  }
+
   function injectStoreStyles() {
     if ($("#skull-store-style").length) return;
 
@@ -314,27 +336,35 @@
         ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
+        ".skull-store__layout{display:grid;grid-template-columns:minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
         ".skull-store__tabs{display:flex;gap:.55em;overflow:hidden;margin-bottom:1.1em;flex-wrap:wrap;}" +
         ".skull-store__tab{padding:.58em .85em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
         ".skull-store__tab.active{background:#d8c39a;color:#111;}" +
         ".skull-store__tab.focus{border-color:#fff;}" +
-        ".skull-store__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(22em,1fr));gap:.8em;}" +
-        ".skull-store__card{min-height:11.6em;padding:1em;border-radius:.45em;background:rgba(255,255,255,.07);border:.12em solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:.65em;}" +
-        ".skull-store__card.focus{border-color:#fff;background:rgba(255,255,255,.13);}" +
-        ".skull-store__row{display:flex;align-items:center;justify-content:space-between;gap:.8em;}" +
-        ".skull-store__name{font-size:1.18em;font-weight:700;line-height:1.18;}" +
-        ".skull-store__author{opacity:.65;font-size:.95em;}" +
-        ".skull-store__desc{opacity:.82;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
-        ".skull-store__badges{display:flex;gap:.4em;flex-wrap:wrap;margin-top:auto;}" +
-        ".skull-store__badge{font-size:.82em;padding:.25em .5em;border-radius:.3em;background:rgba(255,255,255,.1);}" +
-        ".skull-store__badge.active{background:#3fb36b;color:#fff;}" +
-        ".skull-store__badge.off{background:#777;color:#fff;}" +
-        ".skull-store__badge.price{background:#d8c39a;color:#111;}" +
+        ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
+        ".skull-store__section-title:first-child{margin-top:0;}" +
+        ".skull-store .extensions__item{position:relative;margin-bottom:.55em;min-height:5.4em;padding:1em 5.2em 1em 1em;border-radius:.45em;background:rgba(255,255,255,.07);border:.12em solid rgba(255,255,255,.08);}" +
+        ".skull-store .extensions__item.focus{border-color:#fff;background:rgba(255,255,255,.13);}" +
+        ".skull-store .extensions__item-name{font-size:1.15em;font-weight:700;line-height:1.18;padding-right:4em;}" +
+        ".skull-store .extensions__item-author{opacity:.78;margin-top:.25em;font-size:.92em;}" +
+        ".skull-store .extensions__item-descr{opacity:.78;margin-top:.45em;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}" +
+        ".skull-store .extensions__item-premium{display:inline-block;margin-left:.5em;padding:.15em .45em;border-radius:.25em;background:#d8c39a;color:#111;font-size:.86em;}" +
+        ".skull-store .extensions__item-proto{position:absolute;right:1em;bottom:1em;font-size:.75em;opacity:.72;}" +
+        ".skull-store .extensions__item-disabled{position:absolute;right:5.2em;top:1em;padding:.22em .5em;border-radius:.25em;background:rgba(255,255,255,.18);font-size:.8em;}" +
+        ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
+        ".skull-store__item{position:relative;}" +
+        ".skull-store__availability{position:absolute;right:1em;top:1em;padding:.22em .5em;border-radius:.25em;background:rgba(255,255,255,.12);font-size:.8em;}" +
+        ".skull-store__availability.ready{background:#3fb36b;color:#fff;}" +
+        ".skull-store__availability.error{background:#b34444;color:#fff;}" +
+        ".skull-store__availability.wait{background:#777;color:#fff;}" +
+        ".skull-store__price{margin-left:.5em;opacity:.72;}" +
+        ".skull-store__news{position:sticky;top:1em;}" +
+        ".skull-store__news-title{font-size:1.25em;font-weight:700;margin-bottom:.55em;}" +
+        ".skull-store__news-item{border-radius:.45em;padding:.8em;margin-bottom:.65em;background:rgba(255,255,255,.08);}" +
+        ".skull-store__news-name{font-size:1.05em;font-weight:700;margin-bottom:.55em;}" +
+        ".skull-store__news-text{font-size:.92em;line-height:1.35;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
-        ".skull-store-detail{line-height:1.35;text-align:left;}" +
-        ".skull-store-detail__meta{opacity:.68;margin:.6em 0 1em;}" +
-        ".skull-store-detail__url{opacity:.58;font-size:.82em;word-break:break-all;margin-top:1em;}" +
-        "@media(max-width:700px){.skull-store{padding:1em}.skull-store__head{display:block}.skull-store__stats{justify-content:flex-start;margin-top:.8em}.skull-store__grid{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
+        "@media(max-width:900px){.skull-store{padding:1em}.skull-store__layout{grid-template-columns:1fr}.skull-store__news{position:static}.skull-store__title{font-size:1.65em}}" +
         "</style>",
     );
   }
@@ -342,74 +372,83 @@
   function showPluginActions(plugin, rerender) {
     var installed = isInstalled(plugin.url);
     var enabled = isEnabled(plugin.url);
-    var buttons = [];
+    var items = [];
 
-    buttons.push({
-      name: installed ? "Переустановить" : "Установить",
-      onSelect: function () {
-        Lampa.Modal.close();
-        if (installed) removePluginByUrl(plugin.url, true);
-        setTimeout(function () {
-          installPlugin(plugin);
-          rerender();
-        }, installed ? 300 : 0);
-      },
+    items.push({
+      title: installed ? "Переустановить" : "Установить",
+      action: "install",
     });
 
     if (installed) {
-      buttons.push({
-        name: enabled ? "Отключить" : "Включить",
-        onSelect: function () {
-          Lampa.Modal.close();
-          setPluginStatus(plugin.url, enabled ? 0 : 1);
-          rerender();
-        },
+      items.push({
+        title: enabled ? "Отключить" : "Включить",
+        action: "toggle",
       });
 
-      buttons.push({
-        name: "Удалить",
-        onSelect: function () {
-          Lampa.Modal.close();
-          removePluginByUrl(plugin.url);
-          rerender();
-        },
+      items.push({
+        title: "Удалить",
+        action: "remove",
       });
     }
 
-    buttons.push({
-      name: "Закрыть",
-      onSelect: function () {
-        Lampa.Modal.close();
-      },
+    items.push({
+      title: "Проверить доступность",
+      action: "check",
     });
 
-    Lampa.Modal.open({
+    Lampa.Select.show({
       title: plugin.name,
-      align: "left",
-      zIndex: 300,
-      html: $(
-        '<div class="skull-store-detail">' +
-          '<div class="skull-store-detail__meta">' +
-          escapeHtml(categoryNames[plugin.component] || "Плагин") +
-          " / " +
-          escapeHtml(plugin.author) +
-          " / " +
-          escapeHtml(plugin.price) +
-          "</div>" +
-          "<div>" +
-          escapeHtml(plugin.description) +
-          "</div>" +
-          '<div class="skull-store-detail__url">' +
-          escapeHtml(plugin.url) +
-          "</div>" +
-          "</div>",
-      ),
-      buttons: buttons,
+      items: items,
+      onSelect: function (item) {
+        if (item.action == "install") {
+          if (installed) removePluginByUrl(plugin.url, true);
+          setTimeout(function () {
+            installPlugin(plugin);
+            rerender();
+            Lampa.Controller.toggle("skull_store_center");
+          }, installed ? 300 : 0);
+        }
+
+        if (item.action == "toggle") {
+          setPluginStatus(plugin.url, enabled ? 0 : 1);
+          rerender();
+        }
+
+        if (item.action == "remove") {
+          removePluginByUrl(plugin.url);
+          rerender();
+        }
+
+        if (item.action == "check") {
+          delete availability[plugin.url];
+          checkAvailability(plugin);
+          rerender();
+          Lampa.Controller.toggle("skull_store_center");
+        }
+      },
+      onBack: function () {
+        Lampa.Controller.toggle("skull_store_center");
+      },
     });
   }
 
-  function registerStoreComponent(rawPlugins) {
-    var catalog = rawPlugins.map(normalizePlugin);
+  function registerStoreComponent(rawPlugins, news, categories) {
+    categories = categories && categories.length ? categories : defaultCategories;
+
+    var categoryNames = categories.reduce(function (result, category) {
+      result[category.id] = category.title;
+      return result;
+    }, {});
+
+    var categoryOrder = ["all", "installed"].concat(
+      categories.map(function (category) {
+        return category.id;
+      }),
+    );
+
+    var catalog = rawPlugins.map(function (plugin) {
+      return normalizePlugin(plugin, categories);
+    });
 
     if (Lampa.Component.get && Lampa.Component.get("skull_store_center")) return;
 
@@ -424,7 +463,7 @@
         return catalog.filter(function (plugin) {
           if (filter == "all") return true;
           if (filter == "installed") return isInstalled(plugin.url);
-          return plugin.component == filter;
+          return plugin.category == filter;
         });
       }
 
@@ -435,7 +474,7 @@
               category == "all" ||
               category == "installed" ||
               catalog.some(function (plugin) {
-                return plugin.component == category;
+                return plugin.category == category;
               })
             );
           })
@@ -446,47 +485,61 @@
               '" data-filter="' +
               category +
               '">' +
-              escapeHtml(categoryNames[category]) +
+              escapeHtml(category == "all" ? "Все" : category == "installed" ? "Установленные" : categoryNames[category]) +
               "</div>"
             );
           })
           .join("");
       }
 
-      function renderCard(plugin) {
+      function renderItem(plugin) {
         var installed = isInstalled(plugin.url);
         var enabled = isEnabled(plugin.url);
-        var state = installed ? (enabled ? "Установлен" : "Отключен") : "Не установлен";
+        var protocol = plugin.url.indexOf("https://") === 0 ? "https" : "http";
+        var disabledText =
+          Lampa.Lang && Lampa.Lang.translate
+            ? Lampa.Lang.translate("player_disabled")
+            : "Отключено";
 
-        return $(
-          '<div class="skull-store__card selector" data-url="' +
+        var item = $(
+          '<div class="extensions__item selector skull-store__item" data-url="' +
             escapeHtml(plugin.url) +
             '">' +
-            '<div class="skull-store__row">' +
-            '<div><div class="skull-store__name">' +
+            '<div class="extensions__item-name">' +
             escapeHtml(plugin.name) +
-            '</div><div class="skull-store__author">' +
+            "</div>" +
+            '<div class="extensions__item-author">' +
             escapeHtml(plugin.author) +
-            "</div></div>" +
-            '<div class="skull-store__badge price">' +
+            '<span class="extensions__item-premium skull-store__price">' +
             escapeHtml(plugin.price) +
-            "</div>" +
-            "</div>" +
-            '<div class="skull-store__desc">' +
+            "</span></div>" +
+            '<div class="extensions__item-descr">' +
             escapeHtml(plugin.description) +
             "</div>" +
-            '<div class="skull-store__badges">' +
-            '<span class="skull-store__badge ' +
-            (installed ? (enabled ? "active" : "off") : "") +
+            '<div class="extensions__item-proto protocol-' +
+            protocol +
             '">' +
-            state +
-            "</span>" +
-            '<span class="skull-store__badge">' +
-            escapeHtml(categoryNames[plugin.component] || "Плагин") +
-            "</span>" +
+            protocol.toUpperCase() +
             "</div>" +
+            '<div class="extensions__item-disabled' +
+            (installed && !enabled ? "" : " hide") +
+            '">' +
+            disabledText +
+            "</div>" +
+            '<div class="extensions__item-error hide">Ошибка</div>' +
+            '<div class="skull-store__availability wait">Проверка</div>' +
             "</div>",
         );
+
+        item.on("visible", function () {
+          checkAvailability(plugin, item);
+        });
+
+        setTimeout(function () {
+          checkAvailability(plugin, item);
+        }, 50);
+
+        return item;
       }
 
       function bindController() {
@@ -495,7 +548,7 @@
           render();
         });
 
-        $(".skull-store__card", html).on("hover:enter click", function () {
+        $(".skull-store__item", html).on("hover:enter click", function () {
           var url = $(this).data("url");
           var plugin = catalog.find(function (item) {
             return item.url == url;
@@ -504,11 +557,58 @@
         });
       }
 
+      function renderSection(title, list) {
+        var section = $('<div class="skull-store__section"></div>');
+
+        section.append('<div class="skull-store__section-title">' + title + "</div>");
+
+        if (list.length) {
+          list.forEach(function (plugin) {
+            section.append(renderItem(plugin));
+          });
+        } else {
+          section.append('<div class="skull-store__empty">В этом разделе пока пусто</div>');
+        }
+
+        return section;
+      }
+
+      function renderNews() {
+        var panel = $('<div class="skull-store__news"></div>');
+
+        panel.append('<div class="skull-store__news-title">Новости</div>');
+
+        (news || []).forEach(function (item) {
+          panel.append(
+            '<div class="skull-store__news-item" style="' +
+              escapeHtml(item.background || item.bg || "") +
+              ";color:" +
+              escapeHtml(item.textColor || item.colortext || "#fff") +
+              '">' +
+              '<div class="skull-store__news-name">' +
+              escapeHtml(item.title) +
+              "</div>" +
+              '<div class="skull-store__news-text">' +
+              escapeHtml(item.text) +
+              "</div>" +
+              "</div>",
+          );
+        });
+
+        return panel;
+      }
+
       function render() {
         var list = filteredCatalog();
         var installedTotal = catalog.filter(function (plugin) {
           return isInstalled(plugin.url);
         }).length;
+        var plugins = list.filter(function (plugin) {
+          return plugin.type == "plugin";
+        });
+        var extensions = list.filter(function (plugin) {
+          return plugin.type != "plugin";
+        });
 
         html.empty().append(
           '<div class="skull-store__head">' +
@@ -530,17 +630,14 @@
             "</div>",
         );
 
-        var grid = $('<div class="skull-store__grid"></div>');
+        var layout = $('<div class="skull-store__layout"></div>');
+        var left = $('<div class="skull-store__left"></div>');
 
-        if (list.length) {
-          list.forEach(function (plugin) {
-            grid.append(renderCard(plugin));
-          });
-        } else {
-          grid.append('<div class="skull-store__empty">В этом разделе пока пусто</div>');
-        }
-
-        html.append(grid);
+        left.append(renderSection("Расширения", extensions));
+        left.append(renderSection("Плагины", plugins));
+        layout.append(left);
+        layout.append(renderNews());
+        html.append(layout);
         scroll.clear();
         scroll.append(html);
         bindController();
@@ -562,7 +659,7 @@
             Lampa.Controller.collectionFocus(false, scroll.render());
           },
           back: function () {
-            Lampa.Activity.back();
+            Lampa.Activity.backward();
           },
         });
 
@@ -582,8 +679,8 @@
   }
 
   /* Создание Skull Store и его меню */
-  function skullStart(plugins, news) {
-    registerStoreComponent(plugins);
+  function skullStart(plugins, news, categories) {
+    registerStoreComponent(plugins, news, categories);
 
     /* Skull Store */
     Lampa.SettingsApi.addComponent({
@@ -594,20 +691,14 @@
 
     Lampa.Settings.listener.follow("open", function (e) {
       if (e.name == "main") {
-        setTimeout(function () {
-          $('div[data-component="skull_online"]').remove();
-          $('div[data-component="skull_tv"]').remove();
-          $('div[data-component="skull_torpars"]').remove();
-          $('div[data-component="skull_interface"]').remove();
-          $('div[data-component="skull_control"]').remove();
-          $('div[data-component="skull_style"]').remove();
-        }, 0);
-        $("#hideInstall").remove();
         /* Сдвигаем раздел выше */
         setTimeout(function () {
           $("div[data-component=plugins]").before(
             $("div[data-component=skull]"),
           );
+          $("div[data-component=skull]")
+            .unbind("hover:enter")
+            .on("hover:enter", openStoreCenter);
         }, 30);
       }
     });
@@ -631,229 +722,9 @@
       },
       onRender: function (item) {
         item.on("hover:enter", function () {
-          $("body").toggleClass("settings--open", false);
-          Lampa.Settings.render().removeClass("animate").removeClass("animate-down");
-          Lampa.Activity.push({
-            component: "skull_store_center",
-            title: "Skull Store",
-          });
+          openStoreCenter();
         });
       },
-    });
-
-    /* Новости */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_news",
-        type: "static",
-      },
-      field: {
-        name: "Все важные новости и анонсы по плагинам Skull Store публикуются в нашем разделе в Уведомлениях.",
-      },
-    });
-
-    /* Магазин */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_info",
-        type: "title",
-      },
-      field: {
-        name: "Магазин",
-      },
-    });
-
-    /* Онлайн */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_online",
-        type: "static",
-        default: true,
-      },
-      field: {
-        name: icon_online,
-      },
-      onRender: function (item) {
-        item.on("hover:enter", function () {
-          Lampa.Settings.create("skull_online");
-          Lampa.Controller.enabled().controller.back = function () {
-            Lampa.Settings.create("skull");
-          };
-        });
-      },
-    });
-
-    Lampa.Settings.listener.follow("open", function (e) {
-      if (e.name == "main") {
-        Lampa.SettingsApi.addComponent({
-          component: "skull_online",
-          name: "Онлайн",
-        });
-      }
-    });
-
-    /* ТВ */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_tv",
-        type: "static",
-        default: true,
-      },
-      field: {
-        name: icon_tv,
-      },
-      onRender: function (item) {
-        item.on("hover:enter", function () {
-          Lampa.Settings.create("skull_tv");
-          Lampa.Controller.enabled().controller.back = function () {
-            Lampa.Settings.create("skull");
-          };
-        });
-      },
-    });
-
-    Lampa.Settings.listener.follow("open", function (e) {
-      if (e.name == "main") {
-        Lampa.SettingsApi.addComponent({
-          component: "skull_tv",
-          name: "ТВ",
-        });
-      }
-    });
-
-    /* Торренты и Парсеры */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_torpars",
-        type: "static",
-        default: true,
-      },
-      field: {
-        name: icon_torpars,
-      },
-      onRender: function (item) {
-        item.on("hover:enter", function () {
-          Lampa.Settings.create("skull_torpars");
-          Lampa.Controller.enabled().controller.back = function () {
-            Lampa.Settings.create("skull");
-          };
-        });
-      },
-    });
-
-    Lampa.Settings.listener.follow("open", function (e) {
-      if (e.name == "main") {
-        Lampa.SettingsApi.addComponent({
-          component: "skull_torpars",
-          name: "Торренты и Парсеры",
-        });
-      }
-    });
-
-    /* Интерфейс */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_interface",
-        type: "static",
-        default: true,
-      },
-      field: {
-        name: icon_interface,
-      },
-      onRender: function (item) {
-        item.on("hover:enter", function () {
-          Lampa.Settings.create("skull_interface");
-          Lampa.Controller.enabled().controller.back = function () {
-            Lampa.Settings.create("skull");
-          };
-        });
-      },
-    });
-
-    Lampa.Settings.listener.follow("open", function (e) {
-      if (e.name == "main") {
-        Lampa.SettingsApi.addComponent({
-          component: "skull_interface",
-          name: "Интерфейс",
-        });
-      }
-    });
-
-    /* Управление */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_control",
-        type: "static",
-        default: true,
-      },
-      field: {
-        name: icon_control,
-      },
-      onRender: function (item) {
-        item.on("hover:enter", function () {
-          Lampa.Settings.create("skull_control");
-          Lampa.Controller.enabled().controller.back = function () {
-            Lampa.Settings.create("skull");
-          };
-        });
-      },
-    });
-
-    Lampa.Settings.listener.follow("open", function (e) {
-      if (e.name == "main") {
-        Lampa.SettingsApi.addComponent({
-          component: "skull_control",
-          name: "Управление",
-        });
-      }
-    });
-
-    /* Темы */
-    Lampa.SettingsApi.addParam({
-      component: "skull",
-      param: {
-        name: "skull_style",
-        type: "static",
-        default: true,
-      },
-      field: {
-        name: icon_style,
-      },
-      onRender: function (item) {
-        item.on("hover:enter", function () {
-          Lampa.Settings.create("skull_style");
-          Lampa.Controller.enabled().controller.back = function () {
-            Lampa.Settings.create("skull");
-          };
-        });
-      },
-    });
-
-    Lampa.SettingsApi.addParam({
-      component: "skull_style",
-      param: {
-        name: "skull_style_info",
-        type: "title",
-      },
-      field: {
-        name: "Важно!<br>Перед применением темы отключите предыдущую.",
-      },
-    });
-
-    Lampa.Settings.listener.follow("open", function (e) {
-      if (e.name == "main") {
-        Lampa.SettingsApi.addComponent({
-          component: "skull_style",
-          name: "Темы",
-        });
-      }
     });
 
     /* Подвал */
@@ -868,66 +739,6 @@
       },
     });
 
-    /* Плагины */
-    function addPluginSettings(plugin) {
-      Lampa.SettingsApi.addParam({
-        component: plugin.component,
-        param: {
-          name: plugin.param.name,
-          type: "select",
-          values: {
-            1: "Установить",
-            2: "Удалить",
-          },
-          //default: '1',
-        },
-        field: {
-          name:
-            plugin.field.name +
-            '<br><span style="background-color: #D8C39A; color: #000; padding: 0.1em 0.5em; -webkit-border-radius: 0.3em; -moz-border-radius: 0.3em; border-radius: 0.3em; font-size: 0.8em; top: 0.7em; position: relative;">' +
-            plugin.field.price +
-            "</span>",
-          description: plugin.field.description,
-        },
-        onChange: function (value) {
-          if (value == "1") {
-            itemON(
-              plugin.field.link,
-              plugin.field.name,
-              plugin.field.author,
-              plugin.param.name,
-            );
-          }
-          if (value == "2") {
-            var pluginToRemoveUrl = plugin.field.link;
-            deletePlugin(pluginToRemoveUrl);
-          }
-        },
-        onRender: function (item) {
-          // $('.settings-param__name', item).css('color','f3d900');
-          hideInstall();
-          var myResult = checkPlugin(plugin.field.link);
-          setTimeout(function () {
-            $('div[data-name="' + plugin.param.name + '"]').append(
-              '<div class="settings-param__status one" style="border: 0.1em solid #D8C39A;"></div>',
-            );
-            if (myResult) {
-              $('div[data-name="' + plugin.param.name + '"]')
-                .find(".settings-param__status")
-                .removeClass("active error wait")
-                .addClass("active");
-            } else {
-              $('div[data-name="' + plugin.param.name + '"]')
-                .find(".settings-param__status")
-                .removeClass("active error wait")
-                .addClass("error");
-            }
-          }, 100);
-        },
-      });
-    }
-    plugins.forEach(addPluginSettings);
-
     /* Настройки меню */
     Lampa.Settings.listener.follow("open", function (e) {
       if (e.name == "main") {
@@ -935,32 +746,6 @@
       }
       if (e.name == "skull") {
         $(".settings__title").text("💀 Skull Store");
-        $("#newsbody").slick({
-          infinite: true,
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          autoplay: true,
-          autoplaySpeed: 12000,
-          arrows: false,
-        });
-      }
-      if (e.name == "skull_online") {
-        $(".settings__title").text("Online");
-      }
-      if (e.name == "skull_tv") {
-        $(".settings__title").text("ТВ");
-      }
-      if (e.name == "skull_torpars") {
-        $(".settings__title").text("Торренты и Парсеры");
-      }
-      if (e.name == "skull_interface") {
-        $(".settings__title").text("Интерфейс");
-      }
-      if (e.name == "skull_control") {
-        $(".settings__title").text("Управление");
-      }
-      if (e.name == "skull_style") {
-        $(".settings__title").text("Темы");
       }
     });
 
