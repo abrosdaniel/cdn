@@ -404,19 +404,15 @@
         ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
-        ".skull-store__layout{display:grid;grid-template-columns:15em minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
+        ".skull-store__layout{display:grid;grid-template-columns:18em minmax(0,1fr) 18em;align-items:start;}" +
         ".skull-store__column{min-width:0;}" +
         ".skull-store__column>.scroll{height:calc(100vh - 15em);}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
         ".skull-store__category-list.menu__list{padding-left:0;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
         ".skull-store__section-title:first-child{margin-top:0;}" +
-        ".skull-store .extensions__item{width:auto;min-height:10em;margin: 0;}" +
-        ".skull-store .extensions__item-descr{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}" +
-        ".skull-store .extensions__item-premium{margin-left:.5em;}" +
-        ".skull-store .extensions__item-code{margin-right:.5em;}" +
+        ".skull-store .extensions__item{width:auto;margin: 0;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
-        ".skull-store__price{margin-left:.5em;opacity:.72;}" +
         ".skull-store__news .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
         "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__column>.scroll{height:auto}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
@@ -710,16 +706,38 @@
       }
 
       function openNews(item) {
+        function closeNews() {
+          Lampa.Modal.close();
+          Lampa.Controller.toggle("skull_store_center");
+        }
+
         Lampa.Modal.open({
           title: "",
           align: "left",
           zIndex: 300,
           html: $(renderNotice(item)),
-          onBack: function () {
-            Lampa.Modal.close();
-            Lampa.Controller.toggle("skull_store_center");
-          },
+          onBack: closeNews,
         });
+
+        setTimeout(function () {
+          Lampa.Controller.add("skull_store_news_modal", {
+            invisible: true,
+            toggle: function () {
+              Lampa.Controller.collectionSet(Lampa.Modal.render());
+            },
+            up: function () {
+              Lampa.Modal.scroll().wheel(
+                -Math.round(window.innerHeight * 0.15),
+              );
+            },
+            down: function () {
+              Lampa.Modal.scroll().wheel(Math.round(window.innerHeight * 0.15));
+            },
+            back: closeNews,
+          });
+
+          Lampa.Controller.toggle("skull_store_news_modal");
+        }, 0);
       }
 
       function renderCategories() {
