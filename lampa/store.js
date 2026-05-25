@@ -319,7 +319,9 @@
 
     $("body").append(
       '<style id="skull-store-style">' +
-        ".skull-store-page{padding:1.5em 2em 0;}" +
+        ".skull-store-page{position:fixed;z-index:80;top:0;left:0;right:0;bottom:0;padding:1.5em 2em 0;background:#262626;color:#fff;box-sizing:border-box;}" +
+        "body.skull-store--open .wrap__left{visibility:hidden;pointer-events:none;}" +
+        "body.skull-store--open.menu--open:not(.light--version) .wrap__left{transform:none;background:transparent;}" +
         ".skull-store{padding-bottom:3em;}" +
         ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:1.2em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
@@ -328,7 +330,7 @@
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
         ".skull-store__layout{display:grid;grid-template-columns:15em minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
         ".skull-store__column{min-width:0;}" +
-        ".skull-store__column>.scroll{height:calc(100vh - 11em);}" +
+        ".skull-store__column>.scroll{height:calc(100vh - 10em);}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65em;}" +
         ".skull-store__category-list{display:grid;grid-template-columns:1fr;gap:.45em;}" +
         ".skull-store__category{padding:.75em .9em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
@@ -341,9 +343,11 @@
         ".skull-store .extensions__item-premium{margin-left:.5em;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
         ".skull-store__price{margin-left:.5em;opacity:.72;}" +
+        ".skull-store .notice--card{margin-bottom:1em;}" +
+        ".skull-store .notice__img img{opacity:1;}" +
         ".skull-store .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
-        "@media(max-width:900px){.skull-store-page{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
+        "@media(max-width:900px){.skull-store-page{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__column>.scroll{height:auto}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
         "</style>",
     );
   }
@@ -560,22 +564,64 @@
           var item = (news || [])[index];
 
           if (!item) return;
+          openNews(item);
+        });
+      }
 
-          Lampa.Modal.open({
-            title: item.title,
-            align: "left",
-            zIndex: 300,
-            html: $('<div class="about">' + escapeHtml(item.text) + "</div>"),
-            buttons: [
-              {
-                name: "Закрыть",
-                onSelect: function () {
-                  Lampa.Modal.close();
-                  Lampa.Controller.toggle("skull_store_center");
-                },
+      function newsImage(item) {
+        return item.image || item.img || item.picture || item.poster || "";
+      }
+
+      function renderNotice(item, modal) {
+        var image = newsImage(item);
+        var className = "notice selector skull-store__news-item";
+
+        if (modal) className = "notice";
+        if (image) className += " notice--card image--img image--loaded";
+        else className += " image--none";
+
+        return (
+          '<div class="' +
+          className +
+          '">' +
+          (image
+            ? '<div class="notice__left"><div class="notice__img"><img src="' +
+              escapeHtml(image) +
+              '"></div></div>'
+            : "") +
+          '<div class="notice__body">' +
+          '<div class="notice__head">' +
+          '<div class="notice__title">' +
+          escapeHtml(item.title) +
+          "</div>" +
+          (item.date ? '<div class="notice__time">' + escapeHtml(item.date) + "</div>" : "") +
+          "</div>" +
+          '<div class="notice__descr">' +
+          escapeHtml(item.text) +
+          "</div>" +
+          "</div>" +
+          "</div>"
+        );
+      }
+
+      function openNews(item) {
+        Lampa.Modal.open({
+          title: "",
+          align: "left",
+          zIndex: 300,
+          html: $(renderNotice(item, true)),
+          buttons: [
+            {
+              name: "Закрыть",
+              onSelect: function () {
+                Lampa.Modal.close();
+                Lampa.Controller.toggle("skull_store_center");
               },
-            ],
-          });
+            },
+          ],
+          onBack: function () {
+            Lampa.Controller.toggle("skull_store_center");
+          },
         });
       }
 
@@ -614,23 +660,7 @@
         var panel = $('<div class="skull-store__news"></div>');
 
         (news || []).forEach(function (item, index) {
-          panel.append(
-            '<div class="notice selector skull-store__news-item image--none" data-news="' +
-              index +
-              '">' +
-              '<div class="notice__head">' +
-              '<div class="notice__title">' +
-              escapeHtml(item.title) +
-              "</div>" +
-              '<div class="notice__time">' +
-              escapeHtml(item.date || "") +
-              "</div>" +
-              "</div>" +
-              '<div class="notice__descr">' +
-              escapeHtml(item.text) +
-              "</div>" +
-              "</div>",
-          );
+          panel.append($(renderNotice(item)).attr("data-news", index));
         });
 
         return panel;
@@ -753,11 +783,21 @@
         setCollection(next, nearestFromSection(next));
       }
 
+      function releaseController() {
+        var enabled = Lampa.Controller.enabled && Lampa.Controller.enabled();
+
+        if (!enabled || enabled.name != "skull_store_center") return;
+
+        if (Lampa.Controller.clear) Lampa.Controller.clear();
+        else Lampa.Controller.toggle("content");
+      }
+
       this.create = function () {
         render();
       };
 
       this.start = function () {
+        $("body").addClass("skull-store--open");
         checkCatalogAvailability(catalog, true);
 
         Lampa.Controller.add("skull_store_center", {
@@ -784,6 +824,7 @@
             moveHorizontal("right");
           },
           back: function () {
+            releaseController();
             Lampa.Activity.backward();
           },
         });
@@ -792,8 +833,13 @@
       };
 
       this.pause = function () {};
-      this.stop = function () {};
+      this.stop = function () {
+        $("body").removeClass("skull-store--open");
+        releaseController();
+      };
       this.destroy = function () {
+        $("body").removeClass("skull-store--open");
+        releaseController();
         categoryScroll.destroy();
         pluginScroll.destroy();
         newsScroll.destroy();
