@@ -397,9 +397,9 @@
 
     $("body").append(
       '<style id="skull-store-style">' +
-        ".skull-store-page .extensions__body{padding:2.5em 1.5em;}" +
+        ".skull-store-page .extensions__body{padding:2.5em 0;}" +
         ".skull-store{padding-bottom:3em;}" +
-        ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:1.2em;}" +
+        ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:2.4em;padding:0 1.5em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
         ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
@@ -665,17 +665,20 @@
         return item.image || item.img || item.picture || item.poster || "";
       }
 
-      function renderNotice(item) {
+      function newsCardClass(item) {
         var image = newsImage(item);
         var className = "notice selector";
 
         if (image) className += " notice--card image--img image--loaded";
         else className += " image--none";
 
+        return className;
+      }
+
+      function renderNoticeBody(item) {
+        var image = newsImage(item);
+
         return (
-          '<div class="' +
-          className +
-          '">' +
           (image
             ? '<div class="notice__left"><div class="notice__img"><img src="' +
               escapeHtml(image) +
@@ -693,8 +696,17 @@
           '<div class="notice__descr">' +
           escapeHtml(item.text) +
           "</div>" +
-          "</div>" +
           "</div>"
+        );
+      }
+
+      function renderNotice(item) {
+        return (
+          '<section class="' +
+          newsCardClass(item) +
+          '">' +
+          renderNoticeBody(item) +
+          "</section>"
         );
       }
 
@@ -704,16 +716,8 @@
           align: "left",
           zIndex: 300,
           html: $(renderNotice(item)),
-          buttons: [
-            {
-              name: "Закрыть",
-              onSelect: function () {
-                Lampa.Modal.close();
-                Lampa.Controller.toggle("skull_store_center");
-              },
-            },
-          ],
           onBack: function () {
+            Lampa.Modal.close();
             Lampa.Controller.toggle("skull_store_center");
           },
         });
@@ -762,9 +766,11 @@
 
         (news || []).forEach(function (item, index) {
           panel.append(
-            $(renderNotice(item))
+            $("<section></section>")
+              .addClass(newsCardClass(item))
               .addClass("skull-store__news-item")
-              .attr("data-news", index),
+              .attr("data-news", index)
+              .append(renderNoticeBody(item)),
           );
         });
 
@@ -836,9 +842,7 @@
           .empty()
           .append(
             "<div>" +
-              '<div class="skull-store__title">Skull Store</div>' +
-              '<div class="skull-store__subtitle">Управление установкой, отключением и удалением модов Lampa</div>' +
-              "</div>" +
+              '<div class="skull-store__subtitle">Сторонний магазин расширений Lampa.</div>' +
               '<div class="skull-store__stats">' +
               '<div class="skull-store__stat">Всего: ' +
               catalog.length +
@@ -990,7 +994,7 @@
           categoryScroll.minus(head);
           pluginScroll.minus(head);
           newsScroll.minus(head);
-          content.append(headBackward("Skull Store"));
+          content.append(headBackward("💀 Skull Store"));
           content.append(head);
           content.append(body);
           html.append(content);
