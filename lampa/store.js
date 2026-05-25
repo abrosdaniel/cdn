@@ -397,7 +397,7 @@
 
     $("body").append(
       '<style id="skull-store-style">' +
-        ".skull-store-page .extensions__body{padding:2.5em 0;}" +
+        ".skull-store-page .extensions__body{padding:2.5em 1.5em;}" +
         ".skull-store{padding-bottom:3em;}" +
         ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:1.2em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
@@ -418,9 +418,7 @@
         ".skull-store .extensions__item-code{margin-right:.5em;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
         ".skull-store__price{margin-left:.5em;opacity:.72;}" +
-        ".skull-store .notice--card{margin-bottom:1em;}" +
-        ".skull-store .notice__img img{opacity:1;}" +
-        ".skull-store .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
+        ".skull-store__news .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
         "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__column>.scroll{height:auto}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
         "</style>",
@@ -667,11 +665,10 @@
         return item.image || item.img || item.picture || item.poster || "";
       }
 
-      function renderNotice(item, modal) {
+      function renderNotice(item) {
         var image = newsImage(item);
-        var className = "notice selector skull-store__news-item";
+        var className = "notice selector";
 
-        if (modal) className = "notice";
         if (image) className += " notice--card image--img image--loaded";
         else className += " image--none";
 
@@ -706,7 +703,7 @@
           title: "",
           align: "left",
           zIndex: 300,
-          html: $(renderNotice(item, true)),
+          html: $(renderNotice(item)),
           buttons: [
             {
               name: "Закрыть",
@@ -764,7 +761,11 @@
         var panel = $('<div class="skull-store__news"></div>');
 
         (news || []).forEach(function (item, index) {
-          panel.append($(renderNotice(item)).attr("data-news", index));
+          panel.append(
+            $(renderNotice(item))
+              .addClass("skull-store__news-item")
+              .attr("data-news", index),
+          );
         });
 
         return panel;
