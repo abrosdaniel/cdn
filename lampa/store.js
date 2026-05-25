@@ -327,6 +327,8 @@
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
         ".skull-store__layout{display:grid;grid-template-columns:15em minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
+        ".skull-store__column{min-width:0;}" +
+        ".skull-store__column>.scroll{height:calc(100vh - 11em);}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65em;}" +
         ".skull-store__category-list{display:grid;grid-template-columns:1fr;gap:.45em;}" +
         ".skull-store__category{padding:.75em .9em;border-radius:.35em;background:rgba(255,255,255,.08);border:.12em solid transparent;}" +
@@ -339,6 +341,7 @@
         ".skull-store .extensions__item-premium{margin-left:.5em;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
         ".skull-store__price{margin-left:.5em;opacity:.72;}" +
+        ".skull-store .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
         "@media(max-width:900px){.skull-store-page{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
         "</style>",
@@ -436,7 +439,13 @@
       var head = $('<div class="skull-store__head"></div>');
       var body = $('<div class="skull-store"></div>');
       var filter = "all";
-      var scroll = new Lampa.Scroll({ mask: true, over: true });
+      var categoryScroll = new Lampa.Scroll({ mask: true, over: true });
+      var pluginScroll = new Lampa.Scroll({ mask: true, over: true });
+      var newsScroll = new Lampa.Scroll({ mask: true, over: true });
+      var scrolls = [categoryScroll, pluginScroll, newsScroll];
+      var sections = [];
+      var activeSection = 0;
+      var lastFocus = [null, null, null];
 
       function filteredCatalog() {
         return catalog.filter(function (plugin) {
@@ -514,7 +523,7 @@
         });
 
         item.on("hover:focus", function () {
-          scroll.update(item[0], true);
+          pluginScroll.update(item[0], true);
         });
 
         updateAvailabilityView(plugin, item);
@@ -524,7 +533,13 @@
 
       function bindController() {
         $(".selector", body).on("hover:focus", function () {
-          scroll.update(this, true);
+          var index = Number($(this).closest(".skull-store__column").data("section"));
+
+          if (!isNaN(index)) {
+            activeSection = index;
+            lastFocus[index] = this;
+            scrolls[index].update(this, true);
+          }
         });
 
         $(".skull-store__category", body).on("hover:enter click", function () {
@@ -565,10 +580,7 @@
       }
 
       function renderCategories() {
-        var section = $('<div class="skull-store__section skull-store__categories"></div>');
         var list = $('<div class="skull-store__category-list"></div>');
-
-        section.append('<div class="skull-store__section-title">Категории</div>');
 
         visibleCategories().forEach(function (category) {
           list.append(
@@ -582,33 +594,24 @@
           );
         });
 
-        section.append(list);
-
-        return section;
+        return list;
       }
 
       function renderPlugins(list) {
-        var section = $('<div class="skull-store__section"></div>');
         var body = $('<div class="skull-store__section-list"></div>');
-
-        section.append('<div class="skull-store__section-title">Плагины</div>');
 
         if (list.length) {
           list.forEach(function (plugin) {
             body.append(renderItem(plugin));
           });
-          section.append(body);
+          return body;
         } else {
-          section.append('<div class="skull-store__empty">В этом разделе пока пусто</div>');
+          return $('<div class="skull-store__empty">В этом разделе пока пусто</div>');
         }
-
-        return section;
       }
 
       function renderNews() {
         var panel = $('<div class="skull-store__news"></div>');
-
-        panel.append('<div class="skull-store__section-title">Новости</div>');
 
         (news || []).forEach(function (item, index) {
           panel.append(
@@ -633,6 +636,41 @@
         return panel;
       }
 
+      function makeColumn(index, title, scroll) {
+        return $('<div class="skull-store__column" data-section="' + index + '"></div>')
+          .append('<div class="skull-store__section-title">' + title + "</div>")
+          .append(scroll.render());
+      }
+
+      function setCollection(index, target) {
+        var scroll = scrolls[index];
+        var render = scroll.render();
+        var first = $(".selector", render).first()[0];
+        var focus = target || lastFocus[index];
+
+        if (focus && !$.contains(render[0], focus)) focus = null;
+
+        activeSection = index;
+        Lampa.Controller.collectionSet(render);
+        Lampa.Controller.collectionFocus(focus || first || false, render);
+
+        focus = $(".selector.focus", render)[0] || focus || first;
+        if (focus) {
+          lastFocus[index] = focus;
+          scroll.update(focus, true);
+        }
+      }
+
+      function nearestFromSection(index) {
+        var render = scrolls[index].render();
+        var items = $(".selector", render);
+
+        if (!items.length) return null;
+        if (lastFocus[index] && $.contains(render[0], lastFocus[index])) return lastFocus[index];
+
+        return items.first()[0];
+      }
+
       function render() {
         var list = filteredCatalog();
         var installedTotal = catalog.filter(function (plugin) {
@@ -654,34 +692,65 @@
             "</div>",
         );
 
+        categoryScroll.clear();
+        categoryScroll.append(renderCategories());
+        pluginScroll.clear();
+        pluginScroll.append(renderPlugins(list));
+        newsScroll.clear();
+        newsScroll.append(renderNews());
+
         var layout = $('<div class="skull-store__layout"></div>');
 
-        layout.append(renderCategories());
-        layout.append(renderPlugins(list));
-        layout.append(renderNews());
+        layout.append(makeColumn(0, "Категории", categoryScroll));
+        layout.append(makeColumn(1, "Плагины", pluginScroll));
+        layout.append(makeColumn(2, "Новости", newsScroll));
         body.empty().append(layout);
-        scroll.clear();
-        scroll.append(body);
+        sections = $(".skull-store__column", body).toArray();
         bindController();
 
         setTimeout(function () {
-          var active = $(".skull-store__category.active", body)[0];
-          var first = $(".selector", body).first()[0];
-          Lampa.Controller.collectionSet(scroll.render());
-          Lampa.Controller.collectionFocus(active || first || false, scroll.render());
-          if (active || first) scroll.immediate(active || first, true);
+          var active = $(".skull-store__category.active", categoryScroll.render()).first()[0];
+          setCollection(activeSection, activeSection === 0 ? active : nearestFromSection(activeSection));
         }, 50);
       }
 
-      function move(direction) {
+      function moveVertical(direction) {
+        var scroll = scrolls[activeSection];
+
         if (!Navigator.canmove || Navigator.canmove(direction)) {
           Navigator.move(direction);
         }
 
         setTimeout(function () {
-          var focused = $(".selector.focus", body);
-          if (focused.length) scroll.update(focused[0], true);
+          var focused = $(".selector.focus", scroll.render())[0];
+          if (focused) {
+            lastFocus[activeSection] = focused;
+            scroll.update(focused, true);
+          }
         }, 0);
+      }
+
+      function moveHorizontal(direction) {
+        var scroll = scrolls[activeSection];
+        var next = activeSection + (direction == "right" ? 1 : -1);
+
+        if (activeSection == 1 && Navigator.canmove && Navigator.canmove(direction)) {
+          Navigator.move(direction);
+
+          setTimeout(function () {
+            var focused = $(".selector.focus", scroll.render())[0];
+            if (focused) {
+              lastFocus[activeSection] = focused;
+              scroll.update(focused, true);
+            }
+          }, 0);
+
+          return;
+        }
+
+        if (next < 0 || next >= sections.length) return;
+
+        setCollection(next, nearestFromSection(next));
       }
 
       this.create = function () {
@@ -694,21 +763,25 @@
         Lampa.Controller.add("skull_store_center", {
           toggle: function () {
             var focused = $(".selector.focus", body)[0];
-            var first = $(".selector", body).first()[0];
-            Lampa.Controller.collectionSet(scroll.render());
-            Lampa.Controller.collectionFocus(focused || first || false, scroll.render());
+            var section = focused
+              ? Number($(focused).closest(".skull-store__column").data("section"))
+              : activeSection;
+
+            if (isNaN(section)) section = activeSection;
+
+            setCollection(section, focused || nearestFromSection(section));
           },
           up: function () {
-            move("up");
+            moveVertical("up");
           },
           down: function () {
-            move("down");
+            moveVertical("down");
           },
           left: function () {
-            move("left");
+            moveHorizontal("left");
           },
           right: function () {
-            move("right");
+            moveHorizontal("right");
           },
           back: function () {
             Lampa.Activity.backward();
@@ -721,14 +794,18 @@
       this.pause = function () {};
       this.stop = function () {};
       this.destroy = function () {
-        scroll.destroy();
+        categoryScroll.destroy();
+        pluginScroll.destroy();
+        newsScroll.destroy();
         html.remove();
       };
       this.render = function () {
         if (!html.children().length) {
-          scroll.minus(head);
+          categoryScroll.minus(head);
+          pluginScroll.minus(head);
+          newsScroll.minus(head);
           html.append(head);
-          html.append(scroll.render());
+          html.append(body);
         }
 
         return html;
