@@ -399,6 +399,7 @@
       '<style id="skull-store-style">' +
         ".skull-store-page .extensions__body{padding:2.5em 0;}" +
         ".skull-store__head{display:flex;align-items:flex-start;justify-content:space-between;gap:1em;margin-bottom:2.4em;padding:0 1.5em;}" +
+        ".skull-store{padding: 0 1.5em;}" +
         ".skull-store__title{font-size:2.2em;font-weight:700;line-height:1.1;}" +
         ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
@@ -406,12 +407,11 @@
         ".skull-store__layout{display:grid;grid-template-columns:15em minmax(0,1fr) 24em;gap:1.2em;align-items:start;}" +
         ".skull-store__column{min-width:0;}" +
         ".skull-store__column>.scroll{height:calc(100vh - 15em);}" +
-        ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65em;}" +
-        ".skull-store__category-list.menu__list{padding-left:0;margin-left:-.6em;}" +
-        ".skull-store__category.active:not(.focus){background:rgba(255,255,255,.12);}" +
+        ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
+        ".skull-store__category-list.menu__list{padding-left:0;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
         ".skull-store__section-title:first-child{margin-top:0;}" +
-        ".skull-store .extensions__item{width:auto;min-height:10em;}" +
+        ".skull-store .extensions__item{width:auto;min-height:10em;margin: 0;}" +
         ".skull-store .extensions__item-descr{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store .extensions__item-premium{margin-left:.5em;}" +
         ".skull-store .extensions__item-code{margin-right:.5em;}" +
