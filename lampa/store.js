@@ -35,38 +35,25 @@
       "erotic",
       "other",
     ],
-    categoryIcons: {
-      all: "catalog",
-      installed: "collection",
-      online: "play",
-      tv: "tv",
-      torrent: "torrent",
-      interface: "settings",
-      control: "console",
-      theme: "star",
-      erotic: "adult",
-      other: "dots",
-      screensaver: "broadcast",
-      video: "trailer",
-      recomend: "fire",
+    /* Иконка категории: lampa:sprite | online.svg | URL | inline <svg> */
+    icons: {
+      baseUrl: "https://cdn.abros.dev/lampa/icons",
     },
-    categoryFallbackIcons: [
-      "feed",
-      "filter",
-      "hd",
-      "info",
-      "like",
-      "youtube",
-      "book",
-      "bell",
-      "cartoon",
-      "anime",
-      "person",
-      "edit",
-      "favorite",
-      "top",
-      "history",
-    ],
+    categoryIcons: {
+      all: "lampa:catalog",
+      installed: "lampa:collection",
+      online: "lampa:movie",
+      tv: "lampa:tv",
+      torrent: "lampa:torrent",
+      interface: "lampa:settings",
+      control: "lampa:console",
+      theme: "lampa:star",
+      erotic: "lampa:adult",
+      other: "lampa:dots",
+      screensaver: "lampa:broadcast",
+      video: "lampa:trailer",
+      recomend: "lampa:fire",
+    },
   };
 
   window.skull = true;
@@ -259,7 +246,7 @@
         zh: "总计",
         pt: "Total",
         bg: "Общо",
-        he: "סה\"כ",
+        he: 'סה"כ',
         cs: "Celkem",
         ro: "Total",
         fr: "Total",
@@ -345,25 +332,77 @@
     });
   }
 
-  function getCategoryIconId(category) {
-    if (Config.categoryIcons[category]) return Config.categoryIcons[category];
+  function prepareCustomSvg(value) {
+    if (!value) return "";
 
-    var pool = Config.categoryFallbackIcons;
-    var hash = 0;
+    var svg = String(value).trim();
 
-    for (var i = 0; i < category.length; i++) {
-      hash = (hash + category.charCodeAt(i)) | 0;
+    if (!svg || svg.indexOf("lampa:") === 0) return "";
+
+    if (svg.indexOf("<") === -1) {
+      if (Config.icons && Config.icons.baseUrl) {
+        svg =
+          Config.icons.baseUrl.replace(/\/$/, "") +
+          "/" +
+          svg.replace(/^\//, "");
+      } else {
+        return "";
+      }
     }
 
-    return pool[Math.abs(hash) % pool.length];
+    if (/^https?:\/\//i.test(svg) || svg.indexOf("//") === 0) {
+      return (
+        '<img class="skull-store__category-icon skull-store__category-icon--img" src="' +
+        escapeHtml(svg) +
+        '" alt="">'
+      );
+    }
+
+    if (svg.indexOf("<svg") === -1) return "";
+
+    if (svg.indexOf("skull-store__category-icon") === -1) {
+      svg = svg.replace(/<svg\b([^>]*)>/, function (match, attrs) {
+        if (/class\s*=/.test(attrs)) {
+          return (
+            "<svg" +
+            attrs.replace(
+              /class\s*=\s*(['"])(.*?)\1/,
+              'class="$2 skull-store__category-icon"',
+            ) +
+            ">"
+          );
+        }
+
+        return '<svg class="skull-store__category-icon"' + attrs + ">";
+      });
+    }
+
+    if (!/fill\s*=/.test(svg.split(">")[0])) {
+      svg = svg.replace(/<svg\b/, '<svg fill="currentColor"');
+    }
+
+    return svg;
   }
 
   function categoryIconMarkup(category) {
+    var icon = Config.categoryIcons[category] || "lampa:folder";
+
+    if (icon.indexOf("lampa:") === 0) {
+      return (
+        '<svg class="skull-store__category-icon">' +
+        '<use xlink:href="#sprite-' +
+        icon.slice(6) +
+        '"></use></svg>'
+      );
+    }
+
+    var customSvg = prepareCustomSvg(icon);
+
+    if (customSvg) return customSvg;
+
     return (
       '<svg class="skull-store__category-icon">' +
-      '<use xlink:href="#sprite-' +
-      getCategoryIconId(category) +
-      '"></use></svg>'
+      '<use xlink:href="#sprite-folder"></use></svg>'
     );
   }
 
@@ -429,13 +468,15 @@
       });
     });
 
-    var ordered = Config.categoryOrder.filter(function (id) {
-      return seen[id];
-    }).map(function (id) {
-      delete seen[id];
+    var ordered = Config.categoryOrder
+      .filter(function (id) {
+        return seen[id];
+      })
+      .map(function (id) {
+        delete seen[id];
 
-      return { id: id, title: getCategoryLabel(id) };
-    });
+        return { id: id, title: getCategoryLabel(id) };
+      });
 
     Object.keys(seen).forEach(function (id) {
       ordered.push({
@@ -778,7 +819,12 @@
     Object.keys(availability).forEach(function (url) {
       var item = availability[url];
 
-      if (item && item.loading && item.requestId && now - item.requestId > 6500) {
+      if (
+        item &&
+        item.loading &&
+        item.requestId &&
+        now - item.requestId > 6500
+      ) {
         delete availability[url];
       }
     });
@@ -909,6 +955,7 @@
         ".skull-store__category-list.menu__list{padding-left:0;}" +
         ".skull-store__category .menu__ico{display:flex;align-items:center;justify-content:center;}" +
         ".skull-store__category-icon{width:1.5em;height:1.5em;fill:currentColor;}" +
+        ".skull-store__category-icon--img{object-fit:contain;display:block;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;}" +
         ".skull-store .extensions__item{width:auto;margin: 0;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
@@ -964,12 +1011,27 @@
         }
 
         if (item.action == "toggle") {
-          if (setPluginStatus(plugin.url, state.enabled ? 0 : 1)) {
-            rerender({ preserveController: true, skipAvailability: true });
-            showReload(t("plugins_need_reload"), back);
-          } else {
+          var nextStatus = state.enabled ? 0 : 1;
+
+          if (!setPluginStatus(plugin.url, nextStatus)) {
             back();
+            return;
           }
+
+          if (nextStatus === 1) {
+            var installed = findInstalled(plugin.url);
+
+            if (installed && Lampa.Plugins && Lampa.Plugins.push) {
+              Lampa.Plugins.push(installed);
+            }
+
+            rerender({ skipAvailability: true });
+            back();
+            return;
+          }
+
+          rerender({ preserveController: true, skipAvailability: true });
+          showReload(t("plugins_need_reload"), back);
           return;
         }
 
@@ -1291,7 +1353,7 @@
           .append(
             '<div class="skull-store__subtitle"><p>' +
               escapeHtml(t("skull_subtitle")) +
-              '</p><br><p>' +
+              "</p><br><p>" +
               escapeHtml(t("skull_subtitle_suggest")) +
               "</p></div>" +
               '<div class="skull-store__stats">' +
@@ -1524,7 +1586,6 @@
         }, 30);
       }
     });
-
   }
 
   if (window.appready) {
