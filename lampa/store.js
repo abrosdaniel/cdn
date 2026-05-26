@@ -111,6 +111,7 @@
 
   var availability = {};
   var showStoreCenter = null;
+  var skullNoticeClass = null;
 
   function escapeHtml(value) {
     return String(value || "")
@@ -119,6 +120,67 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
+  }
+
+  function newsImage(item) {
+    return item.image || item.img || item.picture || item.poster || "";
+  }
+
+  function newsTime(item, index, fallbackTime) {
+    var parsed = item.date ? Date.parse(item.date) : 0;
+
+    return parsed || fallbackTime - index;
+  }
+
+  function registerStoreNotices(news, attempt) {
+    if (!Lampa.Notice || !Lampa.Notice.addClass) {
+      if ((attempt || 0) < 20) {
+        setTimeout(function () {
+          registerStoreNotices(news, (attempt || 0) + 1);
+        }, 250);
+      }
+
+      return;
+    }
+
+    var fallbackTime = Date.now();
+
+    skullNoticeClass = {
+      name: "Skull Store",
+      active: function () {
+        return true;
+      },
+      count: function () {
+        var viewed = Lampa.Storage.get("skull_store_notice_viewed", 0);
+
+        return this.items().filter(function (item) {
+          return item.time > viewed;
+        }).length;
+      },
+      viewed: function () {
+        Lampa.Storage.set("skull_store_notice_viewed", Date.now());
+        if (Lampa.Notice.drawCount) Lampa.Notice.drawCount();
+      },
+      empty: function () {
+        return "Новостей Skull Store пока нет";
+      },
+      items: function () {
+        return (news || []).map(function (item, index) {
+          return {
+            id: item.id || "skull_store_news_" + index,
+            from: "skull_store",
+            title: item.title,
+            text: item.text,
+            time: newsTime(item, index, fallbackTime),
+            img: newsImage(item),
+            labels: item.level ? [item.level] : null,
+          };
+        });
+      },
+    };
+
+    Lampa.Notice.addClass("skull_store", skullNoticeClass);
+    if (Lampa.Notice.drawCount) Lampa.Notice.drawCount();
   }
 
   function getStoredPlugins() {
@@ -404,7 +466,7 @@
         ".skull-store__subtitle{opacity:.65;margin-top:.35em;font-size:1.05em;}" +
         ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;}" +
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
-        ".skull-store__layout{display:grid;grid-template-columns:18em minmax(0,1fr) 18em;align-items:start;}" +
+        ".skull-store__layout{display:grid;grid-template-columns:18em minmax(0,1fr);align-items:start;}" +
         ".skull-store__column{min-width:0;}" +
         ".skull-store__column>.scroll{height:calc(100vh - 15em);}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
@@ -413,10 +475,8 @@
         ".skull-store__section-title:first-child{margin-top:0;}" +
         ".skull-store .extensions__item{width:auto;margin: 0;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
-        ".skull-store__news .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
-        ".skull-store__news-modal .notice__head{display:flex}.skull-store__news-modal .notice__title{font-size:1.5em;font-weight:400}.skull-store__news-modal .notice__descr{font-size:1.2em;margin-top:.9em;line-height:1.4}.skull-store__news-modal .notice__time{margin-left:auto;padding-left:2em;padding-top:.2em;opacity:.75}.skull-store__news-modal .notice__left{float:left;width:7em;margin:0 2em 1em 0}.skull-store__news-modal .notice__img img{width:100%;border-radius:.3em}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
-        "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:flex;gap:1em;padding:0}.skull-store .extensions__item{width:20em;flex-shrink:0}.skull-store__news{display:flex;gap:1em}.skull-store__news .notice{width:22em;flex-shrink:0}.skull-store__title{font-size:1.65em}}" +
+        "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:flex;gap:1em;padding:0}.skull-store .extensions__item{width:20em;flex-shrink:0}.skull-store__title{font-size:1.65em}}" +
         "</style>",
     );
   }
@@ -515,8 +575,7 @@
       var filter = "all";
       var categoryScroll = new Lampa.Scroll({ mask: true, over: true });
       var pluginScroll = new Lampa.Scroll({ mask: true, over: true });
-      var newsScroll = new Lampa.Scroll({ mask: true, over: true });
-      var scrolls = [categoryScroll, pluginScroll, newsScroll];
+      var scrolls = [categoryScroll, pluginScroll];
       var sections = [];
       var activeSection = 0;
       var lastFocus = [null, null, null];
@@ -648,80 +707,6 @@
           if (plugin) showPluginActions(plugin, render);
         });
 
-        $(".skull-store__news-item", body).on("hover:enter click", function () {
-          var index = Number($(this).data("news"));
-          var item = (news || [])[index];
-
-          if (!item) return;
-          openNews(item);
-        });
-      }
-
-      function newsImage(item) {
-        return item.image || item.img || item.picture || item.poster || "";
-      }
-
-      function newsCardClass(item, selectable) {
-        var image = newsImage(item);
-        var className = "notice";
-
-        if (selectable) className += " selector";
-
-        if (image) className += " notice--card image--img image--loaded";
-        else className += " image--none";
-
-        return className;
-      }
-
-      function renderNoticeBody(item) {
-        var image = newsImage(item);
-
-        return (
-          (image
-            ? '<div class="notice__left"><div class="notice__img"><img src="' +
-              escapeHtml(image) +
-              '"></div></div>'
-            : "") +
-          '<div class="notice__body">' +
-          '<div class="notice__head">' +
-          '<div class="notice__title">' +
-          escapeHtml(item.title) +
-          "</div>" +
-          (item.date
-            ? '<div class="notice__time">' + escapeHtml(item.date) + "</div>"
-            : "") +
-          "</div>" +
-          '<div class="notice__descr">' +
-          escapeHtml(item.text) +
-          "</div>" +
-          "</div>"
-        );
-      }
-
-      function renderNotice(item, selectable) {
-        return (
-          '<section class="' +
-          newsCardClass(item, selectable) +
-          '">' +
-          renderNoticeBody(item) +
-          "</section>"
-        );
-      }
-
-      function openNews(item) {
-        function closeNews() {
-          Lampa.Modal.close();
-          Lampa.Controller.toggle("skull_store_center");
-        }
-
-        Lampa.Modal.open({
-          title: item.title || "Новость",
-          align: "left",
-          size: "medium",
-          zIndex: 300,
-          html: $('<div class="about skull-store__news-modal">' + renderNoticeBody(item) + "</div>"),
-          onBack: closeNews,
-        });
       }
 
       function renderCategories() {
@@ -760,22 +745,6 @@
             '<div class="skull-store__empty">В этом разделе пока пусто</div>',
           );
         }
-      }
-
-      function renderNews() {
-        var panel = $('<div class="skull-store__news"></div>');
-
-        (news || []).forEach(function (item, index) {
-          panel.append(
-            $("<section></section>")
-              .addClass(newsCardClass(item, true))
-              .addClass("skull-store__news-item")
-              .attr("data-news", index)
-              .append(renderNoticeBody(item)),
-          );
-        });
-
-        return panel;
       }
 
       function makeColumn(index, title, scroll) {
@@ -856,14 +825,10 @@
         categoryScroll.append(renderCategories());
         pluginScroll.clear();
         pluginScroll.append(renderPlugins(list));
-        newsScroll.clear();
-        newsScroll.append(renderNews());
-
         var layout = $('<div class="skull-store__layout"></div>');
 
         layout.append(makeColumn(0, "Категории", categoryScroll));
         layout.append(makeColumn(1, "Плагины", pluginScroll));
-        layout.append(makeColumn(2, "Новости", newsScroll));
         body.empty().append(layout);
         sections = $(".skull-store__column", body).toArray();
         bindController();
@@ -985,14 +950,12 @@
         releaseController();
         categoryScroll.destroy();
         pluginScroll.destroy();
-        newsScroll.destroy();
         html.remove();
       };
       this.render = function () {
         if (!html.children().length) {
           categoryScroll.minus(head);
           pluginScroll.minus(head);
-          newsScroll.minus(head);
           content.append(headBackward("💀 Skull Store"));
           content.append(head);
           content.append(body);
@@ -1030,6 +993,7 @@
 
   /* Создание Skull Store и его меню */
   function skullStart(plugins, news, categories) {
+    registerStoreNotices(news);
     registerStoreComponent(plugins, news, categories);
 
     /* Skull Store */
