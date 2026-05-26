@@ -226,7 +226,7 @@
   }
 
   /* Запрос на перезагрузку в модальном окне */
-  function showReload(reloadText) {
+  function showReload(reloadText, cancel) {
     Lampa.Modal.open({
       title: "",
       align: "center",
@@ -237,20 +237,7 @@
           name: "Нет",
           onSelect: function onSelect() {
             Lampa.Modal.close();
-            $(".modal").remove();
-            if ($("body").hasClass("settings--open")) {
-              Lampa.Controller.toggle("settings_component");
-            } else if (
-              Lampa.Controller.enabled &&
-              Lampa.Controller.enabled().name == "skull_store_center"
-            ) {
-              Lampa.Controller.toggle("skull_store_center");
-            } else if (
-              Lampa.Activity.active() &&
-              Lampa.Activity.active().component == "skull_store_center"
-            ) {
-              Lampa.Controller.toggle("skull_store_center");
-            }
+            if (cancel) cancel();
           },
         },
         {
@@ -260,6 +247,10 @@
           },
         },
       ],
+      onBack: function () {
+        Lampa.Modal.close();
+        if (cancel) cancel();
+      },
     });
   }
   var availability = {};
@@ -399,7 +390,7 @@
 
     if (!installed) {
       Lampa.Noty.show("Плагин не установлен");
-      return;
+      return false;
     }
 
     if (Lampa.Plugins && Lampa.Plugins.remove) {
@@ -414,7 +405,7 @@
 
     Lampa.Noty.show("Плагин удален");
     Lampa.Storage.set("needRebootSettingExit", true);
-    showReload("Для полного удаления плагина перезагрузите приложение!");
+    return true;
   }
 
   function setPluginStatus(url, status) {
@@ -428,11 +419,11 @@
       }
     });
 
-    if (changed) {
-      savePluginList(list);
-      Lampa.Noty.show(status ? "Плагин включен" : "Плагин отключен");
-      showReload("Для применения изменения перезагрузите приложение!");
-    }
+    if (!changed) return false;
+
+    savePluginList(list);
+    Lampa.Noty.show(status ? "Плагин включен" : "Плагин отключен");
+    return true;
   }
 
   function openStoreCenter() {
@@ -518,18 +509,20 @@
       var check = item.find(".extensions__item-check");
       var code = item.find(".skull-store__availability");
       var status = item.find(".extensions__item-status");
-      var loading =
-        !availability[plugin.url] || availability[plugin.url].loading;
+      var availabilityStatus = availability[plugin.url];
+      var loading = !!(availabilityStatus && availabilityStatus.loading);
 
       check.toggleClass("hide", !loading);
 
       code
-        .toggleClass("hide", loading)
+        .toggleClass("hide", !availabilityStatus || loading)
         .removeClass("success error yellow")
         .addClass(storeStatusClass(plugin))
         .text(storeStatusText(plugin));
 
-      status.toggleClass("hide", loading).text(storeStatusDescription(plugin));
+      status
+        .toggleClass("hide", !availabilityStatus || loading)
+        .text(storeStatusDescription(plugin));
     });
   }
 
@@ -587,6 +580,9 @@
   function showPluginActions(plugin, rerender) {
     var state = getPluginState(plugin.url);
     var items = [];
+    var back = function () {
+      Lampa.Controller.toggle("skull_store_center");
+    };
 
     if (!state.installed) {
       items.push({
@@ -617,30 +613,43 @@
         if (item.action == "install") {
           installPlugin(plugin);
           rerender();
-          Lampa.Controller.toggle("skull_store_center");
+          back();
+          return;
         }
 
         if (item.action == "toggle") {
-          setPluginStatus(plugin.url, state.enabled ? 0 : 1);
-          rerender();
-          Lampa.Controller.toggle("skull_store_center");
+          if (setPluginStatus(plugin.url, state.enabled ? 0 : 1)) {
+            rerender({ preserveController: true });
+            showReload(
+              "Для применения изменения перезагрузите приложение!",
+              back,
+            );
+          } else {
+            back();
+          }
+          return;
         }
 
         if (item.action == "remove") {
-          removePluginByUrl(plugin.url);
-          rerender();
-          Lampa.Controller.toggle("skull_store_center");
+          if (removePluginByUrl(plugin.url)) {
+            rerender({ preserveController: true });
+            showReload(
+              "Для полного удаления плагина перезагрузите приложение!",
+              back,
+            );
+          } else {
+            back();
+          }
+          return;
         }
 
         if (item.action == "check") {
           delete availability[plugin.url];
           checkAvailability(plugin);
-          Lampa.Controller.toggle("skull_store_center");
+          back();
         }
       },
-      onBack: function () {
-        Lampa.Controller.toggle("skull_store_center");
-      },
+      onBack: back,
     });
   }
 
@@ -699,6 +708,12 @@
         return '<svg><use xlink:href="#sprite-' + sprite + '"></use></svg>';
       }
 
+      function triggerPluginAvailabilityChecks() {
+        if (Lampa.Layer && Lampa.Layer.visible) {
+          Lampa.Layer.visible(pluginScroll.render(true));
+        }
+      }
+
       function renderItem(plugin) {
         var state = getPluginState(plugin.url);
         var protocol = plugin.url.indexOf("https://") === 0 ? "https" : "http";
@@ -711,7 +726,7 @@
         }
 
         var item = $(
-          '<div class="extensions__item selector skull-store__item" data-url="' +
+          '<div class="extensions__item selector skull-store__item layer--visible" data-url="' +
             escapeHtml(plugin.url) +
             '">' +
             '<div class="extensions__item-author">' +
@@ -747,8 +762,6 @@
           checkAvailability(plugin, item);
         });
 
-        updateAvailabilityView(plugin, item);
-
         return item;
       }
 
@@ -777,6 +790,15 @@
             return item.url == url;
           });
           if (plugin) showPluginActions(plugin, render);
+        });
+
+        $(".skull-store__item", body).on("hover:focus", function () {
+          var url = $(this).data("url");
+          var plugin = catalog.find(function (item) {
+            return item.url == url;
+          });
+
+          if (plugin) checkAvailability(plugin, $(this));
         });
       }
 
@@ -845,6 +867,8 @@
           lastFocus[index] = focus;
           scroll.update(focus, true);
         }
+
+        if (index === 1) triggerPluginAvailabilityChecks();
       }
 
       function nearestFromSection(index) {
@@ -925,6 +949,11 @@
         setTimeout(function () {
           fitScrolls();
 
+          if (options.preserveController) {
+            triggerPluginAvailabilityChecks();
+            return;
+          }
+
           if (options.resetPlugins) {
             var firstPlugin = resetPluginScroll();
 
@@ -944,6 +973,7 @@
             activeSection,
             activeSection === 0 ? active : nearestFromSection(activeSection),
           );
+          triggerPluginAvailabilityChecks();
         }, 50);
       }
 
@@ -959,6 +989,7 @@
           if (focused) {
             lastFocus[activeSection] = focused;
             scroll.update(focused, true);
+            if (activeSection === 1) triggerPluginAvailabilityChecks();
           }
         }, 0);
       }
@@ -979,6 +1010,7 @@
             if (focused) {
               lastFocus[activeSection] = focused;
               scroll.update(focused, true);
+              triggerPluginAvailabilityChecks();
             }
           }, 0);
 
