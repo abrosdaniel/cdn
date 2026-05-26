@@ -415,7 +415,7 @@
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
         ".skull-store__news .notice__descr{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
-        "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store__layout{grid-template-columns:1fr}.skull-store__column>.scroll{height:auto}.skull-store__section-list{grid-template-columns:1fr}.skull-store__title{font-size:1.65em}}" +
+        "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:flex;gap:1em;padding:0}.skull-store .extensions__item{width:20em;flex-shrink:0}.skull-store__news{display:flex;gap:1em}.skull-store__news .notice{width:22em;flex-shrink:0}.skull-store__title{font-size:1.65em}}" +
         "</style>",
     );
   }
@@ -712,32 +712,13 @@
         }
 
         Lampa.Modal.open({
-          title: "",
+          title: item.title || "Новость",
           align: "left",
+          size: "medium",
           zIndex: 300,
           html: $(renderNotice(item)),
           onBack: closeNews,
         });
-
-        setTimeout(function () {
-          Lampa.Controller.add("skull_store_news_modal", {
-            invisible: true,
-            toggle: function () {
-              Lampa.Controller.collectionSet(Lampa.Modal.render());
-            },
-            up: function () {
-              Lampa.Modal.scroll().wheel(
-                -Math.round(window.innerHeight * 0.15),
-              );
-            },
-            down: function () {
-              Lampa.Modal.scroll().wheel(Math.round(window.innerHeight * 0.15));
-            },
-            back: closeNews,
-          });
-
-          Lampa.Controller.toggle("skull_store_news_modal");
-        }, 0);
       }
 
       function renderCategories() {
