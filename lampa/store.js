@@ -23,6 +23,7 @@
       { id: "interface", title: "Интерфейс" },
       { id: "control", title: "Управление" },
       { id: "theme", title: "Темы" },
+      { id: "erotic", title: "18+" },
       { id: "other", title: "Другое" },
     ],
     legacyCategories: {
@@ -75,12 +76,89 @@
   }
 
   function normalizeCategoryId(categoryId) {
+    if (Array.isArray(categoryId)) {
+      categoryId = categoryId[0];
+    }
+
+    if (categoryId && typeof categoryId == "object") {
+      categoryId =
+        categoryId.id || categoryId.value || categoryId.slug || "other";
+    }
+
     var aliases = {
       torrents: "torrent",
       themes: "theme",
     };
 
     return aliases[categoryId] || categoryId || "other";
+  }
+
+  function normalizeCategoryIds(category) {
+    var list = [];
+
+    if (Array.isArray(category)) list = category;
+    else if (category) list = [category];
+
+    var result = list
+      .map(normalizeCategoryId)
+      .filter(function (id, index, arr) {
+        return id && arr.indexOf(id) === index;
+      });
+
+    return result.length ? result : ["other"];
+  }
+
+  function buildCategoriesFromCatalog(catalog) {
+    var seen = {};
+
+    catalog.forEach(function (plugin) {
+      (plugin.categories || []).forEach(function (id) {
+        seen[id] = true;
+      });
+    });
+
+    var labelMap = {};
+
+    Config.defaultCategories.forEach(function (category) {
+      labelMap[category.id] = category.title;
+    });
+
+    var ordered = [];
+
+    Config.defaultCategories.forEach(function (category) {
+      if (seen[category.id]) {
+        ordered.push({ id: category.id, title: category.title });
+        delete seen[category.id];
+      }
+    });
+
+    Object.keys(seen).forEach(function (id) {
+      ordered.push({
+        id: id,
+        title: labelMap[id] || id.charAt(0).toUpperCase() + id.slice(1),
+      });
+    });
+
+    return ordered;
+  }
+
+  function pluginInCategory(plugin, categoryId) {
+    return (plugin.categories || []).indexOf(categoryId) >= 0;
+  }
+
+  function normalizeExtensionItem(item) {
+    return {
+      id: item.id,
+      categories: normalizeCategoryIds(item.category),
+      name: item.name,
+      author: item.author,
+      description: item.description,
+      price: item.price,
+      url: item.url,
+      compatibility: item.compatibility,
+      tags: item.tags,
+      component: item.component,
+    };
   }
 
   function normalizeNewsItem(item) {
@@ -95,16 +173,30 @@
     };
   }
 
+  function isPublishedNews(item) {
+    return item && item.status === "published";
+  }
+
   function fetchDirectusLampa() {
+    var params = new URLSearchParams({
+      fields: "*,extensions.*,news.*",
+    });
+
+    params.set("deep[news][_filter][status][_eq]", "published");
+    params.set("deep[news][_sort]", "-date,-sort");
+
     var url =
       Config.directus.url +
       "/items/" +
       Config.directus.collection +
-      "?fields=*,extensions.*,news.*";
+      "?" +
+      params.toString();
 
     return fetch(url).then(function (response) {
       if (!response.ok) {
-        throw new Error("Directus " + Config.directus.collection + ": " + response.status);
+        throw new Error(
+          "Directus " + Config.directus.collection + ": " + response.status,
+        );
       }
 
       return response.json().then(function (payload) {
@@ -121,18 +213,25 @@
   function loadData() {
     fetchDirectusLampa()
       .then(function (data) {
-        var extensions = data.extensions || [];
+        var extensions = (data.extensions || []).map(normalizeExtensionItem);
         var news = (data.news || [])
-          .filter(function (item) {
-            return item.status !== "draft";
-          })
-          .map(normalizeNewsItem);
+          .filter(isPublishedNews)
+          .map(normalizeNewsItem)
+          .sort(function (a, b) {
+            var dateA = a.date ? Date.parse(a.date) : 0;
+            var dateB = b.date ? Date.parse(b.date) : 0;
 
-        skullStart(extensions, news, Config.defaultCategories);
+            return dateB - dateA;
+          });
+
+        skullStart(extensions, news);
       })
       .catch(function (error) {
         console.error("Skull Store: ошибка загрузки из Directus:", error);
-        skullStart([], [], Config.defaultCategories);
+        console.error(
+          "Skull Store: проверьте CORS на Directus (Origin клиента Lampa / cdn.abros.dev)",
+        );
+        skullStart([], []);
       });
   }
 
@@ -186,6 +285,10 @@
       .replace(/'/g, "&#039;");
   }
 
+  function newsText(text) {
+    return escapeHtml(text || "").replace(/\r?\n/g, "<br>");
+  }
+
   function newsImage(item) {
     return item.image || item.img || item.picture || item.poster || "";
   }
@@ -234,7 +337,7 @@
             id: item.id || "skull_store_news_" + index,
             from: "skull_store",
             title: item.title,
-            text: item.text,
+            text: newsText(item.text),
             time: newsTime(item, index, fallbackTime),
             img: newsImage(item),
             labels: item.tags && item.tags.length ? item.tags : null,
@@ -262,20 +365,22 @@
 
   function normalizePlugin(plugin) {
     var legacy = plugin.field ? plugin : false;
-    var categoryId = normalizeCategoryId(
-      plugin.category ||
-        Config.legacyCategories[plugin.component] ||
-        plugin.component,
-    );
+    var categories = plugin.categories
+      ? plugin.categories
+      : normalizeCategoryIds(
+          plugin.category ||
+            Config.legacyCategories[plugin.component] ||
+            plugin.component,
+        );
     var price = legacy ? plugin.field.price : formatPrice(plugin.price);
 
     return {
-      id: plugin.id || (plugin.param && plugin.param.name) || categoryId,
-      category: categoryId,
+      id: plugin.id || (plugin.param && plugin.param.name) || categories[0],
+      categories: categories,
       component:
         plugin.component ||
         (plugin.legacy && plugin.legacy.component) ||
-        categoryId,
+        categories[0],
       name: legacy ? plugin.field.name : plugin.name,
       price: price,
       description: legacy
@@ -525,7 +630,7 @@
         ".skull-store__layout{display:grid;grid-template-columns:18em minmax(0,1fr);align-items:start;}" +
         ".skull-store__column{min-width:0;}" +
         ".skull-store__column>.scroll{height:calc(100vh - 15em) !important;}" +
-        ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
+        ".skull-store__section-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
         ".skull-store__category-list.menu__list{padding-left:0;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
         ".skull-store__section-title:first-child{margin-top:0;}" +
@@ -534,7 +639,7 @@
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
         "@media(max-width:" +
         Config.mobileBreakpoint +
-        "px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column[data-section=\"0\"]>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__column[data-section=\"1\"]>.scroll .scroll__body{display:block!important;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:min(20em,85vw);gap:1em;padding:0;width:max-content}.skull-store .extensions__item{width:auto}.skull-store__title{font-size:1.65em}}" +
+        'px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column[data-section="0"]>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__column[data-section="1"]>.scroll .scroll__body{display:block!important;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:min(20em,85vw);gap:1em;padding:0;width:max-content}.skull-store .extensions__item{width:auto}.skull-store__title{font-size:1.65em}}' +
         "</style>",
     );
   }
@@ -602,9 +707,11 @@
     });
   }
 
-  function registerStoreComponent(rawPlugins, news, categories) {
-    categories =
-      categories && categories.length ? categories : Config.defaultCategories;
+  function registerStoreComponent(rawPlugins, news) {
+    var catalog = rawPlugins.map(function (plugin) {
+      return normalizePlugin(plugin);
+    });
+    var categories = buildCategoriesFromCatalog(catalog);
 
     var categoryNames = categories.reduce(function (result, category) {
       result[category.id] = category.title;
@@ -616,10 +723,6 @@
         return category.id;
       }),
     );
-
-    var catalog = rawPlugins.map(function (plugin) {
-      return normalizePlugin(plugin);
-    });
 
     var instance = null;
 
@@ -642,7 +745,7 @@
         return catalog.filter(function (plugin) {
           if (filter == "all") return true;
           if (filter == "installed") return isInstalled(plugin.url);
-          return plugin.category == filter;
+          return pluginInCategory(plugin, filter);
         });
       }
 
@@ -652,7 +755,7 @@
             category == "all" ||
             category == "installed" ||
             catalog.some(function (plugin) {
-              return plugin.category == category;
+              return pluginInCategory(plugin, category);
             })
           );
         });
@@ -676,6 +779,7 @@
           control: "settings",
           theme: "palette",
           themes: "palette",
+          erotic: "star",
           other: "folder",
         };
         var sprite = icons[category] || "folder";
@@ -687,12 +791,13 @@
         var installed = isInstalled(plugin.url);
         var enabled = isEnabled(plugin.url);
         var protocol = plugin.url.indexOf("https://") === 0 ? "https" : "http";
-        var disabledText =
-          Lampa.Lang && Lampa.Lang.translate
-            ? Lampa.Lang.translate("player_disabled")
-            : "Отключено";
-        var installText = installed ? "Установлен" : "Не установлен";
-        var installClass = installed ? "success" : "yellow";
+        var stateText = "Не установлен";
+        var stateClass = "yellow";
+
+        if (installed) {
+          stateText = enabled ? "Включён" : "Отключён";
+          stateClass = enabled ? "success" : "error";
+        }
 
         var item = $(
           '<div class="extensions__item selector skull-store__item" data-url="' +
@@ -720,14 +825,9 @@
             '<div class="extensions__item-code skull-store__availability hide yellow">Проверка</div>' +
             '<div class="extensions__item-status hide">Проверка</div>' +
             '<div class="extensions__item-code skull-store__install-state ' +
-            installClass +
+            stateClass +
             '">' +
-            escapeHtml(installText) +
-            "</div>" +
-            '<div class="extensions__item-disabled' +
-            (installed && !enabled ? "" : " hide") +
-            '">' +
-            disabledText +
+            escapeHtml(stateText) +
             "</div>" +
             "</div>" +
             "</div>",
@@ -757,7 +857,8 @@
 
         $(".skull-store__category", body).on("hover:enter click", function () {
           filter = $(this).data("filter");
-          render();
+          lastFocus[1] = null;
+          render({ resetPlugins: true });
         });
 
         $(".skull-store__item", body).on("hover:enter click", function () {
@@ -862,7 +963,26 @@
         });
       }
 
-      function render() {
+      function resetPluginScroll() {
+        var render = pluginScroll.render();
+        var scrollBody = render.find(".scroll__body")[0];
+        var scrollContent = render.find(".scroll__content")[0];
+        var scrollRoot = render.find(".scroll")[0];
+
+        if (scrollBody)
+          scrollBody.style.transform = "translate3d(0px, 0px, 0px)";
+        if (scrollContent) scrollContent.scrollLeft = 0;
+        if (scrollRoot) scrollRoot.scrollLeft = 0;
+
+        var first = $(".selector", render).first()[0];
+
+        if (first) pluginScroll.update(first, true);
+
+        return first || null;
+      }
+
+      function render(options) {
+        options = options || {};
         var list = filteredCatalog();
         var installedTotal = catalog.filter(function (plugin) {
           return isInstalled(plugin.url);
@@ -895,6 +1015,17 @@
 
         setTimeout(function () {
           fitScrolls();
+
+          if (options.resetPlugins) {
+            var firstPlugin = resetPluginScroll();
+
+            lastFocus[1] = firstPlugin;
+
+            if (activeSection === 1) {
+              setCollection(1, firstPlugin || false);
+              return;
+            }
+          }
 
           var active = $(
             ".skull-store__category.active",
@@ -1052,9 +1183,9 @@
   }
 
   /* Создание Skull Store и его меню */
-  function skullStart(plugins, news, categories) {
+  function skullStart(plugins, news) {
     registerStoreNotices(news);
-    registerStoreComponent(plugins, news, categories);
+    registerStoreComponent(plugins, news);
 
     /* Skull Store */
     Lampa.SettingsApi.addComponent({
