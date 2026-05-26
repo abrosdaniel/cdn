@@ -15,15 +15,15 @@
       collection: "lampa",
     },
     mobileBreakpoint: 900,
-    categoryLabels: {
-      online: "Онлайн",
-      tv: "ТВ",
-      torrent: "Торренты",
-      interface: "Интерфейс",
-      control: "Управление",
-      theme: "Темы",
-      erotic: "18+",
-      other: "Другое",
+    categoryLabelKeys: {
+      online: "plugins_online",
+      tv: "skull_category_tv",
+      torrent: "full_torrents",
+      interface: "settings_main_interface",
+      control: "extensions_hpu_control",
+      theme: "extensions_hpu_theme",
+      erotic: "skull_category_erotic",
+      other: "extensions_hpu_other",
     },
     categoryOrder: [
       "online",
@@ -65,6 +65,59 @@
   Lampa.Storage.set("needReboot", false);
   Lampa.Storage.set("needRebootSettingExit", false);
 
+  function t(key) {
+    if (Lampa.Lang && Lampa.Lang.translate) return Lampa.Lang.translate(key);
+
+    return key;
+  }
+
+  function registerSkullTranslations() {
+    if (!Lampa.Lang || !Lampa.Lang.add) return;
+
+    Lampa.Lang.add({
+      skull_store_name: { ru: "Skull Store", en: "Skull Store" },
+      skull_category_tv: { ru: "ТВ", en: "TV" },
+      skull_category_erotic: { ru: "18+", en: "18+" },
+      skull_not_installed: { ru: "Не установлен", en: "Not installed" },
+      skull_checking: { ru: "Проверка", en: "Checking" },
+      skull_price_free: { ru: "Бесплатный", en: "Free" },
+      skull_price_subscription: { ru: "Подписка", en: "Subscription" },
+      skull_categories: { ru: "Категории", en: "Categories" },
+      skull_empty_category: {
+        ru: "В этом разделе пока пусто",
+        en: "No plugins in this category yet",
+      },
+      skull_news_empty: {
+        ru: "Новостей Skull Store пока нет",
+        en: "No Skull Store news yet",
+      },
+      skull_subtitle: {
+        ru: "Сторонний магазин расширений Lampa.",
+        en: "Third-party Lampa extensions store.",
+      },
+      skull_subtitle_suggest: {
+        ru: "Предложить добавить новый плагин можно тут",
+        en: "Suggest a new plugin here",
+      },
+      skull_stats_total: { ru: "Всего", en: "Total" },
+      skull_stats_installed: { ru: "Установлено", en: "Installed" },
+      skull_plugin_installed: { ru: "Плагин установлен", en: "Plugin installed" },
+      skull_plugin_not_installed: {
+        ru: "Плагин не установлен",
+        en: "Plugin is not installed",
+      },
+      skull_plugin_removed: { ru: "Плагин удален", en: "Plugin removed" },
+      skull_plugin_enabled: { ru: "Плагин включен", en: "Plugin enabled" },
+      skull_plugin_disabled: { ru: "Плагин отключен", en: "Plugin disabled" },
+    });
+  }
+
+  function getCategoryLabel(id) {
+    var key = Config.categoryLabelKeys[id];
+
+    return key ? t(key) : id.charAt(0).toUpperCase() + id.slice(1);
+  }
+
   function loadScript(src) {
     document.head.appendChild(
       Object.assign(document.createElement("script"), { src }),
@@ -83,9 +136,9 @@
       return price.label || formatPrice(price.type);
     }
 
-    if (price === "subscription") return "Подписка";
+    if (price === "subscription") return t("skull_price_subscription");
 
-    return "Бесплатный";
+    return t("skull_price_free");
   }
 
   function normalizeCategoryId(categoryId) {
@@ -126,15 +179,13 @@
     }).map(function (id) {
       delete seen[id];
 
-      return { id: id, title: Config.categoryLabels[id] || id };
+      return { id: id, title: getCategoryLabel(id) };
     });
 
     Object.keys(seen).forEach(function (id) {
       ordered.push({
         id: id,
-        title:
-          Config.categoryLabels[id] ||
-          id.charAt(0).toUpperCase() + id.slice(1),
+        title: getCategoryLabel(id),
       });
     });
 
@@ -234,14 +285,14 @@
       html: $('<div class="about">' + reloadText + "</div>"),
       buttons: [
         {
-          name: "Нет",
+          name: t("settings_param_no"),
           onSelect: function onSelect() {
             Lampa.Modal.close();
             if (cancel) cancel();
           },
         },
         {
-          name: "Да",
+          name: t("settings_param_yes"),
           onSelect: function onSelect() {
             window.location.reload();
           },
@@ -289,7 +340,7 @@
     var fallbackTime = Date.now();
 
     Lampa.Notice.addClass("skull_store", {
-      name: "Skull Store",
+      name: t("skull_store_name"),
       active: function () {
         return true;
       },
@@ -305,7 +356,7 @@
         if (Lampa.Notice.drawCount) Lampa.Notice.drawCount();
       },
       empty: function () {
-        return "Новостей Skull Store пока нет";
+        return t("skull_news_empty");
       },
       items: function () {
         return (news || []).map(function (item, index) {
@@ -363,7 +414,7 @@
 
   function installPlugin(plugin) {
     if (isInstalled(plugin.url)) {
-      Lampa.Noty.show("Плагин уже установлен");
+      Lampa.Noty.show(t("extensions_ready"));
       return;
     }
 
@@ -381,7 +432,7 @@
       list.push(item);
       Lampa.Storage.set("plugins", list);
       loadScript(plugin.url);
-      Lampa.Noty.show("Плагин " + plugin.name + " установлен");
+      Lampa.Noty.show(t("skull_plugin_installed") + ": " + plugin.name);
     }
   }
 
@@ -389,7 +440,7 @@
     var installed = findInstalled(url);
 
     if (!installed) {
-      Lampa.Noty.show("Плагин не установлен");
+      Lampa.Noty.show(t("skull_plugin_not_installed"));
       return false;
     }
 
@@ -403,7 +454,7 @@
       );
     }
 
-    Lampa.Noty.show("Плагин удален");
+    Lampa.Noty.show(t("skull_plugin_removed"));
     Lampa.Storage.set("needRebootSettingExit", true);
     return true;
   }
@@ -422,7 +473,9 @@
     if (!changed) return false;
 
     savePluginList(list);
-    Lampa.Noty.show(status ? "Плагин включен" : "Плагин отключен");
+    Lampa.Noty.show(
+      status ? t("skull_plugin_enabled") : t("skull_plugin_disabled"),
+    );
     return true;
   }
 
@@ -436,7 +489,7 @@
   function storeStatusText(plugin) {
     var status = availability[plugin.url];
 
-    if (!status || status.loading) return "Проверка";
+    if (!status || status.loading) return t("skull_checking");
     if (status.code) return status.code;
 
     return "404";
@@ -445,12 +498,12 @@
   function storeStatusDescription(plugin) {
     var status = availability[plugin.url];
 
-    if (!status || status.loading) return "Проверка";
+    if (!status || status.loading) return t("skull_checking");
     if (status.text) return status.text;
 
     return Number(status.code) >= 200 && Number(status.code) < 400
-      ? "Работает"
-      : "Ошибка";
+      ? t("extensions_worked")
+      : t("title_error");
   }
 
   function storeStatusClass(plugin) {
@@ -463,10 +516,21 @@
     return "error";
   }
 
-  function checkAvailability(plugin, item) {
-    if (!plugin.url || availability[plugin.url]) return;
+  function checkAvailability(plugin, item, force) {
+    if (!plugin.url) return;
 
-    availability[plugin.url] = { loading: true };
+    var cached = availability[plugin.url];
+
+    if (cached && !force) {
+      updateAvailabilityView(plugin, item);
+      if (!cached.loading) return;
+      return;
+    }
+
+    if (force) delete availability[plugin.url];
+
+    var requestId = Date.now();
+    availability[plugin.url] = { loading: true, requestId: requestId };
     updateAvailabilityView(plugin, item);
 
     $.ajax({
@@ -475,22 +539,27 @@
       timeout: 6000,
       cache: false,
       complete: function (xhr) {
+        var current = availability[plugin.url];
+
+        if (!current || current.requestId !== requestId) return;
+
         var code = xhr && xhr.status ? Number(xhr.status) : 404;
         var response = xhr && xhr.responseText ? xhr.responseText : "";
         var valid = code >= 200 && code < 400 && /Lampa\./.test(response);
 
         availability[plugin.url] = {
           loading: false,
+          requestId: requestId,
           code: valid
             ? "200"
             : code >= 200 && code < 400
               ? "500"
               : String(code || 404),
           text: valid
-            ? "Работает"
+            ? t("extensions_worked")
             : code >= 200 && code < 400
-              ? "Не плагин"
-              : "Ошибка",
+              ? t("extensions_no_plugin")
+              : t("title_error"),
         };
         updateAvailabilityView(plugin);
       },
@@ -586,28 +655,28 @@
 
     if (!state.installed) {
       items.push({
-        title: "Установить",
+        title: t("extensions_install"),
         action: "install",
       });
     } else {
       items.push({
-        title: state.enabled ? "Отключить" : "Включить",
+        title: state.enabled ? t("extensions_disable") : t("extensions_enable"),
         action: "toggle",
       });
 
       items.push({
-        title: "Удалить",
+        title: t("extensions_remove"),
         action: "remove",
       });
     }
 
     items.push({
-      title: "Проверить доступность",
+      title: t("extensions_check"),
       action: "check",
     });
 
     Lampa.Select.show({
-      title: plugin.name,
+      title: t("title_action"),
       items: items,
       onSelect: function (item) {
         if (item.action == "install") {
@@ -620,10 +689,7 @@
         if (item.action == "toggle") {
           if (setPluginStatus(plugin.url, state.enabled ? 0 : 1)) {
             rerender({ preserveController: true });
-            showReload(
-              "Для применения изменения перезагрузите приложение!",
-              back,
-            );
+            showReload(t("plugins_need_reload"), back);
           } else {
             back();
           }
@@ -633,10 +699,7 @@
         if (item.action == "remove") {
           if (removePluginByUrl(plugin.url)) {
             rerender({ preserveController: true });
-            showReload(
-              "Для полного удаления плагина перезагрузите приложение!",
-              back,
-            );
+            showReload(t("plugins_need_reload"), back);
           } else {
             back();
           }
@@ -644,8 +707,7 @@
         }
 
         if (item.action == "check") {
-          delete availability[plugin.url];
-          checkAvailability(plugin);
+          checkAvailability(plugin, null, true);
           back();
         }
       },
@@ -697,8 +759,8 @@
       }
 
       function categoryTitle(category) {
-        if (category == "all") return "Все";
-        if (category == "installed") return "Установленные";
+        if (category == "all") return t("settings_param_jackett_interview_all");
+        if (category == "installed") return t("extensions_from_memory");
         return categoryNames[category] || category;
       }
 
@@ -706,6 +768,17 @@
         var sprite = Config.categoryIcons[category] || "folder";
 
         return '<svg><use xlink:href="#sprite-' + sprite + '"></use></svg>';
+      }
+
+      function syncAvailabilityViews() {
+        $(".skull-store__item", body).each(function () {
+          var url = $(this).data("url");
+          var plugin = catalog.find(function (item) {
+            return item.url == url;
+          });
+
+          if (plugin) updateAvailabilityView(plugin, $(this));
+        });
       }
 
       function triggerPluginAvailabilityChecks() {
@@ -717,11 +790,13 @@
       function renderItem(plugin) {
         var state = getPluginState(plugin.url);
         var protocol = plugin.url.indexOf("https://") === 0 ? "https" : "http";
-        var stateText = "Не установлен";
+        var stateText = t("skull_not_installed");
         var stateClass = "yellow";
 
         if (state.installed) {
-          stateText = state.enabled ? "Включён" : "Отключён";
+          stateText = state.enabled
+            ? t("settings_parental_control_enabled")
+            : t("settings_parental_control_disabled");
           stateClass = state.enabled ? "success" : "error";
         }
 
@@ -741,14 +816,18 @@
             escapeHtml(plugin.description) +
             "</div>" +
             '<div class="extensions__item-footer">' +
-            '<div class="extensions__item-check"></div>' +
+            '<div class="extensions__item-check hide"></div>' +
             '<div class="extensions__item-proto protocol-' +
             protocol +
             '">' +
             protoIcon() +
             "</div>" +
-            '<div class="extensions__item-code skull-store__availability hide yellow">Проверка</div>' +
-            '<div class="extensions__item-status hide">Проверка</div>' +
+            '<div class="extensions__item-code skull-store__availability hide yellow">' +
+            escapeHtml(t("skull_checking")) +
+            "</div>" +
+            '<div class="extensions__item-status hide">' +
+            escapeHtml(t("skull_checking")) +
+            "</div>" +
             '<div class="extensions__item-code skull-store__install-state ' +
             stateClass +
             '">' +
@@ -761,6 +840,8 @@
         item.on("visible", function () {
           checkAvailability(plugin, item);
         });
+
+        updateAvailabilityView(plugin, item);
 
         return item;
       }
@@ -835,7 +916,9 @@
           return body;
         } else {
           return $(
-            '<div class="skull-store__empty">В этом разделе пока пусто</div>',
+            '<div class="skull-store__empty">' +
+              escapeHtml(t("skull_empty_category")) +
+              "</div>",
           );
         }
       }
@@ -925,12 +1008,20 @@
         head
           .empty()
           .append(
-            '<div class="skull-store__subtitle"><p>Сторонний магазин расширений Lampa.</p><br><p>Предложить добавить новый плагин можно тут</p></div>' +
+            '<div class="skull-store__subtitle"><p>' +
+              escapeHtml(t("skull_subtitle")) +
+              '</p><br><p>' +
+              escapeHtml(t("skull_subtitle_suggest")) +
+              "</p></div>" +
               '<div class="skull-store__stats">' +
-              '<div class="skull-store__stat">Всего: ' +
+              '<div class="skull-store__stat">' +
+              escapeHtml(t("skull_stats_total")) +
+              ": " +
               catalog.length +
               "</div>" +
-              '<div class="skull-store__stat">Установлено: ' +
+              '<div class="skull-store__stat">' +
+              escapeHtml(t("skull_stats_installed")) +
+              ": " +
               installedTotal +
               "</div>",
           );
@@ -941,16 +1032,18 @@
         pluginScroll.append(renderPlugins(list));
         var layout = $('<div class="skull-store__layout"></div>');
 
-        layout.append(makeColumn(0, "Категории", categoryScroll));
-        layout.append(makeColumn(1, "Плагины", pluginScroll));
+        layout.append(makeColumn(0, t("skull_categories"), categoryScroll));
+        layout.append(makeColumn(1, t("settings_main_plugins"), pluginScroll));
         body.empty().append(layout);
         bindController();
+        syncAvailabilityViews();
 
         setTimeout(function () {
           fitScrolls();
 
           if (options.preserveController) {
             triggerPluginAvailabilityChecks();
+            syncAvailabilityViews();
             return;
           }
 
@@ -974,6 +1067,7 @@
             activeSection === 0 ? active : nearestFromSection(activeSection),
           );
           triggerPluginAvailabilityChecks();
+          syncAvailabilityViews();
         }, 50);
       }
 
@@ -1087,7 +1181,7 @@
         if (!html.children().length) {
           categoryScroll.minus(head);
           pluginScroll.minus(head);
-          content.append(headBackward("💀 Skull Store"));
+          content.append(headBackward("💀 " + t("skull_store_name")));
           content.append(head);
           content.append(body);
           html.append(content);
@@ -1124,13 +1218,14 @@
 
   /* Создание Skull Store и его меню */
   function skullStart(plugins, news) {
+    registerSkullTranslations();
     registerStoreNotices(news);
     registerStoreComponent(plugins);
 
     /* Skull Store */
     Lampa.SettingsApi.addComponent({
       component: "skull",
-      name: "Skull Store",
+      name: t("skull_store_name"),
       icon: icon_skull,
     });
 
