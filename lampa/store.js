@@ -36,17 +36,37 @@
       "other",
     ],
     categoryIcons: {
-      all: "folder",
-      installed: "check",
-      online: "movie",
+      all: "catalog",
+      installed: "collection",
+      online: "play",
       tv: "tv",
-      torrent: "cloud",
+      torrent: "torrent",
       interface: "settings",
-      control: "settings",
-      theme: "palette",
-      erotic: "star",
-      other: "folder",
+      control: "console",
+      theme: "star",
+      erotic: "adult",
+      other: "dots",
+      screensaver: "broadcast",
+      video: "trailer",
+      recomend: "fire",
     },
+    categoryFallbackIcons: [
+      "feed",
+      "filter",
+      "hd",
+      "info",
+      "like",
+      "youtube",
+      "book",
+      "bell",
+      "cartoon",
+      "anime",
+      "person",
+      "edit",
+      "favorite",
+      "top",
+      "history",
+    ],
   };
 
   window.skull = true;
@@ -60,7 +80,7 @@
 
   /* Иконки */
   var icon_skull =
-    '<svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="currentColor" style="border: 3px solid; border-radius: 5px; padding: 4px;"><path d="M133.234,478.948l-21.141-68.984c2.656-3.203,4.141-7.296,3.813-11.671 c-0.688-9.375-9.25-16.438-19.156-15.797c-9.906,0.656-17.375,8.766-16.688,18.141c0.516,6.984,5.406,12.671,11.938,14.875 l21.141,68.984c-2.656,3.188-4.141,7.281-3.813,11.672c0.688,9.359,9.266,16.438,19.156,15.797 c9.906-0.656,17.375-8.781,16.688-18.141C144.656,486.839,139.781,481.151,133.234,478.948z"></path> <path d="M40.953,438.651c-7.078,1.844-11.234,8.781-9.297,15.484l7.984,27.422c1.938,6.703,9.266,10.641,16.344,8.797 l38.016-9.5l-15.031-51.703L40.953,438.651z"></path> <path d="M192.125,401.527c-37.25,11.296-62.797,16.187-62.797,16.187L144,462.12c0,0,50.578-12.813,112-35.109 c61.422,22.297,112,35.109,112,35.109l14.672-44.406c0,0-25.547-4.891-62.797-16.187c54.813-24.141,107.875-54.375,134.625-88.75 c53.984-69.359,26.734-125.938,26.734-125.938s-4.125-9.469-9.656,8.75c-32.203,92.281-132,150.094-215.578,183.547 c-83.578-33.453-183.375-91.266-215.578-183.547c-5.531-18.219-9.656-8.75-9.656-8.75S3.516,243.417,57.5,312.777 C84.25,347.152,137.313,377.386,192.125,401.527z"></path> <path d="M420,415.511c6.531-2.203,11.422-7.89,11.938-14.875c0.688-9.375-6.781-17.484-16.688-18.141 c-9.906-0.641-18.469,6.422-19.156,15.797c-0.328,4.375,1.156,8.469,3.813,11.671l-21.141,68.984 c-6.547,2.203-11.422,7.891-11.938,14.875c-0.688,9.359,6.781,17.484,16.688,18.141c9.891,0.641,18.469-6.438,19.156-15.797 c0.328-4.391-1.156-8.484-3.813-11.672L420,415.511z"></path> <path d="M471.047,438.651l-38.016-9.5L418,480.854l38.016,9.5c7.078,1.844,14.406-2.094,16.344-8.797l7.984-27.422 C482.281,447.433,478.125,440.495,471.047,438.651z"></path> <path d="M187.141,274.871v28.578c0,5.156,4.188,9.344,9.359,9.344h22.813c5.172,0,9.359-4.188,9.359-9.344v-23.922 h7.797v23.922c0,5.156,4.188,9.344,9.344,9.344h22.828c5.172,0,9.359-4.188,9.359-9.344v-23.922h7.781v23.922 c0,5.156,4.188,9.344,9.359,9.344h22.828c5.156,0,9.344-4.188,9.344-9.344v-28.578c23.781-7.219,63.5-23.984,77-57.859 c9.828-24.641,5.984-57.063-8.719-119.578C380.875,34.917,338.125-0.004,257.234-0.004c-80.906,0-123.656,34.922-138.359,97.438 c-14.719,62.516-18.563,94.938-8.734,119.578C123.641,250.886,163.359,267.652,187.141,274.871z M313.672,112.808 c21.516-3.672,42.5,14.031,46.859,39.547s-9.547,49.188-31.063,52.875c-21.516,3.672-42.5-14.031-46.859-39.547 C278.25,140.152,292.156,116.496,313.672,112.808z M257.234,197.558l20.672,25.859h-20.672h-20.688L257.234,197.558z M153.922,152.355c4.375-25.516,25.344-43.219,46.859-39.547c21.531,3.688,35.438,27.344,31.063,52.875 c-4.359,25.516-25.344,43.219-46.859,39.547C163.469,201.542,149.563,177.871,153.922,152.355z"></path></svg>';
+    '<svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="currentColor" style="border: 1em solid; border-radius: 5px; padding: 4px;"><path d="M133.234,478.948l-21.141-68.984c2.656-3.203,4.141-7.296,3.813-11.671 c-0.688-9.375-9.25-16.438-19.156-15.797c-9.906,0.656-17.375,8.766-16.688,18.141c0.516,6.984,5.406,12.671,11.938,14.875 l21.141,68.984c-2.656,3.188-4.141,7.281-3.813,11.672c0.688,9.359,9.266,16.438,19.156,15.797 c9.906-0.656,17.375-8.781,16.688-18.141C144.656,486.839,139.781,481.151,133.234,478.948z"></path> <path d="M40.953,438.651c-7.078,1.844-11.234,8.781-9.297,15.484l7.984,27.422c1.938,6.703,9.266,10.641,16.344,8.797 l38.016-9.5l-15.031-51.703L40.953,438.651z"></path> <path d="M192.125,401.527c-37.25,11.296-62.797,16.187-62.797,16.187L144,462.12c0,0,50.578-12.813,112-35.109 c61.422,22.297,112,35.109,112,35.109l14.672-44.406c0,0-25.547-4.891-62.797-16.187c54.813-24.141,107.875-54.375,134.625-88.75 c53.984-69.359,26.734-125.938,26.734-125.938s-4.125-9.469-9.656,8.75c-32.203,92.281-132,150.094-215.578,183.547 c-83.578-33.453-183.375-91.266-215.578-183.547c-5.531-18.219-9.656-8.75-9.656-8.75S3.516,243.417,57.5,312.777 C84.25,347.152,137.313,377.386,192.125,401.527z"></path> <path d="M420,415.511c6.531-2.203,11.422-7.89,11.938-14.875c0.688-9.375-6.781-17.484-16.688-18.141 c-9.906-0.641-18.469,6.422-19.156,15.797c-0.328,4.375,1.156,8.469,3.813,11.671l-21.141,68.984 c-6.547,2.203-11.422,7.891-11.938,14.875c-0.688,9.359,6.781,17.484,16.688,18.141c9.891,0.641,18.469-6.438,19.156-15.797 c0.328-4.391-1.156-8.484-3.813-11.672L420,415.511z"></path> <path d="M471.047,438.651l-38.016-9.5L418,480.854l38.016,9.5c7.078,1.844,14.406-2.094,16.344-8.797l7.984-27.422 C482.281,447.433,478.125,440.495,471.047,438.651z"></path> <path d="M187.141,274.871v28.578c0,5.156,4.188,9.344,9.359,9.344h22.813c5.172,0,9.359-4.188,9.359-9.344v-23.922 h7.797v23.922c0,5.156,4.188,9.344,9.344,9.344h22.828c5.172,0,9.359-4.188,9.359-9.344v-23.922h7.781v23.922 c0,5.156,4.188,9.344,9.359,9.344h22.828c5.156,0,9.344-4.188,9.344-9.344v-28.578c23.781-7.219,63.5-23.984,77-57.859 c9.828-24.641,5.984-57.063-8.719-119.578C380.875,34.917,338.125-0.004,257.234-0.004c-80.906,0-123.656,34.922-138.359,97.438 c-14.719,62.516-18.563,94.938-8.734,119.578C123.641,250.886,163.359,267.652,187.141,274.871z M313.672,112.808 c21.516-3.672,42.5,14.031,46.859,39.547s-9.547,49.188-31.063,52.875c-21.516,3.672-42.5-14.031-46.859-39.547 C278.25,140.152,292.156,116.496,313.672,112.808z M257.234,197.558l20.672,25.859h-20.672h-20.688L257.234,197.558z M153.922,152.355c4.375-25.516,25.344-43.219,46.859-39.547c21.531,3.688,35.438,27.344,31.063,52.875 c-4.359,25.516-25.344,43.219-46.859,39.547C163.469,201.542,149.563,177.871,153.922,152.355z"></path></svg>';
   /* Регулярно вызываемые функции */
   Lampa.Storage.set("needReboot", false);
   Lampa.Storage.set("needRebootSettingExit", false);
@@ -75,41 +95,276 @@
     if (!Lampa.Lang || !Lampa.Lang.add) return;
 
     Lampa.Lang.add({
-      skull_store_name: { ru: "Skull Store", en: "Skull Store" },
-      skull_category_tv: { ru: "ТВ", en: "TV" },
-      skull_category_erotic: { ru: "18+", en: "18+" },
-      skull_not_installed: { ru: "Не установлен", en: "Not installed" },
-      skull_checking: { ru: "Проверка", en: "Checking" },
-      skull_price_free: { ru: "Бесплатный", en: "Free" },
-      skull_price_subscription: { ru: "Подписка", en: "Subscription" },
-      skull_categories: { ru: "Категории", en: "Categories" },
+      skull_store_name: {
+        ru: "Skull Store",
+        en: "Skull Store",
+        uk: "Skull Store",
+        be: "Skull Store",
+        zh: "Skull Store",
+        pt: "Skull Store",
+        bg: "Skull Store",
+        he: "Skull Store",
+        cs: "Skull Store",
+        ro: "Skull Store",
+        fr: "Skull Store",
+      },
+      skull_category_tv: {
+        ru: "ТВ",
+        en: "TV",
+        uk: "ТБ",
+        be: "ТБ",
+        zh: "电视",
+        pt: "TV",
+        bg: "ТВ",
+        he: "טלוויזיה",
+        cs: "TV",
+        ro: "TV",
+        fr: "TV",
+      },
+      skull_category_erotic: {
+        ru: "18+",
+        en: "18+",
+        uk: "18+",
+        be: "18+",
+        zh: "18+",
+        pt: "18+",
+        bg: "18+",
+        he: "18+",
+        cs: "18+",
+        ro: "18+",
+        fr: "18+",
+      },
+      skull_not_installed: {
+        ru: "Не установлен",
+        en: "Not installed",
+        uk: "Не встановлено",
+        be: "Не ўстанавлены",
+        zh: "未安装",
+        pt: "Não instalado",
+        bg: "Не е инсталиран",
+        he: "לא מותקן",
+        cs: "Není nainstalováno",
+        ro: "Neinstalat",
+        fr: "Non installé",
+      },
+      skull_checking: {
+        ru: "Проверка",
+        en: "Checking",
+        uk: "Перевірка",
+        be: "Праверка",
+        zh: "检查中",
+        pt: "Verificando",
+        bg: "Проверка",
+        he: "בודק",
+        cs: "Kontrola",
+        ro: "Verificare",
+        fr: "Vérification",
+      },
+      skull_price_free: {
+        ru: "Бесплатный",
+        en: "Free",
+        uk: "Безкоштовний",
+        be: "Бясплатны",
+        zh: "免费",
+        pt: "Grátis",
+        bg: "Безплатен",
+        he: "חינם",
+        cs: "Zdarma",
+        ro: "Gratuit",
+        fr: "Gratuit",
+      },
+      skull_price_subscription: {
+        ru: "Подписка",
+        en: "Subscription",
+        uk: "Підписка",
+        be: "Падпіска",
+        zh: "订阅",
+        pt: "Assinatura",
+        bg: "Абонамент",
+        he: "מנוי",
+        cs: "Předplatné",
+        ro: "Abonament",
+        fr: "Abonnement",
+      },
+      skull_categories: {
+        ru: "Категории",
+        en: "Categories",
+        uk: "Категорії",
+        be: "Катэгорыі",
+        zh: "分类",
+        pt: "Categorias",
+        bg: "Категории",
+        he: "קטגוריות",
+        cs: "Kategorie",
+        ro: "Categorii",
+        fr: "Catégories",
+      },
       skull_empty_category: {
         ru: "В этом разделе пока пусто",
         en: "No plugins in this category yet",
+        uk: "У цьому розділі поки порожньо",
+        be: "У гэтым раздзеле паку пуста",
+        zh: "此分类暂无插件",
+        pt: "Ainda não há plugins nesta categoria",
+        bg: "В този раздел все още няма нищо",
+        he: "אין עדיין תוספים בקטגוריה זו",
+        cs: "V této kategorii zatím nic není",
+        ro: "Nu există încă pluginuri în această categorie",
+        fr: "Aucun plugin dans cette catégorie pour le moment",
       },
       skull_news_empty: {
         ru: "Новостей Skull Store пока нет",
         en: "No Skull Store news yet",
+        uk: "Новин Skull Store поки немає",
+        be: "Навін Skull Store паку няма",
+        zh: "暂无 Skull Store 新闻",
+        pt: "Ainda não há notícias do Skull Store",
+        bg: "Все още няма новини от Skull Store",
+        he: "אין עדיין חדשות מ-Skull Store",
+        cs: "Zatím žádné novinky ze Skull Store",
+        ro: "Nu există încă știri Skull Store",
+        fr: "Pas encore de nouvelles Skull Store",
       },
       skull_subtitle: {
         ru: "Сторонний магазин расширений Lampa.",
         en: "Third-party Lampa extensions store.",
+        uk: "Сторонній магазин розширень Lampa.",
+        be: "Сторонні магазін пашырэнняў Lampa.",
+        zh: "Lampa 第三方扩展商店。",
+        pt: "Loja de extensões Lampa de terceiros.",
+        bg: "Сторонен магазин за разширения на Lampa.",
+        he: "חנות תוספים צד שלישי ל-Lampa.",
+        cs: "Obchod s rozšířeními Lampa třetí strany.",
+        ro: "Magazin de extensii Lampa terț.",
+        fr: "Boutique d'extensions Lampa tierce.",
       },
       skull_subtitle_suggest: {
         ru: "Предложить добавить новый плагин можно тут",
         en: "Suggest a new plugin here",
+        uk: "Запропонувати новий плагін можна тут",
+        be: "Прапанаваць новы плагін можна тут",
+        zh: "在此建议添加新插件",
+        pt: "Sugira um novo plugin aqui",
+        bg: "Предложете нов плагин тук",
+        he: "הצעת תוסף חדש כאן",
+        cs: "Navrhněte nový plugin zde",
+        ro: "Sugerați un plugin nou aici",
+        fr: "Proposer un nouveau plugin ici",
       },
-      skull_stats_total: { ru: "Всего", en: "Total" },
-      skull_stats_installed: { ru: "Установлено", en: "Installed" },
-      skull_plugin_installed: { ru: "Плагин установлен", en: "Plugin installed" },
+      skull_stats_total: {
+        ru: "Всего",
+        en: "Total",
+        uk: "Всього",
+        be: "Усяго",
+        zh: "总计",
+        pt: "Total",
+        bg: "Общо",
+        he: "סה\"כ",
+        cs: "Celkem",
+        ro: "Total",
+        fr: "Total",
+      },
+      skull_stats_installed: {
+        ru: "Установлено",
+        en: "Installed",
+        uk: "Встановлено",
+        be: "Устаноўлена",
+        zh: "已安装",
+        pt: "Instalados",
+        bg: "Инсталирани",
+        he: "מותקנים",
+        cs: "Nainstalováno",
+        ro: "Instalate",
+        fr: "Installés",
+      },
+      skull_plugin_installed: {
+        ru: "Плагин установлен",
+        en: "Plugin installed",
+        uk: "Плагін встановлено",
+        be: "Плагін устаноўлены",
+        zh: "插件已安装",
+        pt: "Plugin instalado",
+        bg: "Плагинът е инсталиран",
+        he: "התוסף הותקן",
+        cs: "Plugin nainstalován",
+        ro: "Plugin instalat",
+        fr: "Plugin installé",
+      },
       skull_plugin_not_installed: {
         ru: "Плагин не установлен",
         en: "Plugin is not installed",
+        uk: "Плагін не встановлено",
+        be: "Плагін не ўстаноўлены",
+        zh: "插件未安装",
+        pt: "Plugin não instalado",
+        bg: "Плагинът не е инсталиран",
+        he: "התוסף לא מותקן",
+        cs: "Plugin není nainstalován",
+        ro: "Pluginul nu este instalat",
+        fr: "Plugin non installé",
       },
-      skull_plugin_removed: { ru: "Плагин удален", en: "Plugin removed" },
-      skull_plugin_enabled: { ru: "Плагин включен", en: "Plugin enabled" },
-      skull_plugin_disabled: { ru: "Плагин отключен", en: "Plugin disabled" },
+      skull_plugin_removed: {
+        ru: "Плагин удален",
+        en: "Plugin removed",
+        uk: "Плагін видалено",
+        be: "Плагін выдалены",
+        zh: "插件已删除",
+        pt: "Plugin removido",
+        bg: "Плагинът е премахнат",
+        he: "התוסף הוסר",
+        cs: "Plugin odstraněn",
+        ro: "Plugin eliminat",
+        fr: "Plugin supprimé",
+      },
+      skull_plugin_enabled: {
+        ru: "Плагин включен",
+        en: "Plugin enabled",
+        uk: "Плагін увімкнено",
+        be: "Плагін уключаны",
+        zh: "插件已启用",
+        pt: "Plugin ativado",
+        bg: "Плагинът е активиран",
+        he: "התוסף הופעל",
+        cs: "Plugin povolen",
+        ro: "Plugin activat",
+        fr: "Plugin activé",
+      },
+      skull_plugin_disabled: {
+        ru: "Плагин отключен",
+        en: "Plugin disabled",
+        uk: "Плагін вимкнено",
+        be: "Плагін адключаны",
+        zh: "插件已禁用",
+        pt: "Plugin desativado",
+        bg: "Плагинът е деактивиран",
+        he: "התוסף הושבת",
+        cs: "Plugin zakázán",
+        ro: "Plugin dezactivat",
+        fr: "Plugin désactivé",
+      },
     });
+  }
+
+  function getCategoryIconId(category) {
+    if (Config.categoryIcons[category]) return Config.categoryIcons[category];
+
+    var pool = Config.categoryFallbackIcons;
+    var hash = 0;
+
+    for (var i = 0; i < category.length; i++) {
+      hash = (hash + category.charCodeAt(i)) | 0;
+    }
+
+    return pool[Math.abs(hash) % pool.length];
+  }
+
+  function categoryIconMarkup(category) {
+    return (
+      '<svg class="skull-store__category-icon">' +
+      '<use xlink:href="#sprite-' +
+      getCategoryIconId(category) +
+      '"></use></svg>'
+    );
   }
 
   function getCategoryLabel(id) {
@@ -306,6 +561,7 @@
   }
   var availability = {};
   var showStoreCenter = null;
+  var syncStoreAvailability = function () {};
 
   function escapeHtml(value) {
     return String(value || "")
@@ -516,15 +772,30 @@
     return "error";
   }
 
+  function cleanupStaleAvailabilityLoading() {
+    var now = Date.now();
+
+    Object.keys(availability).forEach(function (url) {
+      var item = availability[url];
+
+      if (item && item.loading && item.requestId && now - item.requestId > 6500) {
+        delete availability[url];
+      }
+    });
+  }
+
   function checkAvailability(plugin, item, force) {
     if (!plugin.url) return;
+
+    cleanupStaleAvailabilityLoading();
 
     var cached = availability[plugin.url];
 
     if (cached && !force) {
       updateAvailabilityView(plugin, item);
       if (!cached.loading) return;
-      return;
+      if (cached.requestId && Date.now() - cached.requestId < 6500) return;
+      force = true;
     }
 
     if (force) delete availability[plugin.url];
@@ -636,6 +907,8 @@
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
         ".skull-store__install-state{margin-left: auto;margin-right: 0 !important;}" +
         ".skull-store__category-list.menu__list{padding-left:0;}" +
+        ".skull-store__category .menu__ico{display:flex;align-items:center;justify-content:center;}" +
+        ".skull-store__category-icon{width:1.5em;height:1.5em;fill:currentColor;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;}" +
         ".skull-store .extensions__item{width:auto;margin: 0;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
@@ -651,6 +924,10 @@
     var items = [];
     var back = function () {
       Lampa.Controller.toggle("skull_store_center");
+      setTimeout(function () {
+        cleanupStaleAvailabilityLoading();
+        syncStoreAvailability();
+      }, 50);
     };
 
     if (!state.installed) {
@@ -681,14 +958,14 @@
       onSelect: function (item) {
         if (item.action == "install") {
           installPlugin(plugin);
-          rerender();
+          rerender({ skipAvailability: true });
           back();
           return;
         }
 
         if (item.action == "toggle") {
           if (setPluginStatus(plugin.url, state.enabled ? 0 : 1)) {
-            rerender({ preserveController: true });
+            rerender({ preserveController: true, skipAvailability: true });
             showReload(t("plugins_need_reload"), back);
           } else {
             back();
@@ -698,7 +975,7 @@
 
         if (item.action == "remove") {
           if (removePluginByUrl(plugin.url)) {
-            rerender({ preserveController: true });
+            rerender({ preserveController: true, skipAvailability: true });
             showReload(t("plugins_need_reload"), back);
           } else {
             back();
@@ -765,12 +1042,12 @@
       }
 
       function categoryIcon(category) {
-        var sprite = Config.categoryIcons[category] || "folder";
-
-        return '<svg><use xlink:href="#sprite-' + sprite + '"></use></svg>';
+        return categoryIconMarkup(category);
       }
 
       function syncAvailabilityViews() {
+        cleanupStaleAvailabilityLoading();
+
         $(".skull-store__item", body).each(function () {
           var url = $(this).data("url");
           var plugin = catalog.find(function (item) {
@@ -780,6 +1057,8 @@
           if (plugin) updateAvailabilityView(plugin, $(this));
         });
       }
+
+      syncStoreAvailability = syncAvailabilityViews;
 
       function triggerPluginAvailabilityChecks() {
         if (Lampa.Layer && Lampa.Layer.visible) {
@@ -879,7 +1158,9 @@
             return item.url == url;
           });
 
-          if (plugin) checkAvailability(plugin, $(this));
+          if (plugin && availability[plugin.url]) {
+            updateAvailabilityView(plugin, $(this));
+          }
         });
       }
 
@@ -1042,8 +1323,8 @@
           fitScrolls();
 
           if (options.preserveController) {
-            triggerPluginAvailabilityChecks();
             syncAvailabilityViews();
+            if (!options.skipAvailability) triggerPluginAvailabilityChecks();
             return;
           }
 
@@ -1066,8 +1347,8 @@
             activeSection,
             activeSection === 0 ? active : nearestFromSection(activeSection),
           );
-          triggerPluginAvailabilityChecks();
           syncAvailabilityViews();
+          if (!options.skipAvailability) triggerPluginAvailabilityChecks();
         }, 50);
       }
 
@@ -1172,6 +1453,7 @@
         releaseController();
       };
       this.destroy = function () {
+        syncStoreAvailability = function () {};
         releaseController();
         categoryScroll.destroy();
         pluginScroll.destroy();
