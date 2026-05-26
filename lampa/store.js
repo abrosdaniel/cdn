@@ -9,6 +9,32 @@
 (function () {
   "use strict";
 
+  const Config = {
+    domain: "https://cdn.abros.dev/lampa",
+    directus: {
+      url: "https://cms.abros.dev",
+      collection: "lampa",
+    },
+    mobileBreakpoint: 900,
+    defaultCategories: [
+      { id: "online", title: "Онлайн" },
+      { id: "tv", title: "ТВ" },
+      { id: "torrent", title: "Торренты" },
+      { id: "interface", title: "Интерфейс" },
+      { id: "control", title: "Управление" },
+      { id: "theme", title: "Темы" },
+      { id: "other", title: "Другое" },
+    ],
+    legacyCategories: {
+      skull_online: "online",
+      skull_tv: "tv",
+      skull_torpars: "torrent",
+      skull_interface: "interface",
+      skull_control: "control",
+      skull_style: "theme",
+    },
+  };
+
   window.skull = true;
 
   console.groupCollapsed(
@@ -17,9 +43,6 @@
   );
   console.log(`💻 Site: https://abros.dev`);
   console.groupEnd();
-
-  /* Домен-регулятор */
-  const domain = "https://cdn.abros.dev/lampa";
 
   /* Иконки */
   var icon_skull =
@@ -33,24 +56,83 @@
       Object.assign(document.createElement("script"), { src }),
     );
   }
+  function directusAssetUrl(image) {
+    if (!image) return "";
+    if (typeof image == "string") return image;
+    if (image.id) return Config.directus.url + "/assets/" + image.id;
+
+    return "";
+  }
+
+  function formatPrice(price) {
+    if (price && typeof price == "object") {
+      return price.label || formatPrice(price.type);
+    }
+
+    if (price === "subscription") return "Подписка";
+
+    return "Бесплатный";
+  }
+
+  function normalizeCategoryId(categoryId) {
+    var aliases = {
+      torrents: "torrent",
+      themes: "theme",
+    };
+
+    return aliases[categoryId] || categoryId || "other";
+  }
+
+  function normalizeNewsItem(item) {
+    return {
+      id: item.id,
+      status: item.status,
+      title: item.title,
+      text: item.text,
+      image: directusAssetUrl(item.image) || item.image || null,
+      date: item.date || null,
+      tags: Array.isArray(item.tags) ? item.tags : [],
+    };
+  }
+
+  function fetchDirectusLampa() {
+    var url =
+      Config.directus.url +
+      "/items/" +
+      Config.directus.collection +
+      "?fields=*,extensions.*,news.*";
+
+    return fetch(url).then(function (response) {
+      if (!response.ok) {
+        throw new Error("Directus " + Config.directus.collection + ": " + response.status);
+      }
+
+      return response.json().then(function (payload) {
+        var data = payload.data;
+
+        if (Array.isArray(data)) return data[0] || {};
+
+        return data || {};
+      });
+    });
+  }
+
   /* Загрузка данных */
   function loadData() {
-    fetch(`${domain}/data.json`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
+    fetchDirectusLampa()
+      .then(function (data) {
+        var extensions = data.extensions || [];
+        var news = (data.news || [])
+          .filter(function (item) {
+            return item.status !== "draft";
+          })
+          .map(normalizeNewsItem);
+
+        skullStart(extensions, news, Config.defaultCategories);
       })
-      .then((data) => {
-        var { plugins, news, categories } = data;
-        skullStart(plugins, news, categories);
-      })
-      .catch((error) => {
-        console.error(
-          "There has been a problem with your fetch operation:",
-          error,
-        );
+      .catch(function (error) {
+        console.error("Skull Store: ошибка загрузки из Directus:", error);
+        skullStart([], [], Config.defaultCategories);
       });
   }
 
@@ -91,24 +173,6 @@
       ],
     });
   }
-  var defaultCategories = [
-    { id: "online", title: "Онлайн", section: "plugins" },
-    { id: "tv", title: "ТВ", section: "plugins" },
-    { id: "torrents", title: "Торренты", section: "plugins" },
-    { id: "interface", title: "Интерфейс", section: "extensions" },
-    { id: "control", title: "Управление", section: "extensions" },
-    { id: "themes", title: "Темы", section: "extensions" },
-  ];
-
-  var legacyCategories = {
-    skull_online: "online",
-    skull_tv: "tv",
-    skull_torpars: "torrents",
-    skull_interface: "interface",
-    skull_control: "control",
-    skull_style: "themes",
-  };
-
   var availability = {};
   var showStoreCenter = null;
   var skullNoticeClass = null;
@@ -173,7 +237,7 @@
             text: item.text,
             time: newsTime(item, index, fallbackTime),
             img: newsImage(item),
-            labels: item.level ? [item.level] : null,
+            labels: item.tags && item.tags.length ? item.tags : null,
           };
         });
       },
@@ -196,39 +260,31 @@
     });
   }
 
-  function getCategory(categories, id) {
-    return categories.find(function (category) {
-      return category.id == id;
-    });
-  }
-
-  function normalizePlugin(plugin, categories) {
+  function normalizePlugin(plugin) {
     var legacy = plugin.field ? plugin : false;
-    var categoryId =
+    var categoryId = normalizeCategoryId(
       plugin.category ||
-      legacyCategories[plugin.component] ||
-      plugin.component ||
-      "other";
-    var category = getCategory(categories, categoryId) || {};
-    var price = legacy
-      ? plugin.field.price
-      : plugin.price && plugin.price.label;
+        Config.legacyCategories[plugin.component] ||
+        plugin.component,
+    );
+    var price = legacy ? plugin.field.price : formatPrice(plugin.price);
 
     return {
       id: plugin.id || (plugin.param && plugin.param.name) || categoryId,
-      type: plugin.type || category.section || "plugin",
       category: categoryId,
       component:
         plugin.component ||
         (plugin.legacy && plugin.legacy.component) ||
         categoryId,
       name: legacy ? plugin.field.name : plugin.name,
-      price: price || "Бесплатный",
+      price: price,
       description: legacy
         ? plugin.field.description || ""
         : plugin.description || "",
       author: legacy ? plugin.field.author || "" : plugin.author || "",
-      url: legacy ? plugin.field.link : plugin.install && plugin.install.url,
+      url: legacy
+        ? plugin.field.link
+        : plugin.url || (plugin.install && plugin.install.url),
       tags: plugin.tags || [],
       requiresReboot:
         plugin.requiresReboot !== false &&
@@ -468,7 +524,7 @@
         ".skull-store__stat{padding:.45em .7em;border-radius:.35em;background:rgba(255,255,255,.08);font-size:.95em;}" +
         ".skull-store__layout{display:grid;grid-template-columns:18em minmax(0,1fr);align-items:start;}" +
         ".skull-store__column{min-width:0;}" +
-        ".skull-store__column>.scroll{height:calc(100vh - 15em);}" +
+        ".skull-store__column>.scroll{height:calc(100vh - 15em) !important;}" +
         ".skull-store__section-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
         ".skull-store__category-list.menu__list{padding-left:0;}" +
         ".skull-store__section-title{font-size:1.25em;font-weight:700;margin:1.1em 0 .55em;}" +
@@ -476,7 +532,9 @@
         ".skull-store .extensions__item{width:auto;margin: 0;}" +
         ".skull-store .extensions__item-disabled.hide,.skull-store .extensions__item-error.hide{display:none;}" +
         ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
-        "@media(max-width:900px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:flex;gap:1em;padding:0}.skull-store .extensions__item{width:20em;flex-shrink:0}.skull-store__title{font-size:1.65em}}" +
+        "@media(max-width:" +
+        Config.mobileBreakpoint +
+        "px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column[data-section=\"0\"]>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__column[data-section=\"1\"]>.scroll .scroll__body{display:block!important;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:min(20em,85vw);gap:1em;padding:0;width:max-content}.skull-store .extensions__item{width:auto}.skull-store__title{font-size:1.65em}}" +
         "</style>",
     );
   }
@@ -546,7 +604,7 @@
 
   function registerStoreComponent(rawPlugins, news, categories) {
     categories =
-      categories && categories.length ? categories : defaultCategories;
+      categories && categories.length ? categories : Config.defaultCategories;
 
     var categoryNames = categories.reduce(function (result, category) {
       result[category.id] = category.title;
@@ -560,7 +618,7 @@
     );
 
     var catalog = rawPlugins.map(function (plugin) {
-      return normalizePlugin(plugin, categories);
+      return normalizePlugin(plugin);
     });
 
     var instance = null;
@@ -612,10 +670,13 @@
           installed: "check",
           online: "movie",
           tv: "tv",
+          torrent: "cloud",
           torrents: "cloud",
           interface: "settings",
           control: "settings",
+          theme: "palette",
           themes: "palette",
+          other: "folder",
         };
         var sprite = icons[category] || "folder";
 
@@ -706,7 +767,6 @@
           });
           if (plugin) showPluginActions(plugin, render);
         });
-
       }
 
       function renderCategories() {
