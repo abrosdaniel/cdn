@@ -1,5 +1,5 @@
 /*!
- * Scull Store v1.1
+ * BoneHead Store v1.1
  * (c) 2024-2026
  * by Daniel Abros
  * Site → https://abros.dev
@@ -17,12 +17,12 @@
     mobileBreakpoint: 900,
     categoryLabelKeys: {
       online: "plugins_online",
-      tv: "skull_category_tv",
+      tv: "bonehead_category_tv",
       torrent: "full_torrents",
       interface: "settings_main_interface",
       control: "extensions_hpu_control",
       theme: "extensions_hpu_theme",
-      erotic: "skull_category_erotic",
+      erotic: "bonehead_category_erotic",
       other: "extensions_hpu_other",
     },
     categoryOrder: [
@@ -56,17 +56,9 @@
     },
   };
 
-  window.skull = true;
+  window.bonehead = true;
 
-  console.groupCollapsed(
-    `%c✨ Сторонний магазин плагинов Skull Store разработан Daniel Abros`,
-    "border: 1px solid #626262; border-radius: 5px; padding: 2px 4px;",
-  );
-  console.log(`💻 Site: https://abros.dev`);
-  console.groupEnd();
-
-  /* Иконки */
-  var icon_skull =
+  var icon_bonehead =
     '<svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="currentColor" style="border: 1em solid; border-radius: 5px; padding: 4px;"><path d="M133.234,478.948l-21.141-68.984c2.656-3.203,4.141-7.296,3.813-11.671 c-0.688-9.375-9.25-16.438-19.156-15.797c-9.906,0.656-17.375,8.766-16.688,18.141c0.516,6.984,5.406,12.671,11.938,14.875 l21.141,68.984c-2.656,3.188-4.141,7.281-3.813,11.672c0.688,9.359,9.266,16.438,19.156,15.797 c9.906-0.656,17.375-8.781,16.688-18.141C144.656,486.839,139.781,481.151,133.234,478.948z"></path> <path d="M40.953,438.651c-7.078,1.844-11.234,8.781-9.297,15.484l7.984,27.422c1.938,6.703,9.266,10.641,16.344,8.797 l38.016-9.5l-15.031-51.703L40.953,438.651z"></path> <path d="M192.125,401.527c-37.25,11.296-62.797,16.187-62.797,16.187L144,462.12c0,0,50.578-12.813,112-35.109 c61.422,22.297,112,35.109,112,35.109l14.672-44.406c0,0-25.547-4.891-62.797-16.187c54.813-24.141,107.875-54.375,134.625-88.75 c53.984-69.359,26.734-125.938,26.734-125.938s-4.125-9.469-9.656,8.75c-32.203,92.281-132,150.094-215.578,183.547 c-83.578-33.453-183.375-91.266-215.578-183.547c-5.531-18.219-9.656-8.75-9.656-8.75S3.516,243.417,57.5,312.777 C84.25,347.152,137.313,377.386,192.125,401.527z"></path> <path d="M420,415.511c6.531-2.203,11.422-7.89,11.938-14.875c0.688-9.375-6.781-17.484-16.688-18.141 c-9.906-0.641-18.469,6.422-19.156,15.797c-0.328,4.375,1.156,8.469,3.813,11.671l-21.141,68.984 c-6.547,2.203-11.422,7.891-11.938,14.875c-0.688,9.359,6.781,17.484,16.688,18.141c9.891,0.641,18.469-6.438,19.156-15.797 c0.328-4.391-1.156-8.484-3.813-11.672L420,415.511z"></path> <path d="M471.047,438.651l-38.016-9.5L418,480.854l38.016,9.5c7.078,1.844,14.406-2.094,16.344-8.797l7.984-27.422 C482.281,447.433,478.125,440.495,471.047,438.651z"></path> <path d="M187.141,274.871v28.578c0,5.156,4.188,9.344,9.359,9.344h22.813c5.172,0,9.359-4.188,9.359-9.344v-23.922 h7.797v23.922c0,5.156,4.188,9.344,9.344,9.344h22.828c5.172,0,9.359-4.188,9.359-9.344v-23.922h7.781v23.922 c0,5.156,4.188,9.344,9.359,9.344h22.828c5.156,0,9.344-4.188,9.344-9.344v-28.578c23.781-7.219,63.5-23.984,77-57.859 c9.828-24.641,5.984-57.063-8.719-119.578C380.875,34.917,338.125-0.004,257.234-0.004c-80.906,0-123.656,34.922-138.359,97.438 c-14.719,62.516-18.563,94.938-8.734,119.578C123.641,250.886,163.359,267.652,187.141,274.871z M313.672,112.808 c21.516-3.672,42.5,14.031,46.859,39.547s-9.547,49.188-31.063,52.875c-21.516,3.672-42.5-14.031-46.859-39.547 C278.25,140.152,292.156,116.496,313.672,112.808z M257.234,197.558l20.672,25.859h-20.672h-20.688L257.234,197.558z M153.922,152.355c4.375-25.516,25.344-43.219,46.859-39.547c21.531,3.688,35.438,27.344,31.063,52.875 c-4.359,25.516-25.344,43.219-46.859,39.547C163.469,201.542,149.563,177.871,153.922,152.355z"></path></svg>';
   /* Регулярно вызываемые функции */
   Lampa.Storage.set("needReboot", false);
@@ -78,24 +70,24 @@
     return key;
   }
 
-  function registerSkullTranslations() {
+  function registerBoneHeadTranslations() {
     if (!Lampa.Lang || !Lampa.Lang.add) return;
 
     Lampa.Lang.add({
-      skull_store_name: {
-        ru: "Skull Store",
-        en: "Skull Store",
-        uk: "Skull Store",
-        be: "Skull Store",
-        zh: "Skull Store",
-        pt: "Skull Store",
-        bg: "Skull Store",
-        he: "Skull Store",
-        cs: "Skull Store",
-        ro: "Skull Store",
-        fr: "Skull Store",
+      bonehead_store_name: {
+        ru: "BoneHead Store",
+        en: "BoneHead Store",
+        uk: "BoneHead Store",
+        be: "BoneHead Store",
+        zh: "BoneHead Store",
+        pt: "BoneHead Store",
+        bg: "BoneHead Store",
+        he: "BoneHead Store",
+        cs: "BoneHead Store",
+        ro: "BoneHead Store",
+        fr: "BoneHead Store",
       },
-      skull_category_tv: {
+      bonehead_category_tv: {
         ru: "ТВ",
         en: "TV",
         uk: "ТБ",
@@ -108,7 +100,7 @@
         ro: "TV",
         fr: "TV",
       },
-      skull_category_erotic: {
+      bonehead_category_erotic: {
         ru: "18+",
         en: "18+",
         uk: "18+",
@@ -121,7 +113,7 @@
         ro: "18+",
         fr: "18+",
       },
-      skull_not_installed: {
+      bonehead_not_installed: {
         ru: "Не установлен",
         en: "Not installed",
         uk: "Не встановлено",
@@ -134,7 +126,7 @@
         ro: "Neinstalat",
         fr: "Non installé",
       },
-      skull_checking: {
+      bonehead_checking: {
         ru: "Проверка",
         en: "Checking",
         uk: "Перевірка",
@@ -147,7 +139,7 @@
         ro: "Verificare",
         fr: "Vérification",
       },
-      skull_price_free: {
+      bonehead_price_free: {
         ru: "Бесплатный",
         en: "Free",
         uk: "Безкоштовний",
@@ -160,7 +152,7 @@
         ro: "Gratuit",
         fr: "Gratuit",
       },
-      skull_price_subscription: {
+      bonehead_price_subscription: {
         ru: "Подписка",
         en: "Subscription",
         uk: "Підписка",
@@ -173,7 +165,7 @@
         ro: "Abonament",
         fr: "Abonnement",
       },
-      skull_categories: {
+      bonehead_categories: {
         ru: "Категории",
         en: "Categories",
         uk: "Категорії",
@@ -186,7 +178,7 @@
         ro: "Categorii",
         fr: "Catégories",
       },
-      skull_empty_category: {
+      bonehead_empty_category: {
         ru: "В этом разделе пока пусто",
         en: "No plugins in this category yet",
         uk: "У цьому розділі поки порожньо",
@@ -199,20 +191,20 @@
         ro: "Nu există încă pluginuri în această categorie",
         fr: "Aucun plugin dans cette catégorie pour le moment",
       },
-      skull_news_empty: {
-        ru: "Новостей Skull Store пока нет",
-        en: "No Skull Store news yet",
-        uk: "Новин Skull Store поки немає",
-        be: "Навін Skull Store паку няма",
-        zh: "暂无 Skull Store 新闻",
-        pt: "Ainda não há notícias do Skull Store",
-        bg: "Все още няма новини от Skull Store",
-        he: "אין עדיין חדשות מ-Skull Store",
-        cs: "Zatím žádné novinky ze Skull Store",
-        ro: "Nu există încă știri Skull Store",
-        fr: "Pas encore de nouvelles Skull Store",
+      bonehead_news_empty: {
+        ru: "Новостей BoneHead Store пока нет",
+        en: "No BoneHead Store news yet",
+        uk: "Новин BoneHead Store поки немає",
+        be: "Навін BoneHead Store паку няма",
+        zh: "暂无 BoneHead Store 新闻",
+        pt: "Ainda não há notícias do BoneHead Store",
+        bg: "Все още няма новини от BoneHead Store",
+        he: "אין עדיין חדשות מ-BoneHead Store",
+        cs: "Zatím žádné novinky ze BoneHead Store",
+        ro: "Nu există încă știri BoneHead Store",
+        fr: "Pas encore de nouvelles BoneHead Store",
       },
-      skull_subtitle: {
+      bonehead_subtitle: {
         ru: "Сторонний магазин расширений Lampa.",
         en: "Third-party Lampa extensions store.",
         uk: "Сторонній магазин розширень Lampa.",
@@ -225,7 +217,7 @@
         ro: "Magazin de extensii Lampa terț.",
         fr: "Boutique d'extensions Lampa tierce.",
       },
-      skull_subtitle_suggest: {
+      bonehead_subtitle_suggest: {
         ru: "Предложить добавить новый плагин можно тут",
         en: "Suggest a new plugin here",
         uk: "Запропонувати новий плагін можна тут",
@@ -238,7 +230,7 @@
         ro: "Sugerați un plugin nou aici",
         fr: "Proposer un nouveau plugin ici",
       },
-      skull_stats_total: {
+      bonehead_stats_total: {
         ru: "Всего",
         en: "Total",
         uk: "Всього",
@@ -251,7 +243,7 @@
         ro: "Total",
         fr: "Total",
       },
-      skull_stats_installed: {
+      bonehead_stats_installed: {
         ru: "Установлено",
         en: "Installed",
         uk: "Встановлено",
@@ -264,7 +256,7 @@
         ro: "Instalate",
         fr: "Installés",
       },
-      skull_plugin_installed: {
+      bonehead_plugin_installed: {
         ru: "Плагин установлен",
         en: "Plugin installed",
         uk: "Плагін встановлено",
@@ -277,7 +269,7 @@
         ro: "Plugin instalat",
         fr: "Plugin installé",
       },
-      skull_plugin_not_installed: {
+      bonehead_plugin_not_installed: {
         ru: "Плагин не установлен",
         en: "Plugin is not installed",
         uk: "Плагін не встановлено",
@@ -290,7 +282,7 @@
         ro: "Pluginul nu este instalat",
         fr: "Plugin non installé",
       },
-      skull_plugin_removed: {
+      bonehead_plugin_removed: {
         ru: "Плагин удален",
         en: "Plugin removed",
         uk: "Плагін видалено",
@@ -303,7 +295,7 @@
         ro: "Plugin eliminat",
         fr: "Plugin supprimé",
       },
-      skull_plugin_enabled: {
+      bonehead_plugin_enabled: {
         ru: "Плагин включен",
         en: "Plugin enabled",
         uk: "Плагін увімкнено",
@@ -316,7 +308,7 @@
         ro: "Plugin activat",
         fr: "Plugin activé",
       },
-      skull_plugin_disabled: {
+      bonehead_plugin_disabled: {
         ru: "Плагин отключен",
         en: "Plugin disabled",
         uk: "Плагін вимкнено",
@@ -352,7 +344,7 @@
 
     if (/^https?:\/\//i.test(svg) || svg.indexOf("//") === 0) {
       return (
-        '<img class="skull-store__category-icon skull-store__category-icon--img" src="' +
+        '<img class="bonehead-store__category-icon bonehead-store__category-icon--img" src="' +
         escapeHtml(svg) +
         '" alt="">'
       );
@@ -360,20 +352,20 @@
 
     if (svg.indexOf("<svg") === -1) return "";
 
-    if (svg.indexOf("skull-store__category-icon") === -1) {
+    if (svg.indexOf("bonehead-store__category-icon") === -1) {
       svg = svg.replace(/<svg\b([^>]*)>/, function (match, attrs) {
         if (/class\s*=/.test(attrs)) {
           return (
             "<svg" +
             attrs.replace(
               /class\s*=\s*(['"])(.*?)\1/,
-              'class="$2 skull-store__category-icon"',
+              'class="$2 bonehead-store__category-icon"',
             ) +
             ">"
           );
         }
 
-        return '<svg class="skull-store__category-icon"' + attrs + ">";
+        return '<svg class="bonehead-store__category-icon"' + attrs + ">";
       });
     }
 
@@ -389,7 +381,7 @@
 
     if (icon.indexOf("lampa:") === 0) {
       return (
-        '<svg class="skull-store__category-icon">' +
+        '<svg class="bonehead-store__category-icon">' +
         '<use xlink:href="#sprite-' +
         icon.slice(6) +
         '"></use></svg>'
@@ -401,7 +393,7 @@
     if (customSvg) return customSvg;
 
     return (
-      '<svg class="skull-store__category-icon">' +
+      '<svg class="bonehead-store__category-icon">' +
       '<use xlink:href="#sprite-folder"></use></svg>'
     );
   }
@@ -430,9 +422,9 @@
       return price.label || formatPrice(price.type);
     }
 
-    if (price === "subscription") return t("skull_price_subscription");
+    if (price === "subscription") return t("bonehead_price_subscription");
 
-    return t("skull_price_free");
+    return t("bonehead_price_free");
   }
 
   function normalizeCategoryId(categoryId) {
@@ -561,14 +553,11 @@
             return (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0);
           });
 
-        skullStart(data.extensions || [], news);
+        boneHeadStart(data.extensions || [], news);
       })
       .catch(function (error) {
-        console.error("Skull Store: ошибка загрузки из Directus:", error);
-        console.error(
-          "Skull Store: проверьте CORS на Directus (Origin клиента Lampa / cdn.abros.dev)",
-        );
-        skullStart([], []);
+        console.error("BoneHead Store: ошибка загрузки из Directus", error);
+        boneHeadStart([], []);
       });
   }
 
@@ -582,14 +571,14 @@
       buttons: [
         {
           name: t("settings_param_no"),
-          onSelect: function onSelect() {
+          onSelect: function () {
             Lampa.Modal.close();
             if (cancel) cancel();
           },
         },
         {
           name: t("settings_param_yes"),
-          onSelect: function onSelect() {
+          onSelect: function () {
             window.location.reload();
           },
         },
@@ -602,7 +591,6 @@
   }
   var availability = {};
   var showStoreCenter = null;
-  var syncStoreAvailability = function () {};
 
   function escapeHtml(value) {
     return String(value || "")
@@ -636,30 +624,30 @@
 
     var fallbackTime = Date.now();
 
-    Lampa.Notice.addClass("skull_store", {
-      name: t("skull_store_name"),
+    Lampa.Notice.addClass("bonehead_store", {
+      name: t("bonehead_store_name"),
       active: function () {
         return true;
       },
       count: function () {
-        var viewed = Lampa.Storage.get("skull_store_notice_viewed", 0);
+        var viewed = Lampa.Storage.get("bonehead_store_notice_viewed", 0);
 
         return this.items().filter(function (item) {
           return item.time > viewed;
         }).length;
       },
       viewed: function () {
-        Lampa.Storage.set("skull_store_notice_viewed", Date.now());
+        Lampa.Storage.set("bonehead_store_notice_viewed", Date.now());
         if (Lampa.Notice.drawCount) Lampa.Notice.drawCount();
       },
       empty: function () {
-        return t("skull_news_empty");
+        return t("bonehead_news_empty");
       },
       items: function () {
         return (news || []).map(function (item, index) {
           return {
-            id: item.id || "skull_store_news_" + index,
-            from: "skull_store",
+            id: item.id || "bonehead_store_news_" + index,
+            from: "bonehead_store",
             title: item.title,
             text: newsText(item.text),
             time: newsTime(item, index, fallbackTime),
@@ -729,7 +717,7 @@
       list.push(item);
       Lampa.Storage.set("plugins", list);
       loadScript(plugin.url);
-      Lampa.Noty.show(t("skull_plugin_installed") + ": " + plugin.name);
+      Lampa.Noty.show(t("bonehead_plugin_installed") + ": " + plugin.name);
     }
   }
 
@@ -737,7 +725,7 @@
     var installed = findInstalled(url);
 
     if (!installed) {
-      Lampa.Noty.show(t("skull_plugin_not_installed"));
+      Lampa.Noty.show(t("bonehead_plugin_not_installed"));
       return false;
     }
 
@@ -751,7 +739,7 @@
       );
     }
 
-    Lampa.Noty.show(t("skull_plugin_removed"));
+    Lampa.Noty.show(t("bonehead_plugin_removed"));
     Lampa.Storage.set("needRebootSettingExit", true);
     return true;
   }
@@ -771,7 +759,7 @@
 
     savePluginList(list);
     Lampa.Noty.show(
-      status ? t("skull_plugin_enabled") : t("skull_plugin_disabled"),
+      status ? t("bonehead_plugin_enabled") : t("bonehead_plugin_disabled"),
     );
     return true;
   }
@@ -786,7 +774,7 @@
   function storeStatusText(plugin) {
     var status = availability[plugin.url];
 
-    if (!status || status.loading) return t("skull_checking");
+    if (!status || status.loading) return t("bonehead_checking");
     if (status.code) return status.code;
 
     return "404";
@@ -795,7 +783,7 @@
   function storeStatusDescription(plugin) {
     var status = availability[plugin.url];
 
-    if (!status || status.loading) return t("skull_checking");
+    if (!status || status.loading) return t("bonehead_checking");
     if (status.text) return status.text;
 
     return Number(status.code) >= 200 && Number(status.code) < 400
@@ -886,14 +874,14 @@
   function updateAvailabilityView(plugin, item) {
     var items =
       item ||
-      $(".skull-store__item").filter(function () {
+      $(".bonehead-store__item").filter(function () {
         return $(this).data("url") == plugin.url;
       });
 
     items.each(function () {
       var item = $(this);
       var check = item.find(".extensions__item-check");
-      var code = item.find(".skull-store__availability");
+      var code = item.find(".bonehead-store__availability");
       var status = item.find(".extensions__item-status");
       var availabilityStatus = availability[plugin.url];
       var loading = !!(availabilityStatus && availabilityStatus.loading);
@@ -910,6 +898,21 @@
         .toggleClass("hide", !availabilityStatus || loading)
         .text(storeStatusDescription(plugin));
     });
+  }
+
+  function getPluginInstallState(url) {
+    var state = getPluginState(url);
+
+    if (!state.installed) {
+      return { text: t("bonehead_not_installed"), className: "yellow" };
+    }
+
+    return {
+      text: state.enabled
+        ? t("settings_parental_control_enabled")
+        : t("settings_parental_control_disabled"),
+      className: state.enabled ? "success" : "error",
+    };
   }
 
   function headBackward(title) {
@@ -939,119 +942,30 @@
   }
 
   function injectStoreStyles() {
-    if ($("#skull-store-style").length) return;
+    if ($("#bonehead-store-style").length) return;
 
     $("body").append(
-      '<style id="skull-store-style">' +
-        ".skull-store-page .extensions__body{padding:2.5em 0;}" +
-        ".skull-store__head{display:flex;align-items:center;justify-content:space-between;gap:1em;margin-bottom:2.4em;padding:0 1.5em;}" +
-        ".skull-store{padding: 0 1.5em;}" +
-        ".skull-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;opacity:.65;}" +
-        ".skull-store__stat{padding:.45em .7em;border-radius:.5em;}" +
-        ".skull-store__layout{display:grid;grid-template-columns:20em minmax(0,1fr);align-items:start;}" +
-        ".skull-store__column>.scroll{height:calc(100vh - 15em) !important;}" +
-        ".skull-store__section-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
-        ".skull-store__install-state{margin-left: auto;margin-right: 0 !important;}" +
-        ".skull-store__category-list.menu__list{padding-left:0;}" +
-        ".skull-store__category .menu__ico{display:flex;align-items:center;justify-content:center;}" +
-        ".skull-store__category-icon{width:1.5em;height:1.5em;fill:currentColor;}" +
-        ".skull-store__category-icon--img{object-fit:contain;display:block;}" +
-        ".skull-store__section-title{font-size:1.25em;font-weight:700;}" +
-        ".skull-store .extensions__item{width:auto;margin: 0;}" +
-        ".skull-store__empty{padding:2em;opacity:.7;text-align:center;}" +
+      '<style id="bonehead-store-style">' +
+        ".bonehead-store-page .extensions__body{padding:2.5em 0;}" +
+        ".bonehead-store__head{display:flex;align-items:center;justify-content:space-between;gap:1em;margin-bottom:2.4em;padding:0 1.5em;}" +
+        ".bonehead-store{padding: 0 1.5em;}" +
+        ".bonehead-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;opacity:.65;}" +
+        ".bonehead-store__stat{padding:.45em .7em;border-radius:.5em;}" +
+        ".bonehead-store__layout{display:grid;grid-template-columns:20em minmax(0,1fr);align-items:start;}" +
+        ".bonehead-store__section-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
+        ".bonehead-store__install-state{margin-left: auto;margin-right: 0 !important;}" +
+        ".bonehead-store__category-list.menu__list{padding-left:0;}" +
+        ".bonehead-store__category .menu__ico{display:flex;align-items:center;justify-content:center;}" +
+        ".bonehead-store__category-icon{width:1.5em;height:1.5em;fill:currentColor;}" +
+        ".bonehead-store__category-icon--img{object-fit:contain;display:block;}" +
+        ".bonehead-store__section-title{font-size:1.25em;font-weight:700;}" +
+        ".bonehead-store .extensions__item{width:auto;margin: 0;}" +
+        ".bonehead-store__empty{padding:2em;opacity:.7;text-align:center;}" +
         "@media(max-width:" +
         Config.mobileBreakpoint +
-        'px){.skull-store-page .extensions__body{padding:1em 1em 0}.skull-store{padding:0}.skull-store__head{padding:0;margin-bottom:1em}.skull-store__layout{display:block}.skull-store__column{margin-bottom:1.2em}.skull-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.skull-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.skull-store__column[data-section="0"]>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.skull-store__column[data-section="1"]>.scroll .scroll__body{display:block!important;width:max-content;transform:none!important}.skull-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.skull-store__category.menu__item{flex-shrink:0}.skull-store__section-list{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:min(20em,85vw);gap:1em;padding:0;width:max-content}.skull-store .extensions__item{width:auto}.skull-store__title{font-size:1.65em}}' +
+        'px){.bonehead-store-page .extensions__body{padding:1em 1em 0}.bonehead-store{padding:0}.bonehead-store__head{padding:0;margin-bottom:1em}.bonehead-store__layout{display:block}.bonehead-store__column{margin-bottom:1.2em}.bonehead-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.bonehead-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.bonehead-store__column[data-section="0"]>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.bonehead-store__column[data-section="1"]>.scroll .scroll__body{display:block!important;width:max-content;transform:none!important}.bonehead-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.bonehead-store__category.menu__item{flex-shrink:0}.bonehead-store__section-list{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:min(20em,85vw);gap:1em;padding:0;width:max-content}.bonehead-store .extensions__item{width:auto}.bonehead-store__title{font-size:1.65em}}' +
         "</style>",
     );
-  }
-
-  function showPluginActions(plugin, rerender) {
-    var state = getPluginState(plugin.url);
-    var items = [];
-    var back = function () {
-      Lampa.Controller.toggle("skull_store_center");
-      setTimeout(function () {
-        cleanupStaleAvailabilityLoading();
-        syncStoreAvailability();
-      }, 50);
-    };
-
-    if (!state.installed) {
-      items.push({
-        title: t("extensions_install"),
-        action: "install",
-      });
-    } else {
-      items.push({
-        title: state.enabled ? t("extensions_disable") : t("extensions_enable"),
-        action: "toggle",
-      });
-
-      items.push({
-        title: t("extensions_remove"),
-        action: "remove",
-      });
-    }
-
-    items.push({
-      title: t("extensions_check"),
-      action: "check",
-    });
-
-    Lampa.Select.show({
-      title: t("title_action"),
-      items: items,
-      onSelect: function (item) {
-        if (item.action == "install") {
-          installPlugin(plugin);
-          rerender({ skipAvailability: true });
-          back();
-          return;
-        }
-
-        if (item.action == "toggle") {
-          var nextStatus = state.enabled ? 0 : 1;
-
-          if (!setPluginStatus(plugin.url, nextStatus)) {
-            back();
-            return;
-          }
-
-          if (nextStatus === 1) {
-            var installed = findInstalled(plugin.url);
-
-            if (installed && Lampa.Plugins && Lampa.Plugins.push) {
-              Lampa.Plugins.push(installed);
-            }
-
-            rerender({ skipAvailability: true });
-            back();
-            return;
-          }
-
-          rerender({ preserveController: true, skipAvailability: true });
-          showReload(t("plugins_need_reload"), back);
-          return;
-        }
-
-        if (item.action == "remove") {
-          if (removePluginByUrl(plugin.url)) {
-            rerender({ preserveController: true, skipAvailability: true });
-            showReload(t("plugins_need_reload"), back);
-          } else {
-            back();
-          }
-          return;
-        }
-
-        if (item.action == "check") {
-          checkAvailability(plugin, null, true);
-          back();
-        }
-      },
-      onBack: back,
-    });
   }
 
   function registerStoreComponent(rawPlugins) {
@@ -1073,10 +987,10 @@
 
     injectStoreStyles();
 
-    function SkullStorePage() {
-      var html = $('<div class="extensions skull-store-page"></div>');
-      var head = $('<div class="skull-store__head"></div>');
-      var body = $('<div class="skull-store"></div>');
+    function BoneHeadStorePage() {
+      var html = $('<div class="extensions bonehead-store-page"></div>');
+      var head = $('<div class="bonehead-store__head"></div>');
+      var body = $('<div class="bonehead-store"></div>');
       var content = $('<div class="extensions__body"></div>');
       var filter = "all";
       var categoryScroll = new Lampa.Scroll({ mask: true, over: true });
@@ -1093,8 +1007,20 @@
         });
       }
 
-      function visibleCategories() {
-        return categoryOrder;
+      function findCatalogPlugin(url) {
+        return catalog.find(function (item) {
+          return item.url == url;
+        });
+      }
+
+      function syncAvailabilityViews() {
+        cleanupStaleAvailabilityLoading();
+
+        $(".bonehead-store__item", body).each(function () {
+          var plugin = findCatalogPlugin($(this).data("url"));
+
+          if (plugin) updateAvailabilityView(plugin, $(this));
+        });
       }
 
       function categoryTitle(category) {
@@ -1103,25 +1029,6 @@
         return categoryNames[category] || category;
       }
 
-      function categoryIcon(category) {
-        return categoryIconMarkup(category);
-      }
-
-      function syncAvailabilityViews() {
-        cleanupStaleAvailabilityLoading();
-
-        $(".skull-store__item", body).each(function () {
-          var url = $(this).data("url");
-          var plugin = catalog.find(function (item) {
-            return item.url == url;
-          });
-
-          if (plugin) updateAvailabilityView(plugin, $(this));
-        });
-      }
-
-      syncStoreAvailability = syncAvailabilityViews;
-
       function triggerPluginAvailabilityChecks() {
         if (Lampa.Layer && Lampa.Layer.visible) {
           Lampa.Layer.visible(pluginScroll.render(true));
@@ -1129,25 +1036,16 @@
       }
 
       function renderItem(plugin) {
-        var state = getPluginState(plugin.url);
+        var installState = getPluginInstallState(plugin.url);
         var protocol = plugin.url.indexOf("https://") === 0 ? "https" : "http";
-        var stateText = t("skull_not_installed");
-        var stateClass = "yellow";
-
-        if (state.installed) {
-          stateText = state.enabled
-            ? t("settings_parental_control_enabled")
-            : t("settings_parental_control_disabled");
-          stateClass = state.enabled ? "success" : "error";
-        }
 
         var item = $(
-          '<div class="extensions__item selector skull-store__item layer--visible" data-url="' +
+          '<div class="extensions__item selector bonehead-store__item layer--visible" data-url="' +
             escapeHtml(plugin.url) +
             '">' +
             '<div class="extensions__item-author">' +
             escapeHtml(plugin.author) +
-            '<span class="extensions__item-premium skull-store__price">' +
+            '<span class="extensions__item-premium bonehead-store__price">' +
             escapeHtml(plugin.price) +
             "</span></div>" +
             '<div class="extensions__item-name">' +
@@ -1163,16 +1061,16 @@
             '">' +
             protoIcon() +
             "</div>" +
-            '<div class="extensions__item-code skull-store__availability hide yellow">' +
-            escapeHtml(t("skull_checking")) +
+            '<div class="extensions__item-code bonehead-store__availability hide yellow">' +
+            escapeHtml(t("bonehead_checking")) +
             "</div>" +
             '<div class="extensions__item-status hide">' +
-            escapeHtml(t("skull_checking")) +
+            escapeHtml(t("bonehead_checking")) +
             "</div>" +
-            '<div class="extensions__item-code skull-store__install-state ' +
-            stateClass +
+            '<div class="extensions__item-code bonehead-store__install-state ' +
+            installState.className +
             '">' +
-            escapeHtml(stateText) +
+            escapeHtml(installState.text) +
             "</div>" +
             "</div>" +
             "</div>",
@@ -1187,10 +1085,170 @@
         return item;
       }
 
+      function isStoreOverlayOpen() {
+        if ($("body").hasClass("selectbox--open")) return true;
+        if (Lampa.Modal && Lampa.Modal.opened && Lampa.Modal.opened()) return true;
+
+        return $(".modal").length > 0;
+      }
+
+      function updateHeadStats() {
+        var installedTotal = catalog.filter(function (plugin) {
+          return isInstalled(plugin.url);
+        }).length;
+
+        head.find(".bonehead-store__stat").eq(0).text(
+          t("bonehead_stats_total") + ": " + catalog.length,
+        );
+        head.find(".bonehead-store__stat").eq(1).text(
+          t("bonehead_stats_installed") + ": " + installedTotal,
+        );
+      }
+
+      function updatePluginItemState(plugin, options) {
+        options = options || {};
+        var item = $(
+          '.bonehead-store__item[data-url="' + escapeHtml(plugin.url) + '"]',
+          body,
+        );
+
+        if (!item.length) return;
+
+        if (options.removed) {
+          item.css("opacity", 0.5);
+          return;
+        }
+
+        var installState = getPluginInstallState(plugin.url);
+
+        item
+          .find(".bonehead-store__install-state")
+          .removeClass("success error yellow")
+          .addClass(installState.className)
+          .text(installState.text);
+      }
+
+      function restoreStoreFocus(after) {
+        setTimeout(function () {
+          fitScrolls();
+
+          scrolls.forEach(function (scroll) {
+            if (scroll.restorePosition) scroll.restorePosition();
+          });
+
+          setCollection(
+            activeSection,
+            lastFocus[activeSection] || nearestFromSection(activeSection),
+          );
+          cleanupStaleAvailabilityLoading();
+          syncAvailabilityViews();
+
+          if (after) after();
+        }, 50);
+      }
+
+      function showPluginActions(plugin) {
+        var state = getPluginState(plugin.url);
+        var items = [];
+        var controller =
+          Lampa.Controller.enabled && Lampa.Controller.enabled()
+            ? Lampa.Controller.enabled().name
+            : "bonehead_store_center";
+        var back = function (after) {
+          Lampa.Controller.toggle(controller);
+          restoreStoreFocus(after);
+        };
+
+        if (!state.installed) {
+          items.push({ title: t("extensions_install"), action: "install" });
+        } else {
+          items.push({
+            title: state.enabled ? t("extensions_disable") : t("extensions_enable"),
+            action: "toggle",
+          });
+          items.push({ title: t("extensions_remove"), action: "remove" });
+        }
+
+        items.push({ title: t("extensions_check"), action: "check" });
+
+        Lampa.Select.show({
+          title: t("title_action"),
+          items: items,
+          onSelect: function (item) {
+            if (item.action == "install") {
+              installPlugin(plugin);
+              updatePluginItemState(plugin);
+              updateHeadStats();
+
+              if (filter === "installed") {
+                render({ preserveController: true, skipAvailability: true });
+              }
+
+              back();
+              return;
+            }
+
+            if (item.action == "toggle") {
+              var nextStatus = state.enabled ? 0 : 1;
+
+              if (!setPluginStatus(plugin.url, nextStatus)) {
+                back();
+                return;
+              }
+
+              updatePluginItemState(plugin);
+              updateHeadStats();
+
+              if (nextStatus === 1) {
+                back(function () {
+                  var installed = findInstalled(plugin.url);
+
+                  if (installed && Lampa.Plugins && Lampa.Plugins.push) {
+                    Lampa.Plugins.push(installed);
+                  }
+                });
+                return;
+              }
+
+              showReload(t("plugins_need_reload"), function () {
+                back();
+              });
+              return;
+            }
+
+            if (item.action == "remove") {
+              if (removePluginByUrl(plugin.url)) {
+                updatePluginItemState(plugin, { removed: true });
+                updateHeadStats();
+                showReload(t("plugins_need_reload"), function () {
+                  back(function () {
+                    if (filter === "installed") {
+                      render({
+                        preserveController: true,
+                        skipAvailability: true,
+                      });
+                    }
+                  });
+                });
+              } else {
+                back();
+              }
+              return;
+            }
+
+            if (item.action == "check") {
+              checkAvailability(plugin, null, true);
+              back();
+            }
+          },
+          onBack: back,
+        });
+      }
+
       function bindController() {
         $(".selector", body).on("hover:focus", function () {
           var index = Number(
-            $(this).closest(".skull-store__column").data("section"),
+            $(this).closest(".bonehead-store__column").data("section"),
           );
 
           if (!isNaN(index)) {
@@ -1200,25 +1258,19 @@
           }
         });
 
-        $(".skull-store__category", body).on("hover:enter click", function () {
+        $(".bonehead-store__category", body).on("hover:enter click", function () {
           filter = $(this).data("filter");
           lastFocus[1] = null;
           render({ resetPlugins: true });
         });
 
-        $(".skull-store__item", body).on("hover:enter click", function () {
-          var url = $(this).data("url");
-          var plugin = catalog.find(function (item) {
-            return item.url == url;
-          });
-          if (plugin) showPluginActions(plugin, render);
+        $(".bonehead-store__item", body).on("hover:enter click", function () {
+          var plugin = findCatalogPlugin($(this).data("url"));
+          if (plugin) showPluginActions(plugin);
         });
 
-        $(".skull-store__item", body).on("hover:focus", function () {
-          var url = $(this).data("url");
-          var plugin = catalog.find(function (item) {
-            return item.url == url;
-          });
+        $(".bonehead-store__item", body).on("hover:focus", function () {
+          var plugin = findCatalogPlugin($(this).data("url"));
 
           if (plugin && availability[plugin.url]) {
             updateAvailabilityView(plugin, $(this));
@@ -1227,17 +1279,17 @@
       }
 
       function renderCategories() {
-        var list = $('<ul class="skull-store__category-list menu__list"></ul>');
+        var list = $('<ul class="bonehead-store__category-list menu__list"></ul>');
 
-        visibleCategories().forEach(function (category) {
+        categoryOrder.forEach(function (category) {
           list.append(
-            '<li class="skull-store__category menu__item selector' +
+            '<li class="bonehead-store__category menu__item selector' +
               (filter == category ? " active" : "") +
               '" data-filter="' +
               category +
               '">' +
               '<div class="menu__ico">' +
-              categoryIcon(category) +
+              categoryIconMarkup(category) +
               "</div>" +
               '<div class="menu__text">' +
               escapeHtml(categoryTitle(category)) +
@@ -1250,7 +1302,7 @@
       }
 
       function renderPlugins(list) {
-        var body = $('<div class="skull-store__section-list"></div>');
+        var body = $('<div class="bonehead-store__section-list"></div>');
 
         if (list.length) {
           list.forEach(function (plugin) {
@@ -1259,8 +1311,8 @@
           return body;
         } else {
           return $(
-            '<div class="skull-store__empty">' +
-              escapeHtml(t("skull_empty_category")) +
+            '<div class="bonehead-store__empty">' +
+              escapeHtml(t("bonehead_empty_category")) +
               "</div>",
           );
         }
@@ -1268,11 +1320,11 @@
 
       function makeColumn(index, title, scroll) {
         return $(
-          '<div class="skull-store__column" data-section="' +
+          '<div class="bonehead-store__column" data-section="' +
             index +
             '"></div>',
         )
-          .append('<div class="skull-store__section-title">' + title + "</div>")
+          .append('<div class="bonehead-store__section-title">' + title + "</div>")
           .append(scroll.render());
       }
 
@@ -1309,6 +1361,8 @@
       }
 
       function fitScrolls() {
+        if (isStoreOverlayOpen()) return;
+
         var fontSize = parseFloat($("body").css("font-size")) || 16;
         var bottom = fontSize * 2.5;
 
@@ -1351,19 +1405,19 @@
         head
           .empty()
           .append(
-            '<div class="skull-store__subtitle"><p>' +
-              escapeHtml(t("skull_subtitle")) +
+            '<div class="bonehead-store__subtitle"><p>' +
+              escapeHtml(t("bonehead_subtitle")) +
               "</p><br><p>" +
-              escapeHtml(t("skull_subtitle_suggest")) +
+              escapeHtml(t("bonehead_subtitle_suggest")) +
               "</p></div>" +
-              '<div class="skull-store__stats">' +
-              '<div class="skull-store__stat">' +
-              escapeHtml(t("skull_stats_total")) +
+              '<div class="bonehead-store__stats">' +
+              '<div class="bonehead-store__stat">' +
+              escapeHtml(t("bonehead_stats_total")) +
               ": " +
               catalog.length +
               "</div>" +
-              '<div class="skull-store__stat">' +
-              escapeHtml(t("skull_stats_installed")) +
+              '<div class="bonehead-store__stat">' +
+              escapeHtml(t("bonehead_stats_installed")) +
               ": " +
               installedTotal +
               "</div>",
@@ -1373,19 +1427,22 @@
         categoryScroll.append(renderCategories());
         pluginScroll.clear();
         pluginScroll.append(renderPlugins(list));
-        var layout = $('<div class="skull-store__layout"></div>');
+        var layout = $('<div class="bonehead-store__layout"></div>');
 
-        layout.append(makeColumn(0, t("skull_categories"), categoryScroll));
+        layout.append(makeColumn(0, t("bonehead_categories"), categoryScroll));
         layout.append(makeColumn(1, t("settings_main_plugins"), pluginScroll));
         body.empty().append(layout);
         bindController();
-        syncAvailabilityViews();
 
         setTimeout(function () {
           fitScrolls();
 
           if (options.preserveController) {
             syncAvailabilityViews();
+            setCollection(
+              activeSection,
+              lastFocus[activeSection] || nearestFromSection(activeSection),
+            );
             if (!options.skipAvailability) triggerPluginAvailabilityChecks();
             return;
           }
@@ -1402,7 +1459,7 @@
           }
 
           var active = $(
-            ".skull-store__category.active",
+            ".bonehead-store__category.active",
             categoryScroll.render(),
           ).first()[0];
           setCollection(
@@ -1462,7 +1519,7 @@
       function releaseController() {
         var enabled = Lampa.Controller.enabled && Lampa.Controller.enabled();
 
-        if (!enabled || enabled.name != "skull_store_center") return;
+        if (!enabled || enabled.name != "bonehead_store_center") return;
 
         if (Lampa.Controller.clear) Lampa.Controller.clear();
         else Lampa.Controller.toggle("content");
@@ -1477,12 +1534,12 @@
 
         fitScrolls();
 
-        Lampa.Controller.add("skull_store_center", {
+        Lampa.Controller.add("bonehead_store_center", {
           toggle: function () {
             var focused = $(".selector.focus", body)[0];
             var section = focused
               ? Number(
-                  $(focused).closest(".skull-store__column").data("section"),
+                  $(focused).closest(".bonehead-store__column").data("section"),
                 )
               : activeSection;
 
@@ -1507,15 +1564,10 @@
           },
         });
 
-        Lampa.Controller.toggle("skull_store_center");
+        Lampa.Controller.toggle("bonehead_store_center");
       };
 
-      this.pause = function () {};
-      this.stop = function () {
-        releaseController();
-      };
       this.destroy = function () {
-        syncStoreAvailability = function () {};
         releaseController();
         categoryScroll.destroy();
         pluginScroll.destroy();
@@ -1523,9 +1575,7 @@
       };
       this.render = function () {
         if (!html.children().length) {
-          categoryScroll.minus(head);
-          pluginScroll.minus(head);
-          content.append(headBackward("💀 " + t("skull_store_name")));
+          content.append(headBackward("💀 " + t("bonehead_store_name")));
           content.append(head);
           content.append(body);
           html.append(content);
@@ -1541,7 +1591,7 @@
       var controller =
         Lampa.Controller.enabled && Lampa.Controller.enabled().name;
 
-      instance = new SkullStorePage();
+      instance = new BoneHeadStorePage();
       instance.onBack = function () {
         instance.destroy();
         instance = null;
@@ -1560,17 +1610,17 @@
     };
   }
 
-  /* Создание Skull Store и его меню */
-  function skullStart(plugins, news) {
-    registerSkullTranslations();
+  /* Создание BoneHead Store и его меню */
+  function boneHeadStart(plugins, news) {
+    registerBoneHeadTranslations();
     registerStoreNotices(news);
     registerStoreComponent(plugins);
 
-    /* Skull Store */
+    /* BoneHead Store */
     Lampa.SettingsApi.addComponent({
-      component: "skull",
-      name: t("skull_store_name"),
-      icon: icon_skull,
+      component: "bonehead",
+      name: t("bonehead_store_name"),
+      icon: icon_bonehead,
     });
 
     Lampa.Settings.listener.follow("open", function (e) {
@@ -1578,9 +1628,9 @@
         /* Сдвигаем раздел выше */
         setTimeout(function () {
           $("div[data-component=plugins]").before(
-            $("div[data-component=skull]"),
+            $("div[data-component=bonehead]"),
           );
-          $("div[data-component=skull]")
+          $("div[data-component=bonehead]")
             .unbind("hover:enter")
             .on("hover:enter", openStoreCenter);
         }, 30);

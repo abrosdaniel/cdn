@@ -1,4 +1,4 @@
-# Directus: схема для Skull Store
+# Directus: схема для BoneHead Store
 
 API: `https://cms.abros.dev`
 
