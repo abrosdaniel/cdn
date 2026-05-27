@@ -1,5 +1,5 @@
 /*!
- * BoneHead Store v1.1
+ * BoneHead v1.1
  * (c) 2024-2026
  * by Daniel Abros
  * Site → https://abros.dev
@@ -16,6 +16,7 @@
     },
     mobileBreakpoint: 900,
     categoryLabelKeys: {
+      installed: "bonehead_category_installed",
       online: "plugins_online",
       tv: "bonehead_category_tv",
       torrent: "full_torrents",
@@ -24,6 +25,9 @@
       theme: "extensions_hpu_theme",
       erotic: "bonehead_category_erotic",
       other: "extensions_hpu_other",
+      screensaver: "extensions_hpu_screensaver",
+      video: "extensions_hpu_video",
+      recomend: "extensions_hpu_recomend",
     },
     categoryOrder: [
       "online",
@@ -59,7 +63,7 @@
   window.bonehead = true;
 
   var icon_bonehead =
-    '<svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="currentColor" style="border: 1em solid; border-radius: 5px; padding: 4px;"><path d="M133.234,478.948l-21.141-68.984c2.656-3.203,4.141-7.296,3.813-11.671 c-0.688-9.375-9.25-16.438-19.156-15.797c-9.906,0.656-17.375,8.766-16.688,18.141c0.516,6.984,5.406,12.671,11.938,14.875 l21.141,68.984c-2.656,3.188-4.141,7.281-3.813,11.672c0.688,9.359,9.266,16.438,19.156,15.797 c9.906-0.656,17.375-8.781,16.688-18.141C144.656,486.839,139.781,481.151,133.234,478.948z"></path> <path d="M40.953,438.651c-7.078,1.844-11.234,8.781-9.297,15.484l7.984,27.422c1.938,6.703,9.266,10.641,16.344,8.797 l38.016-9.5l-15.031-51.703L40.953,438.651z"></path> <path d="M192.125,401.527c-37.25,11.296-62.797,16.187-62.797,16.187L144,462.12c0,0,50.578-12.813,112-35.109 c61.422,22.297,112,35.109,112,35.109l14.672-44.406c0,0-25.547-4.891-62.797-16.187c54.813-24.141,107.875-54.375,134.625-88.75 c53.984-69.359,26.734-125.938,26.734-125.938s-4.125-9.469-9.656,8.75c-32.203,92.281-132,150.094-215.578,183.547 c-83.578-33.453-183.375-91.266-215.578-183.547c-5.531-18.219-9.656-8.75-9.656-8.75S3.516,243.417,57.5,312.777 C84.25,347.152,137.313,377.386,192.125,401.527z"></path> <path d="M420,415.511c6.531-2.203,11.422-7.89,11.938-14.875c0.688-9.375-6.781-17.484-16.688-18.141 c-9.906-0.641-18.469,6.422-19.156,15.797c-0.328,4.375,1.156,8.469,3.813,11.671l-21.141,68.984 c-6.547,2.203-11.422,7.891-11.938,14.875c-0.688,9.359,6.781,17.484,16.688,18.141c9.891,0.641,18.469-6.438,19.156-15.797 c0.328-4.391-1.156-8.484-3.813-11.672L420,415.511z"></path> <path d="M471.047,438.651l-38.016-9.5L418,480.854l38.016,9.5c7.078,1.844,14.406-2.094,16.344-8.797l7.984-27.422 C482.281,447.433,478.125,440.495,471.047,438.651z"></path> <path d="M187.141,274.871v28.578c0,5.156,4.188,9.344,9.359,9.344h22.813c5.172,0,9.359-4.188,9.359-9.344v-23.922 h7.797v23.922c0,5.156,4.188,9.344,9.344,9.344h22.828c5.172,0,9.359-4.188,9.359-9.344v-23.922h7.781v23.922 c0,5.156,4.188,9.344,9.359,9.344h22.828c5.156,0,9.344-4.188,9.344-9.344v-28.578c23.781-7.219,63.5-23.984,77-57.859 c9.828-24.641,5.984-57.063-8.719-119.578C380.875,34.917,338.125-0.004,257.234-0.004c-80.906,0-123.656,34.922-138.359,97.438 c-14.719,62.516-18.563,94.938-8.734,119.578C123.641,250.886,163.359,267.652,187.141,274.871z M313.672,112.808 c21.516-3.672,42.5,14.031,46.859,39.547s-9.547,49.188-31.063,52.875c-21.516,3.672-42.5-14.031-46.859-39.547 C278.25,140.152,292.156,116.496,313.672,112.808z M257.234,197.558l20.672,25.859h-20.672h-20.688L257.234,197.558z M153.922,152.355c4.375-25.516,25.344-43.219,46.859-39.547c21.531,3.688,35.438,27.344,31.063,52.875 c-4.359,25.516-25.344,43.219-46.859,39.547C163.469,201.542,149.563,177.871,153.922,152.355z"></path></svg>';
+    '<svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="currentColor" style="border: 2px solid; border-radius: 5px; padding: 4px;"><path d="M133.234,478.948l-21.141-68.984c2.656-3.203,4.141-7.296,3.813-11.671 c-0.688-9.375-9.25-16.438-19.156-15.797c-9.906,0.656-17.375,8.766-16.688,18.141c0.516,6.984,5.406,12.671,11.938,14.875 l21.141,68.984c-2.656,3.188-4.141,7.281-3.813,11.672c0.688,9.359,9.266,16.438,19.156,15.797 c9.906-0.656,17.375-8.781,16.688-18.141C144.656,486.839,139.781,481.151,133.234,478.948z"></path> <path d="M40.953,438.651c-7.078,1.844-11.234,8.781-9.297,15.484l7.984,27.422c1.938,6.703,9.266,10.641,16.344,8.797 l38.016-9.5l-15.031-51.703L40.953,438.651z"></path> <path d="M192.125,401.527c-37.25,11.296-62.797,16.187-62.797,16.187L144,462.12c0,0,50.578-12.813,112-35.109 c61.422,22.297,112,35.109,112,35.109l14.672-44.406c0,0-25.547-4.891-62.797-16.187c54.813-24.141,107.875-54.375,134.625-88.75 c53.984-69.359,26.734-125.938,26.734-125.938s-4.125-9.469-9.656,8.75c-32.203,92.281-132,150.094-215.578,183.547 c-83.578-33.453-183.375-91.266-215.578-183.547c-5.531-18.219-9.656-8.75-9.656-8.75S3.516,243.417,57.5,312.777 C84.25,347.152,137.313,377.386,192.125,401.527z"></path> <path d="M420,415.511c6.531-2.203,11.422-7.89,11.938-14.875c0.688-9.375-6.781-17.484-16.688-18.141 c-9.906-0.641-18.469,6.422-19.156,15.797c-0.328,4.375,1.156,8.469,3.813,11.671l-21.141,68.984 c-6.547,2.203-11.422,7.891-11.938,14.875c-0.688,9.359,6.781,17.484,16.688,18.141c9.891,0.641,18.469-6.438,19.156-15.797 c0.328-4.391-1.156-8.484-3.813-11.672L420,415.511z"></path> <path d="M471.047,438.651l-38.016-9.5L418,480.854l38.016,9.5c7.078,1.844,14.406-2.094,16.344-8.797l7.984-27.422 C482.281,447.433,478.125,440.495,471.047,438.651z"></path> <path d="M187.141,274.871v28.578c0,5.156,4.188,9.344,9.359,9.344h22.813c5.172,0,9.359-4.188,9.359-9.344v-23.922 h7.797v23.922c0,5.156,4.188,9.344,9.344,9.344h22.828c5.172,0,9.359-4.188,9.359-9.344v-23.922h7.781v23.922 c0,5.156,4.188,9.344,9.359,9.344h22.828c5.156,0,9.344-4.188,9.344-9.344v-28.578c23.781-7.219,63.5-23.984,77-57.859 c9.828-24.641,5.984-57.063-8.719-119.578C380.875,34.917,338.125-0.004,257.234-0.004c-80.906,0-123.656,34.922-138.359,97.438 c-14.719,62.516-18.563,94.938-8.734,119.578C123.641,250.886,163.359,267.652,187.141,274.871z M313.672,112.808 c21.516-3.672,42.5,14.031,46.859,39.547s-9.547,49.188-31.063,52.875c-21.516,3.672-42.5-14.031-46.859-39.547 C278.25,140.152,292.156,116.496,313.672,112.808z M257.234,197.558l20.672,25.859h-20.672h-20.688L257.234,197.558z M153.922,152.355c4.375-25.516,25.344-43.219,46.859-39.547c21.531,3.688,35.438,27.344,31.063,52.875 c-4.359,25.516-25.344,43.219-46.859,39.547C163.469,201.542,149.563,177.871,153.922,152.355z"></path></svg>';
   /* Регулярно вызываемые функции */
   Lampa.Storage.set("needReboot", false);
   Lampa.Storage.set("needRebootSettingExit", false);
@@ -74,18 +78,31 @@
     if (!Lampa.Lang || !Lampa.Lang.add) return;
 
     Lampa.Lang.add({
-      bonehead_store_name: {
-        ru: "BoneHead Store",
-        en: "BoneHead Store",
-        uk: "BoneHead Store",
-        be: "BoneHead Store",
-        zh: "BoneHead Store",
-        pt: "BoneHead Store",
-        bg: "BoneHead Store",
-        he: "BoneHead Store",
-        cs: "BoneHead Store",
-        ro: "BoneHead Store",
-        fr: "BoneHead Store",
+      bonehead_name: {
+        ru: "BoneHead",
+        en: "BoneHead",
+        uk: "BoneHead",
+        be: "BoneHead",
+        zh: "BoneHead",
+        pt: "BoneHead",
+        bg: "BoneHead",
+        he: "BoneHead",
+        cs: "BoneHead",
+        ro: "BoneHead",
+        fr: "BoneHead",
+      },
+      bonehead_category_installed: {
+        ru: "Установленные",
+        en: "Installed",
+        uk: "Встановлені",
+        be: "Устаноўленыя",
+        zh: "已安装",
+        pt: "Instalados",
+        bg: "Инсталирани",
+        he: "מותקנים",
+        cs: "Nainstalováno",
+        ro: "Instalate",
+        fr: "Installés",
       },
       bonehead_category_tv: {
         ru: "ТВ",
@@ -126,20 +143,7 @@
         ro: "Neinstalat",
         fr: "Non installé",
       },
-      bonehead_checking: {
-        ru: "Проверка",
-        en: "Checking",
-        uk: "Перевірка",
-        be: "Праверка",
-        zh: "检查中",
-        pt: "Verificando",
-        bg: "Проверка",
-        he: "בודק",
-        cs: "Kontrola",
-        ro: "Verificare",
-        fr: "Vérification",
-      },
-      bonehead_price_free: {
+      bonehead_not_installed: {
         ru: "Бесплатный",
         en: "Free",
         uk: "Безкоштовний",
@@ -165,44 +169,18 @@
         ro: "Abonament",
         fr: "Abonnement",
       },
-      bonehead_categories: {
-        ru: "Категории",
-        en: "Categories",
-        uk: "Категорії",
-        be: "Катэгорыі",
-        zh: "分类",
-        pt: "Categorias",
-        bg: "Категории",
-        he: "קטגוריות",
-        cs: "Kategorie",
-        ro: "Categorii",
-        fr: "Catégories",
-      },
-      bonehead_empty_category: {
-        ru: "В этом разделе пока пусто",
-        en: "No plugins in this category yet",
-        uk: "У цьому розділі поки порожньо",
-        be: "У гэтым раздзеле паку пуста",
-        zh: "此分类暂无插件",
-        pt: "Ainda não há plugins nesta categoria",
-        bg: "В този раздел все още няма нищо",
-        he: "אין עדיין תוספים בקטגוריה זו",
-        cs: "V této kategorii zatím nic není",
-        ro: "Nu există încă pluginuri în această categorie",
-        fr: "Aucun plugin dans cette catégorie pour le moment",
-      },
       bonehead_news_empty: {
-        ru: "Новостей BoneHead Store пока нет",
-        en: "No BoneHead Store news yet",
-        uk: "Новин BoneHead Store поки немає",
-        be: "Навін BoneHead Store паку няма",
-        zh: "暂无 BoneHead Store 新闻",
-        pt: "Ainda não há notícias do BoneHead Store",
-        bg: "Все още няма новини от BoneHead Store",
-        he: "אין עדיין חדשות מ-BoneHead Store",
-        cs: "Zatím žádné novinky ze BoneHead Store",
-        ro: "Nu există încă știri BoneHead Store",
-        fr: "Pas encore de nouvelles BoneHead Store",
+        ru: "Новостей BoneHead пока нет",
+        en: "No BoneHead news yet",
+        uk: "Новин BoneHead поки немає",
+        be: "Навін BoneHead паку няма",
+        zh: "暂无 BoneHead 新闻",
+        pt: "Ainda não há notícias do BoneHead",
+        bg: "Все още няма новини от BoneHead",
+        he: "אין עדיין חדשות מ-BoneHead",
+        cs: "Zatím žádné novinky ze BoneHead",
+        ro: "Nu există încă știri BoneHead",
+        fr: "Pas encore de nouvelles BoneHead",
       },
       bonehead_subtitle: {
         ru: "Сторонний магазин расширений Lampa.",
@@ -243,32 +221,6 @@
         ro: "Total",
         fr: "Total",
       },
-      bonehead_stats_installed: {
-        ru: "Установлено",
-        en: "Installed",
-        uk: "Встановлено",
-        be: "Устаноўлена",
-        zh: "已安装",
-        pt: "Instalados",
-        bg: "Инсталирани",
-        he: "מותקנים",
-        cs: "Nainstalováno",
-        ro: "Instalate",
-        fr: "Installés",
-      },
-      bonehead_plugin_installed: {
-        ru: "Плагин установлен",
-        en: "Plugin installed",
-        uk: "Плагін встановлено",
-        be: "Плагін устаноўлены",
-        zh: "插件已安装",
-        pt: "Plugin instalado",
-        bg: "Плагинът е инсталиран",
-        he: "התוסף הותקן",
-        cs: "Plugin nainstalován",
-        ro: "Plugin instalat",
-        fr: "Plugin installé",
-      },
       bonehead_plugin_not_installed: {
         ru: "Плагин не установлен",
         en: "Plugin is not installed",
@@ -281,45 +233,6 @@
         cs: "Plugin není nainstalován",
         ro: "Pluginul nu este instalat",
         fr: "Plugin non installé",
-      },
-      bonehead_plugin_removed: {
-        ru: "Плагин удален",
-        en: "Plugin removed",
-        uk: "Плагін видалено",
-        be: "Плагін выдалены",
-        zh: "插件已删除",
-        pt: "Plugin removido",
-        bg: "Плагинът е премахнат",
-        he: "התוסף הוסר",
-        cs: "Plugin odstraněn",
-        ro: "Plugin eliminat",
-        fr: "Plugin supprimé",
-      },
-      bonehead_plugin_enabled: {
-        ru: "Плагин включен",
-        en: "Plugin enabled",
-        uk: "Плагін увімкнено",
-        be: "Плагін уключаны",
-        zh: "插件已启用",
-        pt: "Plugin ativado",
-        bg: "Плагинът е активиран",
-        he: "התוסף הופעל",
-        cs: "Plugin povolen",
-        ro: "Plugin activat",
-        fr: "Plugin activé",
-      },
-      bonehead_plugin_disabled: {
-        ru: "Плагин отключен",
-        en: "Plugin disabled",
-        uk: "Плагін вимкнено",
-        be: "Плагін адключаны",
-        zh: "插件已禁用",
-        pt: "Plugin desativado",
-        bg: "Плагинът е деактивиран",
-        he: "התוסף הושבת",
-        cs: "Plugin zakázán",
-        ro: "Plugin dezactivat",
-        fr: "Plugin désactivé",
       },
     });
   }
@@ -344,7 +257,7 @@
 
     if (/^https?:\/\//i.test(svg) || svg.indexOf("//") === 0) {
       return (
-        '<img class="bonehead-store__category-icon bonehead-store__category-icon--img" src="' +
+        '<img class="bonehead__category-icon bonehead__category-icon--img" src="' +
         escapeHtml(svg) +
         '" alt="">'
       );
@@ -352,20 +265,20 @@
 
     if (svg.indexOf("<svg") === -1) return "";
 
-    if (svg.indexOf("bonehead-store__category-icon") === -1) {
+    if (svg.indexOf("bonehead__category-icon") === -1) {
       svg = svg.replace(/<svg\b([^>]*)>/, function (match, attrs) {
         if (/class\s*=/.test(attrs)) {
           return (
             "<svg" +
             attrs.replace(
               /class\s*=\s*(['"])(.*?)\1/,
-              'class="$2 bonehead-store__category-icon"',
+              'class="$2 bonehead__category-icon"',
             ) +
             ">"
           );
         }
 
-        return '<svg class="bonehead-store__category-icon"' + attrs + ">";
+        return '<svg class="bonehead__category-icon"' + attrs + ">";
       });
     }
 
@@ -381,7 +294,7 @@
 
     if (icon.indexOf("lampa:") === 0) {
       return (
-        '<svg class="bonehead-store__category-icon">' +
+        '<svg class="bonehead__category-icon">' +
         '<use xlink:href="#sprite-' +
         icon.slice(6) +
         '"></use></svg>'
@@ -393,7 +306,7 @@
     if (customSvg) return customSvg;
 
     return (
-      '<svg class="bonehead-store__category-icon">' +
+      '<svg class="bonehead__category-icon">' +
       '<use xlink:href="#sprite-folder"></use></svg>'
     );
   }
@@ -556,7 +469,7 @@
         boneHeadStart(data.extensions || [], news);
       })
       .catch(function (error) {
-        console.error("BoneHead Store: ошибка загрузки из Directus", error);
+        console.error("BoneHead: ошибка загрузки из Directus", error);
         boneHeadStart([], []);
       });
   }
@@ -590,7 +503,7 @@
     });
   }
   var availability = {};
-  var showStoreCenter = null;
+  var showBoneHeadCenter = null;
 
   function escapeHtml(value) {
     return String(value || "")
@@ -611,11 +524,11 @@
     return parsed || fallbackTime - index;
   }
 
-  function registerStoreNotices(news, attempt) {
+  function registerBoneHeadNotices(news, attempt) {
     if (!Lampa.Notice || !Lampa.Notice.addClass) {
       if ((attempt || 0) < 20) {
         setTimeout(function () {
-          registerStoreNotices(news, (attempt || 0) + 1);
+          registerBoneHeadNotices(news, (attempt || 0) + 1);
         }, 250);
       }
 
@@ -624,20 +537,20 @@
 
     var fallbackTime = Date.now();
 
-    Lampa.Notice.addClass("bonehead_store", {
-      name: t("bonehead_store_name"),
+    Lampa.Notice.addClass("bonehead", {
+      name: t("bonehead_name"),
       active: function () {
         return true;
       },
       count: function () {
-        var viewed = Lampa.Storage.get("bonehead_store_notice_viewed", 0);
+        var viewed = Lampa.Storage.get("bonehead_notice_viewed", 0);
 
         return this.items().filter(function (item) {
           return item.time > viewed;
         }).length;
       },
       viewed: function () {
-        Lampa.Storage.set("bonehead_store_notice_viewed", Date.now());
+        Lampa.Storage.set("bonehead_notice_viewed", Date.now());
         if (Lampa.Notice.drawCount) Lampa.Notice.drawCount();
       },
       empty: function () {
@@ -646,8 +559,8 @@
       items: function () {
         return (news || []).map(function (item, index) {
           return {
-            id: item.id || "bonehead_store_news_" + index,
-            from: "bonehead_store",
+            id: item.id || "bonehead_news_" + index,
+            from: "bonehead",
             title: item.title,
             text: newsText(item.text),
             time: newsTime(item, index, fallbackTime),
@@ -717,7 +630,7 @@
       list.push(item);
       Lampa.Storage.set("plugins", list);
       loadScript(plugin.url);
-      Lampa.Noty.show(t("bonehead_plugin_installed") + ": " + plugin.name);
+      Lampa.Noty.show(t("plugins_add_success"));
     }
   }
 
@@ -739,7 +652,7 @@
       );
     }
 
-    Lampa.Noty.show(t("bonehead_plugin_removed"));
+    Lampa.Noty.show(t("settings_removed"));
     Lampa.Storage.set("needRebootSettingExit", true);
     return true;
   }
@@ -759,22 +672,24 @@
 
     savePluginList(list);
     Lampa.Noty.show(
-      status ? t("bonehead_plugin_enabled") : t("bonehead_plugin_disabled"),
+      status
+        ? t("settings_parental_control_enabled")
+        : t("settings_parental_control_disabled"),
     );
     return true;
   }
 
-  function openStoreCenter() {
+  function openBoneHeadCenter() {
     $("body").toggleClass("settings--open", false);
     Lampa.Settings.render().removeClass("animate").removeClass("animate-down");
 
-    if (showStoreCenter) showStoreCenter();
+    if (showBoneHeadCenter) showBoneHeadCenter();
   }
 
   function storeStatusText(plugin) {
     var status = availability[plugin.url];
 
-    if (!status || status.loading) return t("bonehead_checking");
+    if (!status || status.loading) return t("loading");
     if (status.code) return status.code;
 
     return "404";
@@ -783,7 +698,7 @@
   function storeStatusDescription(plugin) {
     var status = availability[plugin.url];
 
-    if (!status || status.loading) return t("bonehead_checking");
+    if (!status || status.loading) return t("loading");
     if (status.text) return status.text;
 
     return Number(status.code) >= 200 && Number(status.code) < 400
@@ -874,14 +789,14 @@
   function updateAvailabilityView(plugin, item) {
     var items =
       item ||
-      $(".bonehead-store__item").filter(function () {
+      $(".bonehead__item").filter(function () {
         return $(this).data("url") == plugin.url;
       });
 
     items.each(function () {
       var item = $(this);
       var check = item.find(".extensions__item-check");
-      var code = item.find(".bonehead-store__availability");
+      var code = item.find(".bonehead__availability");
       var status = item.find(".extensions__item-status");
       var availabilityStatus = availability[plugin.url];
       var loading = !!(availabilityStatus && availabilityStatus.loading);
@@ -941,34 +856,34 @@
     );
   }
 
-  function injectStoreStyles() {
-    if ($("#bonehead-store-style").length) return;
+  function injectBoneHeadStyles() {
+    if ($("#bonehead-style").length) return;
 
     $("body").append(
-      '<style id="bonehead-store-style">' +
-        ".bonehead-store-page .extensions__body{padding:2.5em 0;}" +
-        ".bonehead-store__head{display:flex;align-items:center;justify-content:space-between;gap:1em;margin-bottom:2.4em;padding:0 1.5em;}" +
-        ".bonehead-store{padding: 0 1.5em;}" +
-        ".bonehead-store__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;opacity:.65;}" +
-        ".bonehead-store__stat{padding:.45em .7em;border-radius:.5em;}" +
-        ".bonehead-store__layout{display:grid;grid-template-columns:20em minmax(0,1fr);align-items:start;}" +
-        ".bonehead-store__section-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
-        ".bonehead-store__install-state{margin-left: auto;margin-right: 0 !important;}" +
-        ".bonehead-store__category-list.menu__list{padding-left:0;}" +
-        ".bonehead-store__category .menu__ico{display:flex;align-items:center;justify-content:center;}" +
-        ".bonehead-store__category-icon{width:1.5em;height:1.5em;fill:currentColor;}" +
-        ".bonehead-store__category-icon--img{object-fit:contain;display:block;}" +
-        ".bonehead-store__section-title{font-size:1.25em;font-weight:700;}" +
-        ".bonehead-store .extensions__item{width:auto;margin: 0;}" +
-        ".bonehead-store__empty{padding:2em;opacity:.7;text-align:center;}" +
+      '<style id="bonehead-style">' +
+        ".bonehead-page .extensions__body{padding:2.5em 0;}" +
+        ".bonehead__head{display:flex;align-items:center;justify-content:space-between;gap:1em;margin-bottom:2.4em;padding:0 1.5em;}" +
+        ".bonehead{padding: 0 1.5em;}" +
+        ".bonehead__stats{display:flex;gap:.55em;flex-wrap:wrap;justify-content:flex-end;opacity:.65;}" +
+        ".bonehead__stat{padding:.45em .7em;border-radius:.5em;}" +
+        ".bonehead__layout{display:grid;grid-template-columns:20em minmax(0,1fr);align-items:start;}" +
+        ".bonehead__section-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2em;padding: 0 0.6em;}" +
+        ".bonehead__install-state{margin-left: auto;margin-right: 0 !important;}" +
+        ".bonehead__category-list.menu__list{padding-left:0;}" +
+        ".bonehead__category .menu__ico{display:flex;align-items:center;justify-content:center;}" +
+        ".bonehead__category-icon{width:1.5em;height:1.5em;fill:currentColor;}" +
+        ".bonehead__category-icon--img{object-fit:contain;display:block;}" +
+        ".bonehead__section-title{font-size:1.25em;font-weight:700;}" +
+        ".bonehead .extensions__item{width:auto;margin: 0;}" +
+        ".bonehead__empty{padding:2em;opacity:.7;text-align:center;}" +
         "@media(max-width:" +
         Config.mobileBreakpoint +
-        'px){.bonehead-store-page .extensions__body{padding:1em 1em 0}.bonehead-store{padding:0}.bonehead-store__head{padding:0;margin-bottom:1em}.bonehead-store__layout{display:block}.bonehead-store__column{margin-bottom:1.2em}.bonehead-store__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.bonehead-store__column>.scroll>.scroll__content{padding:.6em 0 1em}.bonehead-store__column[data-section="0"]>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.bonehead-store__column[data-section="1"]>.scroll .scroll__body{display:block!important;width:max-content;transform:none!important}.bonehead-store__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.bonehead-store__category.menu__item{flex-shrink:0}.bonehead-store__section-list{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:min(20em,85vw);gap:1em;padding:0;width:max-content}.bonehead-store .extensions__item{width:auto}.bonehead-store__title{font-size:1.65em}}' +
+        'px){.bonehead-page .extensions__body{padding:1em 1em 0}.bonehead{padding:0}.bonehead__head{padding:0;margin-bottom:1em}.bonehead__layout{display:block}.bonehead__column{margin-bottom:1.2em}.bonehead__column>.scroll{height:auto!important;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}.bonehead__column>.scroll>.scroll__content{padding:.6em 0 1em}.bonehead__column[data-section="0"]>.scroll .scroll__body{display:flex!important;gap:1em;width:max-content;transform:none!important}.bonehead__column[data-section="1"]>.scroll .scroll__body{display:block!important;width:max-content;transform:none!important}.bonehead__category-list.menu__list{display:flex;gap:.5em;margin:0;padding:0}.bonehead__category.menu__item{flex-shrink:0}.bonehead__section-list{display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:min(20em,85vw);gap:1em;padding:0;width:max-content}.bonehead .extensions__item{width:auto}.bonehead__title{font-size:1.65em}}' +
         "</style>",
     );
   }
 
-  function registerStoreComponent(rawPlugins) {
+  function registerBoneHeadComponent(rawPlugins) {
     var catalog = rawPlugins.map(normalizePlugin);
     var categories = buildCategoriesFromCatalog(catalog);
     var categoryNames = {};
@@ -985,12 +900,12 @@
 
     var instance = null;
 
-    injectStoreStyles();
+    injectBoneHeadStyles();
 
-    function BoneHeadStorePage() {
-      var html = $('<div class="extensions bonehead-store-page"></div>');
-      var head = $('<div class="bonehead-store__head"></div>');
-      var body = $('<div class="bonehead-store"></div>');
+    function BoneHeadPage() {
+      var html = $('<div class="extensions bonehead-page"></div>');
+      var head = $('<div class="bonehead__head"></div>');
+      var body = $('<div class="bonehead"></div>');
       var content = $('<div class="extensions__body"></div>');
       var filter = "all";
       var categoryScroll = new Lampa.Scroll({ mask: true, over: true });
@@ -1016,7 +931,7 @@
       function syncAvailabilityViews() {
         cleanupStaleAvailabilityLoading();
 
-        $(".bonehead-store__item", body).each(function () {
+        $(".bonehead__item", body).each(function () {
           var plugin = findCatalogPlugin($(this).data("url"));
 
           if (plugin) updateAvailabilityView(plugin, $(this));
@@ -1040,12 +955,12 @@
         var protocol = plugin.url.indexOf("https://") === 0 ? "https" : "http";
 
         var item = $(
-          '<div class="extensions__item selector bonehead-store__item layer--visible" data-url="' +
+          '<div class="extensions__item selector bonehead__item layer--visible" data-url="' +
             escapeHtml(plugin.url) +
             '">' +
             '<div class="extensions__item-author">' +
             escapeHtml(plugin.author) +
-            '<span class="extensions__item-premium bonehead-store__price">' +
+            '<span class="extensions__item-premium bonehead__price">' +
             escapeHtml(plugin.price) +
             "</span></div>" +
             '<div class="extensions__item-name">' +
@@ -1061,13 +976,13 @@
             '">' +
             protoIcon() +
             "</div>" +
-            '<div class="extensions__item-code bonehead-store__availability hide yellow">' +
-            escapeHtml(t("bonehead_checking")) +
+            '<div class="extensions__item-code bonehead__availability hide yellow">' +
+            escapeHtml(t("loading")) +
             "</div>" +
             '<div class="extensions__item-status hide">' +
-            escapeHtml(t("bonehead_checking")) +
+            escapeHtml(t("loading")) +
             "</div>" +
-            '<div class="extensions__item-code bonehead-store__install-state ' +
+            '<div class="extensions__item-code bonehead__install-state ' +
             installState.className +
             '">' +
             escapeHtml(installState.text) +
@@ -1085,9 +1000,10 @@
         return item;
       }
 
-      function isStoreOverlayOpen() {
+      function isBoneHeadOverlayOpen() {
         if ($("body").hasClass("selectbox--open")) return true;
-        if (Lampa.Modal && Lampa.Modal.opened && Lampa.Modal.opened()) return true;
+        if (Lampa.Modal && Lampa.Modal.opened && Lampa.Modal.opened())
+          return true;
 
         return $(".modal").length > 0;
       }
@@ -1097,18 +1013,20 @@
           return isInstalled(plugin.url);
         }).length;
 
-        head.find(".bonehead-store__stat").eq(0).text(
-          t("bonehead_stats_total") + ": " + catalog.length,
-        );
-        head.find(".bonehead-store__stat").eq(1).text(
-          t("bonehead_stats_installed") + ": " + installedTotal,
-        );
+        head
+          .find(".bonehead__stat")
+          .eq(0)
+          .text(t("bonehead_stats_total") + ": " + catalog.length);
+        head
+          .find(".bonehead__stat")
+          .eq(1)
+          .text(t("plugins_installed") + ": " + installedTotal);
       }
 
       function updatePluginItemState(plugin, options) {
         options = options || {};
         var item = $(
-          '.bonehead-store__item[data-url="' + escapeHtml(plugin.url) + '"]',
+          '.bonehead__item[data-url="' + escapeHtml(plugin.url) + '"]',
           body,
         );
 
@@ -1122,13 +1040,13 @@
         var installState = getPluginInstallState(plugin.url);
 
         item
-          .find(".bonehead-store__install-state")
+          .find(".bonehead__install-state")
           .removeClass("success error yellow")
           .addClass(installState.className)
           .text(installState.text);
       }
 
-      function restoreStoreFocus(after) {
+      function restoreBoneHeadFocus(after) {
         setTimeout(function () {
           fitScrolls();
 
@@ -1153,17 +1071,19 @@
         var controller =
           Lampa.Controller.enabled && Lampa.Controller.enabled()
             ? Lampa.Controller.enabled().name
-            : "bonehead_store_center";
+            : "bonehead_center";
         var back = function (after) {
           Lampa.Controller.toggle(controller);
-          restoreStoreFocus(after);
+          restoreBoneHeadFocus(after);
         };
 
         if (!state.installed) {
           items.push({ title: t("extensions_install"), action: "install" });
         } else {
           items.push({
-            title: state.enabled ? t("extensions_disable") : t("extensions_enable"),
+            title: state.enabled
+              ? t("extensions_disable")
+              : t("extensions_enable"),
             action: "toggle",
           });
           items.push({ title: t("extensions_remove"), action: "remove" });
@@ -1248,7 +1168,7 @@
       function bindController() {
         $(".selector", body).on("hover:focus", function () {
           var index = Number(
-            $(this).closest(".bonehead-store__column").data("section"),
+            $(this).closest(".bonehead__column").data("section"),
           );
 
           if (!isNaN(index)) {
@@ -1258,18 +1178,18 @@
           }
         });
 
-        $(".bonehead-store__category", body).on("hover:enter click", function () {
+        $(".bonehead__category", body).on("hover:enter click", function () {
           filter = $(this).data("filter");
           lastFocus[1] = null;
           render({ resetPlugins: true });
         });
 
-        $(".bonehead-store__item", body).on("hover:enter click", function () {
+        $(".bonehead__item", body).on("hover:enter click", function () {
           var plugin = findCatalogPlugin($(this).data("url"));
           if (plugin) showPluginActions(plugin);
         });
 
-        $(".bonehead-store__item", body).on("hover:focus", function () {
+        $(".bonehead__item", body).on("hover:focus", function () {
           var plugin = findCatalogPlugin($(this).data("url"));
 
           if (plugin && availability[plugin.url]) {
@@ -1279,11 +1199,11 @@
       }
 
       function renderCategories() {
-        var list = $('<ul class="bonehead-store__category-list menu__list"></ul>');
+        var list = $('<ul class="bonehead__category-list menu__list"></ul>');
 
         categoryOrder.forEach(function (category) {
           list.append(
-            '<li class="bonehead-store__category menu__item selector' +
+            '<li class="bonehead__category menu__item selector' +
               (filter == category ? " active" : "") +
               '" data-filter="' +
               category +
@@ -1302,7 +1222,7 @@
       }
 
       function renderPlugins(list) {
-        var body = $('<div class="bonehead-store__section-list"></div>');
+        var body = $('<div class="bonehead__section-list"></div>');
 
         if (list.length) {
           list.forEach(function (plugin) {
@@ -1311,8 +1231,8 @@
           return body;
         } else {
           return $(
-            '<div class="bonehead-store__empty">' +
-              escapeHtml(t("bonehead_empty_category")) +
+            '<div class="bonehead__empty">' +
+              escapeHtml(t("empty_text_two")) +
               "</div>",
           );
         }
@@ -1320,11 +1240,9 @@
 
       function makeColumn(index, title, scroll) {
         return $(
-          '<div class="bonehead-store__column" data-section="' +
-            index +
-            '"></div>',
+          '<div class="bonehead__column" data-section="' + index + '"></div>',
         )
-          .append('<div class="bonehead-store__section-title">' + title + "</div>")
+          .append('<div class="bonehead__section-title">' + title + "</div>")
           .append(scroll.render());
       }
 
@@ -1361,7 +1279,7 @@
       }
 
       function fitScrolls() {
-        if (isStoreOverlayOpen()) return;
+        if (isBoneHeadOverlayOpen()) return;
 
         var fontSize = parseFloat($("body").css("font-size")) || 16;
         var bottom = fontSize * 2.5;
@@ -1405,19 +1323,19 @@
         head
           .empty()
           .append(
-            '<div class="bonehead-store__subtitle"><p>' +
+            '<div class="bonehead__subtitle"><p>' +
               escapeHtml(t("bonehead_subtitle")) +
               "</p><br><p>" +
               escapeHtml(t("bonehead_subtitle_suggest")) +
               "</p></div>" +
-              '<div class="bonehead-store__stats">' +
-              '<div class="bonehead-store__stat">' +
+              '<div class="bonehead__stats">' +
+              '<div class="bonehead__stat">' +
               escapeHtml(t("bonehead_stats_total")) +
               ": " +
               catalog.length +
               "</div>" +
-              '<div class="bonehead-store__stat">' +
-              escapeHtml(t("bonehead_stats_installed")) +
+              '<div class="bonehead__stat">' +
+              escapeHtml(t("plugins_installed")) +
               ": " +
               installedTotal +
               "</div>",
@@ -1427,9 +1345,9 @@
         categoryScroll.append(renderCategories());
         pluginScroll.clear();
         pluginScroll.append(renderPlugins(list));
-        var layout = $('<div class="bonehead-store__layout"></div>');
+        var layout = $('<div class="bonehead__layout"></div>');
 
-        layout.append(makeColumn(0, t("bonehead_categories"), categoryScroll));
+        layout.append(makeColumn(0, t("title_category"), categoryScroll));
         layout.append(makeColumn(1, t("settings_main_plugins"), pluginScroll));
         body.empty().append(layout);
         bindController();
@@ -1459,7 +1377,7 @@
           }
 
           var active = $(
-            ".bonehead-store__category.active",
+            ".bonehead__category.active",
             categoryScroll.render(),
           ).first()[0];
           setCollection(
@@ -1519,7 +1437,7 @@
       function releaseController() {
         var enabled = Lampa.Controller.enabled && Lampa.Controller.enabled();
 
-        if (!enabled || enabled.name != "bonehead_store_center") return;
+        if (!enabled || enabled.name != "bonehead_center") return;
 
         if (Lampa.Controller.clear) Lampa.Controller.clear();
         else Lampa.Controller.toggle("content");
@@ -1534,13 +1452,11 @@
 
         fitScrolls();
 
-        Lampa.Controller.add("bonehead_store_center", {
+        Lampa.Controller.add("bonehead_center", {
           toggle: function () {
             var focused = $(".selector.focus", body)[0];
             var section = focused
-              ? Number(
-                  $(focused).closest(".bonehead-store__column").data("section"),
-                )
+              ? Number($(focused).closest(".bonehead__column").data("section"))
               : activeSection;
 
             if (isNaN(section)) section = activeSection;
@@ -1564,7 +1480,7 @@
           },
         });
 
-        Lampa.Controller.toggle("bonehead_store_center");
+        Lampa.Controller.toggle("bonehead_center");
       };
 
       this.destroy = function () {
@@ -1575,7 +1491,7 @@
       };
       this.render = function () {
         if (!html.children().length) {
-          content.append(headBackward("💀 " + t("bonehead_store_name")));
+          content.append(headBackward("💀 " + t("bonehead_name") + " 💀"));
           content.append(head);
           content.append(body);
           html.append(content);
@@ -1585,13 +1501,13 @@
       };
     }
 
-    showStoreCenter = function () {
+    showBoneHeadCenter = function () {
       if (instance) return;
 
       var controller =
         Lampa.Controller.enabled && Lampa.Controller.enabled().name;
 
-      instance = new BoneHeadStorePage();
+      instance = new BoneHeadPage();
       instance.onBack = function () {
         instance.destroy();
         instance = null;
@@ -1610,16 +1526,16 @@
     };
   }
 
-  /* Создание BoneHead Store и его меню */
+  /* Создание BoneHead и его меню */
   function boneHeadStart(plugins, news) {
     registerBoneHeadTranslations();
-    registerStoreNotices(news);
-    registerStoreComponent(plugins);
+    registerBoneHeadNotices(news);
+    registerBoneHeadComponent(plugins);
 
-    /* BoneHead Store */
+    /* BoneHead */
     Lampa.SettingsApi.addComponent({
       component: "bonehead",
-      name: t("bonehead_store_name"),
+      name: t("bonehead_name"),
       icon: icon_bonehead,
     });
 
@@ -1632,7 +1548,7 @@
           );
           $("div[data-component=bonehead]")
             .unbind("hover:enter")
-            .on("hover:enter", openStoreCenter);
+            .on("hover:enter", openBoneHeadCenter);
         }, 30);
       }
     });
