@@ -16,8 +16,9 @@
     },
     mobileBreakpoint: 900,
     categoryLabelKeys: {
+      all: "settings_param_jackett_interview_all",
       installed: "bonehead_category_installed",
-      online: "plugins_online",
+      online: "bonehead_category_online",
       tv: "bonehead_category_tv",
       torrent: "full_torrents",
       interface: "settings_main_interface",
@@ -104,6 +105,19 @@
         ro: "Instalate",
         fr: "Installés",
       },
+      bonehead_category_online: {
+        ru: "Онлайн",
+        en: "Online",
+        uk: "Онлайн",
+        be: "Онлайн",
+        zh: "在线",
+        pt: "Online",
+        bg: "Онлайн",
+        he: "אונליין",
+        cs: "Online",
+        ro: "Online",
+        fr: "Online",
+      },
       bonehead_category_tv: {
         ru: "ТВ",
         en: "TV",
@@ -143,7 +157,7 @@
         ro: "Neinstalat",
         fr: "Non installé",
       },
-      bonehead_not_installed: {
+      bonehead_price_free: {
         ru: "Бесплатный",
         en: "Free",
         uk: "Безкоштовний",
@@ -939,8 +953,10 @@
       }
 
       function categoryTitle(category) {
-        if (category == "all") return t("settings_param_jackett_interview_all");
-        if (category == "installed") return t("extensions_from_memory");
+        var key = Config.categoryLabelKeys[category];
+
+        if (key) return t(key);
+
         return categoryNames[category] || category;
       }
 
