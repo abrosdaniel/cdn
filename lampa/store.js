@@ -423,11 +423,17 @@
   }
 
   function normalizeNewsItem(item) {
+    var image = item.image;
+
+    if (image && typeof image == "object") {
+      image = directusAssetUrl(image);
+    }
+
     return {
       id: item.id,
       title: item.title,
       text: item.text,
-      image: directusAssetUrl(item.image) || null,
+      image: image || null,
       date: item.date || null,
       tags: Array.isArray(item.tags) ? item.tags : [],
     };
@@ -528,8 +534,36 @@
       .replace(/'/g, "&#039;");
   }
 
-  function newsText(text) {
-    return escapeHtml(text || "").replace(/\r?\n/g, "<br>");
+  function formatNewsHtml(text) {
+    text = String(text || "").trim();
+
+    if (!text) return "";
+
+    if (text.indexOf("<") === -1) {
+      return escapeHtml(text).replace(/\r?\n/g, "<br>");
+    }
+
+    var div = document.createElement("div");
+    div.innerHTML = text;
+
+    div
+      .querySelectorAll("script, iframe, object, embed, form, input, button")
+      .forEach(function (el) {
+        el.remove();
+      });
+
+    div.querySelectorAll("*").forEach(function (el) {
+      Array.from(el.attributes).forEach(function (attr) {
+        if (
+          /^on/i.test(attr.name) ||
+          (attr.name === "href" && /^javascript:/i.test(attr.value))
+        ) {
+          el.removeAttribute(attr.name);
+        }
+      });
+    });
+
+    return div.innerHTML;
   }
 
   function newsTime(item, index, fallbackTime) {
@@ -576,10 +610,10 @@
             id: item.id || "bonehead_news_" + index,
             from: "bonehead",
             title: item.title,
-            text: newsText(item.text),
+            text: formatNewsHtml(item.text),
             time: newsTime(item, index, fallbackTime),
             img: item.image || "",
-            labels: item.tags.length ? item.tags : null,
+            labels: item.tags && item.tags.length ? item.tags : null,
           };
         });
       },
